@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:dfengine/DeskFun Engine.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:DeskFunUI/DeskFunUI.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:DeskFun X/DeskFun X.xcodeproj">
+   </FileRef>
+</Workspace>
