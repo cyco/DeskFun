@@ -45,6 +45,8 @@ typedef enum {
     ZONETYPE_Use          = 16,
     ZONETYPE_Find         = 17,
     ZONETYPE_FindTheForce = 18,
+    
+    ZONETYPE_UNKNOWN = 9999
 } ZONE_TYPE;
 
 typedef enum {

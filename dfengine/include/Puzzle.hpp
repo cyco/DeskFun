@@ -18,10 +18,12 @@ using namespace std;
 
 typedef enum : uint32_t {
     PuzzleTypeU1 = 0,
-    PuzzleTypeU2 = 1,
+    PuzzleTypeTrade = 1,
     PuzzleTypeU3 = 2,
     PuzzleTypeEnd = 3,
-    PuzzleTypeU4 = 4
+    PuzzleTypeU4 = 4,
+
+    PUZZLE_TYPE_DISABLED = 0xFFFF
 } _PuzzleType;
 typedef uint32_t PuzzleType;
 
@@ -48,7 +50,7 @@ public:
     Tile* getQuestItem(unsigned short index);
     string& getText(unsigned short index);
     
-private:
+public:
     string name;
     PuzzleType type;
     Tile *questItems[2];

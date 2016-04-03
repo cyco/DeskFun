@@ -16,6 +16,7 @@
 @interface MapGeneration ()
 {
     uint16_t map[100];
+    YodaDocument *document;
 }
 @end
 
@@ -28,6 +29,18 @@
     [self _initializeMap];
     
     self.mapView.map = map;
+    
+    document = new YodaDocument();
+    document->puzzles.clear();
+    
+    vector<Puzzle*> puzzles = self.data->_puzzles;
+    for(int i=0; i < puzzles.size(); i++) {
+        Puzzle *puzzle = puzzles[i];
+        if(i == 0xBD || i==0xC5)
+            puzzle->type = PUZZLE_TYPE_DISABLED;
+        document->puzzles.insert(document->puzzles.end(), puzzle);
+    }
+    
     [self generateWorld:nil];
 }
 
@@ -131,5 +144,12 @@
     memcpy(map, nmap->tiles, sizeof(uint16) * 100);
     
     [_mapView setNeedsDisplay:true];
+    
+    if(!document) return;
+    
+    document->planet = HOTH;
+    
+    int16 goalID = document->GetNewPuzzleId(-1, -1, (ZONE_TYPE)9999, 0);
+    printf("Goal ID: 0x%0x\n", goalID);
 }
 @end
