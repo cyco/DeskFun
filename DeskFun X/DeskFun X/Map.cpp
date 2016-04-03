@@ -20,7 +20,7 @@ Map::Map(){
 
 #pragma mark - Accessors
 void Map::set(int x, int y, uint16 v) {
-    puzzles[x + 10 * y] = v;
+    tiles[x + 10 * y] = v;
 }
 
 uint16 Map::get(int x, int y) {
@@ -614,10 +614,10 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
                 case WORLD_ITEM_BLOCK_NORTH:
                     if(get(x, y-1) == 300) {
                         if ( y <= 1 || get(x, y-2) != 300 ) {
-                            map_set(world, x, y-1, 306);
+                            set(x, y-1, 306);
                             map_set(puzzles, x, y-1, puzzles_placed);
                         } else {
-                            map_set(world, x, y-2, 306);
+                            set(x, y-2, 306);
                             map_set(puzzles, x, y-2, puzzles_placed);
                         }
                         puzzles_placed++;
@@ -626,10 +626,10 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
                 case WORLD_ITEM_BLOCK_SOUTH:
                     if(get(x, y+1) == 300 ) {
                         if ( y >= 8 || get(x, y+2) != 300 ) {
-                            map_set(world, x, y+1, 306);
+                            set(x, y+1, 306);
                             map_set(puzzles, x, y+1, puzzles_placed);
                         } else {
-                            map_set(world, x, y+2, 306);
+                            set(x, y+2, 306);
                             map_set(puzzles, x, y+2, puzzles_placed);
                         }
                         puzzles_placed++;
@@ -665,7 +665,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                             }
                         } while ( !do_break );
                         
-                        map_set(world, puzzle_x, y, 306);
+                        set(puzzle_x, y, 306);
                         map_set(puzzles, puzzle_x, y, count++);
                         
                         break;
@@ -687,7 +687,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                             }
                         } while ( !do_break );
                         
-                        map_set(world, x, puzzle_y, 306);
+                        set(x, puzzle_y, 306);
                         map_set(puzzles, x, puzzle_y, count++);
                         
                         break;
@@ -709,7 +709,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                             }
                         } while ( !do_break );
                         
-                        map_set(world, puzzle_x, y, 306);
+                        set(puzzle_x, y, 306);
                         map_set(puzzles, puzzle_x, y, count++);
                         break;
                     }
@@ -730,7 +730,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                             }
                         } while ( !do_break );
                         
-                        map_set(world, x, puzzle_y, 306);
+                        set(x, puzzle_y, 306);
                         map_set(puzzles, x, puzzle_y, count++);
                         break;
                     }
@@ -772,7 +772,7 @@ int Map::choose_additional_puzzles(uint16_t* world, uint16_t *puzzles, int place
                 && ( y == 0 || get(x, y-1) != 306 )
                 && ( y == 9 || get(x, y+1) != 306 )) {
                 
-                map_set(world, x, y, 306);
+                set(x, y, 306);
                 map_set(puzzles, x, y, placed_puzzles++);
             }
             
