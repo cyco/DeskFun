@@ -11,7 +11,6 @@
 
 #pragma mark - C Methods
 extern "C" {
-int map_get_island_orientation(int x, int y, uint16_t* map);
 int find_puzzle(uint16_t* puzzles, int count, int *x, int *y);
 }
 
@@ -572,12 +571,12 @@ int Map::AdditionalPuzzleLocations(int travels_to_place, uint16_t* world, int* p
 
 #pragma mark -
 
-int Map::map_get_island_orientation(int x, int y, uint16_t* map)
+int Map::map_get_island_orientation(int x, int y)
 {
-    if(map_get(map, x-1, y) == 104) return 1;
-    if(map_get(map, x+1, y) == 104) return 3;
-    if(map_get(map, x, y-1) == 104) return 2;
-    if(map_get(map, x, y+1) == 104) return 4;
+    if(get(x-1, y) == 104) return 1;
+    if(get(x+1, y) == 104) return 3;
+    if(get(x, y-1) == 104) return 2;
+    if(get(x, y+1) == 104) return 4;
     
     return 0;
 }
@@ -587,10 +586,10 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++){
             int i = x + y * 10;
-            switch (map_get(world, x, y)) {
+            switch (get(x, y)) {
                 case WORLD_ITEM_BLOCK_WEST:
-                    if (map_get(world, x-1, y) == 300 ) {
-                        if ( x <= 1 || map_get(world, x-2, y) != 300 ){
+                    if (get(x-1, y) == 300 ) {
+                        if ( x <= 1 || get(x-2, y) != 300 ){
                             world[i-1] = 306;
                             puzzles[i-1] = puzzles_placed;
                         } else {
@@ -601,8 +600,8 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
                     }
                     break;
                 case WORLD_ITEM_BLOCK_EAST:
-                    if (map_get(world, x+1, y) == 300 ) {
-                        if ( x >= 8 || map_get(world, x+2, y) != 300 ) {
+                    if (get(x+1, y) == 300 ) {
+                        if ( x >= 8 || get(x+2, y) != 300 ) {
                             world[i+1] = 306;
                             puzzles[i+1] = puzzles_placed;
                         } else {
@@ -613,8 +612,8 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
                     }
                     break;
                 case WORLD_ITEM_BLOCK_NORTH:
-                    if(map_get(world, x, y-1) == 300) {
-                        if ( y <= 1 || map_get(world, x, y-2) != 300 ) {
+                    if(get(x, y-1) == 300) {
+                        if ( y <= 1 || get(x, y-2) != 300 ) {
                             map_set(world, x, y-1, 306);
                             map_set(puzzles, x, y-1, puzzles_placed);
                         } else {
@@ -625,8 +624,8 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
                     }
                     break;
                 case WORLD_ITEM_BLOCK_SOUTH:
-                    if(map_get(world, x, y+1) == 300 ) {
-                        if ( y >= 8 || map_get(world, x, y+2) != 300 ) {
+                    if(get(x, y+1) == 300 ) {
+                        if ( y >= 8 || get(x, y+2) != 300 ) {
                             map_set(world, x, y+1, 306);
                             map_set(puzzles, x, y+1, puzzles_placed);
                         } else {
@@ -647,14 +646,14 @@ int Map::choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles) {
 int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count) {
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
-            if (map_get(world, x, y) == 102 ) {
-                switch(map_get_island_orientation(x, y, world)) {
+            if (get(x, y) == 102 ) {
+                switch(map_get_island_orientation(x, y)) {
                     case 1:{
                         int puzzle_x = x - 1;
                         int do_break = 0;
                         do {
                             if ( puzzle_x >= 0 ) {
-                                if (map_get(world, puzzle_x, y) == 104 ) {
+                                if (get(puzzle_x, y) == 104 ) {
                                     --puzzle_x;
                                 } else {
                                     ++puzzle_x;
@@ -676,7 +675,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                         int do_break = 0;
                         do {
                             if ( puzzle_y >= 0 ) {
-                                if ( map_get(world, x, puzzle_y) == 104 ) {
+                                if ( get(x, puzzle_y) == 104 ) {
                                     --puzzle_y;
                                 } else {
                                     ++puzzle_y;
@@ -698,7 +697,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                         int do_break = 0;
                         do {
                             if ( puzzle_x <= 9 ) {
-                                if (map_get(world, puzzle_x, y) == 104 ) {
+                                if (get(puzzle_x, y) == 104 ) {
                                     ++puzzle_x;
                                 } else {
                                     --puzzle_x;
@@ -719,7 +718,7 @@ int Map::choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count
                         int puzzle_y = y + 1;
                         do {
                             if ( puzzle_y <= 9 ) {
-                                if ( map_get(world, x, puzzle_y) == 104 ) {
+                                if ( get(x, puzzle_y) == 104 ) {
                                     ++puzzle_y;
                                 } else {
                                     --puzzle_y;
@@ -766,12 +765,12 @@ int Map::choose_additional_puzzles(uint16_t* world, uint16_t *puzzles, int place
         
         if (GetDistanceToCenter(x, y) >= 3 || i >= 150)
         {
-            uint16_t item = map_get(world, x, y);
+            uint16_t item = get(x, y);
             if ( (item == 1 || item == 300)
-                && ( x == 0 || map_get(world, x-1, y) != 306 )
-                && ( x == 9 || map_get(world, x+1, y) != 306 )
-                && ( y == 0 || map_get(world, x, y-1) != 306 )
-                && ( y == 9 || map_get(world, x, y+1) != 306 )) {
+                && ( x == 0 || get(x-1, y) != 306 )
+                && ( x == 9 || get(x+1, y) != 306 )
+                && ( y == 0 || get(x, y-1) != 306 )
+                && ( y == 9 || get(x, y+1) != 306 )) {
                 
                 map_set(world, x, y, 306);
                 map_set(puzzles, x, y, placed_puzzles++);

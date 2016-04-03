@@ -35,7 +35,7 @@ private:
     int try_placing_transport(uint16_t *world, int item_idx, int transport_count, int *placed_transport_count_ref, int iteration, int threshold_2, int v36);
     int DeterminePuzzleLocations(signed int iteration, int puzzle_count_to_place, uint16_t* world, int transport_count, int *placed_transport_count_ref, int blockade_count, int *placed_blockade_count_ref, int *placed_puzzle_count_ref);
     int AdditionalPuzzleLocations(int travels_to_place, uint16_t* world, int* placed_puzzles_count_ref);
-    int map_get_island_orientation(int x, int y, uint16_t* map);
+    int map_get_island_orientation(int x, int y);
     int choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles);
     int choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count);
     int choose_additional_puzzles(uint16_t* world, uint16_t *puzzles, int placed_puzzles, int total_puzzle_count);
