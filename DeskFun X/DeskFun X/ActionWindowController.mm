@@ -252,6 +252,8 @@ NSString * const ActionDragType = @"com.deskfun.action";
             f(@"Required item is %@ (%0x)", [self _nameOfTile:arguments[0]], arguments[0]);
         case Action::Instruction::ConditionCode::Ending:
             f(@"Ending is %@ (0x%0x)", [self _nameOfTile:arguments[0]], arguments[0]);
+        case Action::Instruction::ConditionCode::ZoneSolved:
+            f(@"Zone is solved");
         case Action::Instruction::ConditionCode::RandomIs:
             f(@"Random is %d", arguments[0]);
         case Action::Instruction::ConditionCode::RandomIsNot:

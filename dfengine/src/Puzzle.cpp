@@ -57,7 +57,7 @@ Puzzle::Puzzle(FILE *file)
 
     uint32_t size;
     fread(&size, sizeof(size), 1, file);
-
+    
     if(context->getGameStyle() == GameStyleYoda)
         fread(&type, sizeof(type), 1, file);
 

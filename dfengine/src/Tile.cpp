@@ -45,6 +45,7 @@ Tile::~Tile(void)
 const char Tile::NAMES_CATEGORY[] = "TNAM";
 
 typedef enum {
+    TransparentBit = 1,
     DraggableBit = 3,
     LocatorBit   = 5
 } TileSpecs;

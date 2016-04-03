@@ -123,9 +123,9 @@ void ZoneTransitionScene::_renderRoomAnimation(void)
     if(snapAnimationToTiles)
         t = floor(t);
 
+#ifdef glColor4f
     const GLfloat w = 9.0; // viewport width
     const GLfloat h = 9.0; // viewport height
-#ifdef glColor4f
     glColor4f(0.0, 0.0, 0.0, 1.0);
     glDisable(GL_TEXTURE_2D);
  //    glBindTexture(GL_TEXTURE_2D, 0);

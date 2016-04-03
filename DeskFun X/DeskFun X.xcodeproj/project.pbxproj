@@ -29,6 +29,13 @@
 		835E17A91B1B9CF0004A981E /* Desktop_Adventure_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 835E17A81B1B9CF0004A981E /* Desktop_Adventure_Tests.m */; };
 		835E17B01B1B9D2F004A981E /* DirectionTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 835E17AF1B1B9D2F004A981E /* DirectionTest.mm */; };
 		835E17B41B1BB7A1004A981E /* CocoaInputManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 835E17B21B1BB7A1004A981E /* CocoaInputManager.mm */; };
+		83645C091CB106FE00845F16 /* MapGeneration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83645C071CB106FE00845F16 /* MapGeneration.mm */; };
+		83645C0A1CB106FE00845F16 /* MapGeneration.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83645C081CB106FE00845F16 /* MapGeneration.xib */; };
+		83645C0D1CB1096400845F16 /* MapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83645C0C1CB1096400845F16 /* MapView.mm */; };
+		83645C251CB120E700845F16 /* map.c in Sources */ = {isa = PBXBuildFile; fileRef = 83645C171CB120E600845F16 /* map.c */; };
+		83645C281CB120E700845F16 /* win_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 83645C1F1CB120E700845F16 /* win_rand.c */; };
+		83645C361CB1325100845F16 /* YodaDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83645C341CB1325100845F16 /* YodaDocument.cpp */; };
+		83645C4D1CB139A700845F16 /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83645C4B1CB139A700845F16 /* Map.cpp */; };
 		8365D04D1AC86DC90031E23E /* PuzzleWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */; };
 		8365D04E1AC86DC90031E23E /* PuzzleWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */; };
 		8374EAA21B35AD3C00B90F60 /* DeskFunUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */; };
@@ -62,7 +69,7 @@
 		83E3171B19F0134C000476AB /* TileWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E3171919F0134C000476AB /* TileWindowController.mm */; };
 		83E3171C19F0134C000476AB /* TileWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83E3171A19F0134C000476AB /* TileWindowController.xib */; };
 		83E3172119F013A0000476AB /* TileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E3172019F013A0000476AB /* TileView.mm */; };
-		83F177E21BEBD62E00AD7832 /* DeskFunUI.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 8374EAAA1B35AD5600B90F60 /* DeskFunUI.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		83F177E21BEBD62E00AD7832 /* DeskFunUI.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 8374EAAA1B35AD5600B90F60 /* DeskFunUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F1C0991B20463500790D45 /* pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F1C0981B20463500790D45 /* pause.png */; };
 		83F809141AFF8C35005A9001 /* SetupWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83F809121AFF8C35005A9001 /* SetupWindowController.mm */; };
 		83F809151AFF8C35005A9001 /* SetupWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83F809131AFF8C35005A9001 /* SetupWindowController.xib */; };
@@ -172,6 +179,24 @@
 		835E17AF1B1B9D2F004A981E /* DirectionTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DirectionTest.mm; sourceTree = "<group>"; };
 		835E17B21B1BB7A1004A981E /* CocoaInputManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaInputManager.mm; sourceTree = "<group>"; };
 		835E17B31B1BB7A1004A981E /* CocoaInputManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CocoaInputManager.hpp; sourceTree = "<group>"; };
+		83645C061CB106FE00845F16 /* MapGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapGeneration.h; sourceTree = "<group>"; };
+		83645C071CB106FE00845F16 /* MapGeneration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MapGeneration.mm; sourceTree = "<group>"; };
+		83645C081CB106FE00845F16 /* MapGeneration.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapGeneration.xib; sourceTree = "<group>"; };
+		83645C0B1CB1096400845F16 /* MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView.h; sourceTree = "<group>"; };
+		83645C0C1CB1096400845F16 /* MapView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MapView.mm; sourceTree = "<group>"; };
+		83645C171CB120E600845F16 /* map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = map.c; sourceTree = "<group>"; };
+		83645C181CB120E600845F16 /* map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = map.h; sourceTree = "<group>"; };
+		83645C1D1CB120E700845F16 /* samples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = samples.h; sourceTree = "<group>"; };
+		83645C1E1CB120E700845F16 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		83645C1F1CB120E700845F16 /* win_rand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = win_rand.c; sourceTree = "<group>"; };
+		83645C201CB120E700845F16 /* win_rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win_rand.h; sourceTree = "<group>"; };
+		83645C2E1CB1283700845F16 /* ZoneTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZoneTypes.h; sourceTree = "<group>"; };
+		83645C2F1CB12A2D00845F16 /* Puzzles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Puzzles.h; sourceTree = "<group>"; };
+		83645C341CB1325100845F16 /* YodaDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YodaDocument.cpp; sourceTree = "<group>"; };
+		83645C351CB1325100845F16 /* YodaDocument.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = YodaDocument.hpp; sourceTree = "<group>"; };
+		83645C401CB1331500845F16 /* CppTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppTypes.h; sourceTree = "<group>"; };
+		83645C4B1CB139A700845F16 /* Map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
+		83645C4C1CB139A700845F16 /* Map.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Map.hpp; sourceTree = "<group>"; };
 		8365D04A1AC86DC90031E23E /* PuzzleWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PuzzleWindowController.h; sourceTree = "<group>"; };
 		8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PuzzleWindowController.mm; sourceTree = "<group>"; };
 		8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PuzzleWindowController.xib; sourceTree = "<group>"; };
@@ -333,6 +358,55 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		83645C051CB106D400845F16 /* MapGeneration */ = {
+			isa = PBXGroup;
+			children = (
+				83645C331CB1324500845F16 /* Stuff */,
+				83645C291CB126A400845F16 /* New Group */,
+				83645C0E1CB120D300845F16 /* Generation */,
+				83645C0B1CB1096400845F16 /* MapView.h */,
+				83645C0C1CB1096400845F16 /* MapView.mm */,
+				83645C061CB106FE00845F16 /* MapGeneration.h */,
+				83645C071CB106FE00845F16 /* MapGeneration.mm */,
+				83645C081CB106FE00845F16 /* MapGeneration.xib */,
+			);
+			name = MapGeneration;
+			sourceTree = "<group>";
+		};
+		83645C0E1CB120D300845F16 /* Generation */ = {
+			isa = PBXGroup;
+			children = (
+				83645C171CB120E600845F16 /* map.c */,
+				83645C181CB120E600845F16 /* map.h */,
+				83645C1D1CB120E700845F16 /* samples.h */,
+				83645C1E1CB120E700845F16 /* types.h */,
+				83645C1F1CB120E700845F16 /* win_rand.c */,
+				83645C201CB120E700845F16 /* win_rand.h */,
+			);
+			name = Generation;
+			sourceTree = "<group>";
+		};
+		83645C291CB126A400845F16 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				83645C2F1CB12A2D00845F16 /* Puzzles.h */,
+				83645C2E1CB1283700845F16 /* ZoneTypes.h */,
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
+		83645C331CB1324500845F16 /* Stuff */ = {
+			isa = PBXGroup;
+			children = (
+				83645C341CB1325100845F16 /* YodaDocument.cpp */,
+				83645C351CB1325100845F16 /* YodaDocument.hpp */,
+				83645C401CB1331500845F16 /* CppTypes.h */,
+				83645C4B1CB139A700845F16 /* Map.cpp */,
+				83645C4C1CB139A700845F16 /* Map.hpp */,
+			);
+			name = Stuff;
+			sourceTree = "<group>";
+		};
 		8374EA9D1B35ACD000B90F60 /* Frameworks & Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -398,6 +472,7 @@
 		83D4A53919EC436800AA73A0 /* DeskFun X */ = {
 			isa = PBXGroup;
 			children = (
+				83645C051CB106D400845F16 /* MapGeneration */,
 				83D4A53C19EC436800AA73A0 /* AppDelegate.h */,
 				83D4A53D19EC436800AA73A0 /* AppDelegate.m */,
 				83E3171E19F01395000476AB /* Debug */,
@@ -541,7 +616,7 @@
 		83D4A52F19EC436800AA73A0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = chris;
 				TargetAttributes = {
 					835E17A31B1B9CF0004A981E = {
@@ -649,6 +724,7 @@
 				83F1C0991B20463500790D45 /* pause.png in Resources */,
 				83DAAC341B1CE9C4007CA000 /* north-west.pdf in Resources */,
 				83D4A59219EC45F300AA73A0 /* DAGameWindowController.xib in Resources */,
+				83645C0A1CB106FE00845F16 /* MapGeneration.xib in Resources */,
 				835789731AE3B7BF0070EC21 /* DASpeechContoller.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -669,6 +745,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83645C251CB120E700845F16 /* map.c in Sources */,
 				83C248D51B23AB550024C087 /* HostCallbacks.mm in Sources */,
 				832283B91B02864A006AA266 /* PaletteView.mm in Sources */,
 				83C090891AE2B37200D5CD23 /* DASpeechBubbleView.m in Sources */,
@@ -679,11 +756,14 @@
 				8332CCFE19F0812900D153D9 /* CharsController.mm in Sources */,
 				83D4A59D19EC463200AA73A0 /* DASceneView.mm in Sources */,
 				833DCEE01B4EF2190069D420 /* NSNumber+StringReading.m in Sources */,
+				83645C4D1CB139A700845F16 /* Map.cpp in Sources */,
 				83E3172119F013A0000476AB /* TileView.mm in Sources */,
 				8332CCF919F07EBA00D153D9 /* SoundsController.mm in Sources */,
 				837D7E961B0482C40006BB19 /* TileLayer.mm in Sources */,
 				8365D04D1AC86DC90031E23E /* PuzzleWindowController.mm in Sources */,
+				83645C0D1CB1096400845F16 /* MapView.mm in Sources */,
 				834A24581B3FFA1F00DD3E26 /* CocoaSoundMixer.mm in Sources */,
+				83645C361CB1325100845F16 /* YodaDocument.cpp in Sources */,
 				835789761AE3CCB60070EC21 /* DADisabledScrollView.m in Sources */,
 				83CAF1E819F0343A002BF7C1 /* TileCollectionView.mm in Sources */,
 				83DAAC291B1CD929007CA000 /* DACursor.mm in Sources */,
@@ -693,11 +773,13 @@
 				83D4A59119EC45F300AA73A0 /* DAGameWindowController.mm in Sources */,
 				83F809141AFF8C35005A9001 /* SetupWindowController.mm in Sources */,
 				83E192F71AC8345A00E9C2BA /* ZoneView.mm in Sources */,
+				83645C091CB106FE00845F16 /* MapGeneration.mm in Sources */,
 				83D4A53E19EC436800AA73A0 /* AppDelegate.m in Sources */,
 				835789721AE3B7BF0070EC21 /* DASpeechContoller.m in Sources */,
 				835E17B41B1BB7A1004A981E /* CocoaInputManager.mm in Sources */,
 				831F5A371AF8055D0060E762 /* ActionWindowController.mm in Sources */,
 				837D7E9B1B048C430006BB19 /* LoadingView.m in Sources */,
+				83645C281CB120E700845F16 /* win_rand.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

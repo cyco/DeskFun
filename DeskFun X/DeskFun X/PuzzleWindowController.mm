@@ -82,4 +82,19 @@
     return cellView;
 }
 
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    NSInteger row = self.tableView.selectedRow;
+    if(row == -1) return;
+    
+    Puzzle *p = data->_puzzles[row];
+    
+    for(int i=0; i < 5; i++)
+    {
+        const char *string = p->getText(i).c_str();
+        NSString *labelString = strlen(string) ?  [NSString stringWithFormat:@"%d. %s", i+1,  string] : @"";
+        printf("%s\n", [labelString cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+}
+
 @end

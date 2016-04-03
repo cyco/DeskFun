@@ -23,43 +23,43 @@ class Action : GameObject
 public:
     typedef struct packed {
         typedef enum : uint16_t {
-            PlaceTile  = 0x00,
-            RemoveTile = 0x01,
-            MoveTile   = 0x02,
+            PlaceTile  = 0x00,          // DONE
+            RemoveTile = 0x01,          // DONE
+            MoveTile   = 0x02,          // DONE
             DrawTile   = 0x03,
-            SpeakHero  = 0x04,
-            SpeakNPC   = 0x05,
+            SpeakHero  = 0x04,          // DONE
+            SpeakNPC   = 0x05,          // DONE
             SetTileNeedsDisplay = 0x06,
             SetRectNeedsDisplay = 0x07,
             Wait   = 0x08,
             Redraw = 0x09,
-            PlaySound = 0x0a,
+            PlaySound = 0x0a,           // DONE
             // = 0x0b, // update inventory?
-            RollDice = 0x0c,
-            SetCounter = 0x0d,
-            // = 0x0e, // AddToCounter
-            // = 0x0f,
-            HideHero = 0x10,
-            ShowHero = 0x11,
-            SetHero  = 0x12,
+            RollDice = 0x0c,            // DONE
+            SetCounter = 0x0d,          // DONE
+            // = 0x0e, // AddToCounter  // DONE
+            // = 0x0f, // PlaceTile     // DONE
+            HideHero = 0x10,            // DONE
+            ShowHero = 0x11,            // DONE
+            SetHero  = 0x12,            // DONE
             // = 0x13,
-            DisableAction = 0x14,
-            DisableHotspot = 0x15,
-            EnableHotspot  = 0x16,
+            DisableAction = 0x14,       // DONE
+            DisableHotspot = 0x15,      // DONE
+            EnableHotspot  = 0x16,      // DONE
             // = 0x17, // spawnEnemy(id, 0x00)
             // = 0x18,
             // = 0x19,
             // = 0x1a,
-            DropItem   = 0x1b,
-            AddItem    = 0x1c,
-            RemoveItem = 0x1d,
+            DropItem   = 0x1b,      // DONE
+            AddItem    = 0x1c,      // DONE
+            RemoveItem = 0x1d,      // DONE
             // = 0x1e, // mark zone as solved?
             // = 0x1f,
             ChangeZone = 0x21,
             // = 0x22,
             // = 0x23,
-            SetRandom = 0x24,
-            AddHealth = 0x25,
+            SetRandom = 0x24,      // DONE
+            AddHealth = 0x25,      // DONE
 
             OPCODE_COUNT
         } Opcode;
@@ -70,35 +70,35 @@ public:
             Bump = 0x02,
             PlaceItem = 0x03,
             StandingOn = 0x04,
-            CounterIs = 0x05,
-            RandomIs = 0x06,
-            RandomIsNot = 0x07, // guessed
-            TileIs = 0x08,
+            CounterIs = 0x05,// DONE
+            RandomIs = 0x06,// DONE
+            RandomIsNot = 0x07,// DONE
+            TileIs = 0x08, // WRONG RANDOM_LT instead,  // DONE
             EnterByPlane = 0x09,
             TileAtIs = 0x0a,
             TileAt = 0x0b,
             // = 0x0c,
             HasItem      = 0x0d,
             RequiredItem = 0x0e,
-            Ending       = 0x0f,
-            // = 0x10,
+            Ending       = 0x0f, // DONE
+            ZoneSolved = 0x10,
             // = 0x12,
-            HealthIsLessThan = 0x13,
-            HealthIsMoreThan = 0x14,
+            HealthIsLessThan = 0x13, // DONE
+            HealthIsMoreThan = 0x14, // DONE
             // = 0x16,
             PlaceItemIsNot = 0x17,
             HeroIsAt = 0x18,
             // = 0x19,
             // = 0x1a,
             // = 0x1b,
-            GamesWonIsExactly = 0x1c,
+            GamesWonIsExactly = 0x1c, // DONE
             // = 0x1d,
             // = 0x1e,
-            CounterIsNot = 0x1f,
+            CounterIsNot = 0x1f, // DONE
             // = 0x20,
             // = 0x21,
             // = 0x22,
-            GamesWonBiggerThan = 0x23,
+            GamesWonBiggerThan = 0x23, // DONE
 
             CONDITION_CODE_COUNT,
         } ConditionCode;
@@ -158,6 +158,7 @@ public:
                 case HasItem: return "HasItem";
                 case RequiredItem: return "RequiredItem";
                 case Ending: return "Ending";
+                case ZoneSolved: return "ZoneSolved";
                 case HealthIsLessThan: return "HealthIsLessThan";
                 case HealthIsMoreThan: return "HealthIsMoreThan";
                 case PlaceItemIsNot: return "PlaceItemIsNot";

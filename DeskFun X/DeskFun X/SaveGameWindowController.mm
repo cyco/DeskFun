@@ -298,7 +298,7 @@ void parseState(FILE *file, GameDataParser* _data)
     printstate("ammo: %02x (%2.2f%%)\n", ammo, ammo / (double)maxAmmo);
 
     // unknown ints
-    printf("0x%02x\n", ftell(file));
+    printf("0x%02lx\n", ftell(file));
 
     uint32_t z, x, y;
     fread(&z, sizeof(uint32_t), 1, file);

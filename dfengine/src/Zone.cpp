@@ -147,7 +147,6 @@ void Zone::_readAuxiliaryData(FILE* file)
 
         uint8_t *buffer = new uint8_t[size];
         fread(buffer, sizeof(uint8_t), size, file);
-
         auxiliaryData[i] = (char*)malloc(size);
         memcpy(auxiliaryData[i], buffer, size);
     }

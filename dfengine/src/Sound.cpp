@@ -12,7 +12,7 @@ Sound::Sound(FILE* file)
 {
     uint16_t length;
     fread(&length, sizeof(length), 1, file);
-
+    
     char fileName[length];
     fread(fileName, length, 1, file);
     fileName[length-1] = '\0';
