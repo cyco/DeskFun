@@ -1,14 +1,13 @@
 #ifndef REIMP_TYPES
 #define REIMP_TYPES REIMP_TYPES
 
-#define DeterminePuzzleLocationsCall1 0
-#define DeterminePuzzleLocationsCall2 0
-#define DeterminePuzzleLocationsCall3 0
-#define DeterminePuzzleLocationsCall4 0
-#define DeterminePuzzleLocationsCall5 0
+#define determinePuzzleLocationsCall1 0
+#define determinePuzzleLocationsCall2 0
+#define determinePuzzleLocationsCall3 0
+#define determinePuzzleLocationsCall4 0
+#define determinePuzzleLocationsCall5 0
 
 
-#include "map.h"
 typedef enum {
 	WORLD_SIZE_SMALL = 1,
 	WORLD_SIZE_MEDIUM = 2,

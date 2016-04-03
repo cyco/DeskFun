@@ -12,6 +12,23 @@
 #include <stdio.h>
 #include "types.h"
 
+typedef enum {
+    WORLD_ITEM_INVALID = -1,
+    WORLD_ITEM_NONE = 0,
+    WORLD_ITEM_EMPTY = 1,
+    WORLD_ITEM_TRAVEL_START = 101,
+    WORLD_ITEM_TRAVEL_END = 102,
+    WORLD_ITEM_ISLAND = 104,
+    WORLD_ITEM_SPACEPORT = 201,
+    WORLD_ITEM_BLOCK_WEST = 301,
+    WORLD_ITEM_BLOCK_EAST = 302,
+    WORLD_ITEM_BLOCK_NORTH = 303,
+    WORLD_ITEM_BLOCK_SOUTH = 304,
+    WORLD_ITEM_KEPT_FREE = 305,
+    WORLD_ITEM_PUZZLE_CANDIDATE = 300,
+    WORLD_ITEM_PUZZLE = 306,
+} WORLD_ITEM;
+
 class Map {
 public:
     uint16 tiles[100];
@@ -32,17 +49,17 @@ public:
     void generate(uint16_t seed, WORLD_SIZE size);
 private:
     // Puzzles
-    int try_placing_transport(uint16_t *world, int item_idx, int transport_count, int *placed_transport_count_ref, int iteration, int threshold_2, int v36);
-    int DeterminePuzzleLocations(signed int iteration, int puzzle_count_to_place, uint16_t* world, int transport_count, int *placed_transport_count_ref, int blockade_count, int *placed_blockade_count_ref, int *placed_puzzle_count_ref);
-    int AdditionalPuzzleLocations(int travels_to_place, uint16_t* world, int* placed_puzzles_count_ref);
-    int map_get_island_orientation(int x, int y);
-    int choose_puzzles_behind_blockades(uint16_t* world, uint16_t *puzzles);
-    int choose_puzzles_on_islands(uint16_t* world, uint16_t *puzzles, int count);
-    int choose_additional_puzzles(uint16_t* world, uint16_t *puzzles, int placed_puzzles, int total_puzzle_count);
-    int map_count_stuff(uint16_t* world, int* travels, int* blockades, int *puzzles);
-    int make_sure_last_puzzle_is_not_too_close_to_center(uint16_t *puzzles, int placed_puzzles);
-    int find_puzzle(uint16_t* puzzles, int count, int *x, int *y);
-    int place_intermediate_world_thing();
+    int tryPlacingTransport(int item_idx, int transport_count, int *placed_transport_count_ref, int iteration, int threshold_2, int v36);
+    int determinePuzzleLocations(signed int iteration, int puzzle_count_to_place, int transport_count, int *placed_transport_count_ref, int blockade_count, int *placed_blockade_count_ref, int *placed_puzzle_count_ref);
+    int additionalPuzzleLocations(int travels_to_place, int* placed_puzzles_count_ref);
+    int getIslandOrientation(int x, int y);
+    int choosePuzzlesBehindBlockades();
+    int choosePuzzlesOnIslands(int count);
+    int chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_count);
+    int countStuff(int* travels, int* blockades, int *puzzles);
+    int makeSureLastPuzzleIsNotTooCloseToCenter(int placed_puzzles);
+    int findPuzzle(int count, int *x, int *y);
+    int placeSomethingOnTheMap();
     
     // Transports
     void placeTransports(int count);

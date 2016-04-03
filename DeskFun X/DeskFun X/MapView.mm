@@ -7,7 +7,7 @@
 //
 
 #import "MapView.h"
-#import "types.h"
+#import "Map.hpp"
 @implementation MapView
 
 - (void)drawRect:(NSRect)dirtyRect {
