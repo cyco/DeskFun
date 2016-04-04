@@ -101,19 +101,16 @@
     [self _generateWorld:[self readSeed]-1 withSize:self.sizeSlider.floatValue];
 }
 
-- (IBAction)nextWorld:(id)sender
-{
+- (IBAction)nextWorld:(id)sender {
     [self _generateWorld:[self readSeed]+1 withSize:self.sizeSlider.floatValue];
 }
 
-- (IBAction)randomWorld:(id)sender
-{
+- (IBAction)randomWorld:(id)sender {
     uint16_t seed = random() % 0xFFFF;
     [self _generateWorld:seed withSize:self.sizeSlider.floatValue];
 }
 
-- (IBAction)generateWorld:(id)sender
-{
+- (IBAction)generateWorld:(id)sender {
     [self _generateWorld:[self readSeed] withSize:self.sizeSlider.floatValue];
 }
 
@@ -130,6 +127,8 @@
 }
 
 - (void)_generateWorld:(uint16_t)seed withSize:(int)size {
+    if(!document) return;
+
     self.seedField.stringValue = [NSString stringWithFormat:@"0x%04X", seed];
     self.sizeSlider.doubleValue = size;
     
@@ -138,18 +137,43 @@
         map[i] = 0;
         puzzles[i] = -1;
     }
-    
+
+    document->planet = HOTH;
+
     Map *nmap = new Map();
-    nmap->generate(seed, (WORLD_SIZE)size);
+    int puzzle_count = nmap->generate(seed, (WORLD_SIZE)size);
     memcpy(map, nmap->tiles, sizeof(uint16) * 100);
     
     [_mapView setNeedsDisplay:true];
+
+    int s1, s2;
+    vector<int16> array1, array2;
     
-    if(!document) return;
+    if ( (char)puzzle_count % -2 ) {
+        s1 = (puzzle_count + 1) / 2;
+        s2 = (puzzle_count + 1) / 2;
+    } else {
+        s1 = puzzle_count / 2;
+        s2 = puzzle_count / 2 + 1;
+    }
     
-    document->planet = HOTH;
+    array1.resize(s1+1, -1);
+    array2.resize(s2+1, -1);
     
     int16 goalID = document->GetNewPuzzleId(-1, -1, (ZONE_TYPE)9999, 0);
     printf("Goal ID: 0x%0x\n", goalID);
+
+    array1[s1] = goalID;
+    array2[s2] = goalID;
+    
+    Puzzle *goalPuzzle = document->puzzles[goalID];
+    document->chosen_puzzle_ids.insert(document->chosen_puzzle_ids.end(), goalID);
+    
+    int16 puzzle_id = document->GetNewPuzzleId(466, 1652, (ZONE_TYPE)10, 0);
+    printf("YodaDocument::GetNewPuzzleId => 0x%0x (%d)", puzzle_id, puzzle_id);
+    // TODO: add goal puzzle to planet array
+    // // // // // // // // // // // // // // // // // // // // // // //
+    // nmap->print();
+    // // // // // // // // // // // // // // // // // // // // // // //
 }
 @end

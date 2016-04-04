@@ -12,95 +12,55 @@ YodaDocument::YodaDocument(){
     puzzles_can_be_reused = -1;
 }
 
-void YodaDocument::ShuffleVector(vector<int16> &array) {
-    int16 v2; // di@1
-    int v3; // eax@4
-    int v7; // edi@10
-    signed int v8; // ebx@11
-    int16 v12; // dx@22
-    int v13; // eax@24
-    vector<int16> temp_array; // [sp+Ch] [bp-2Ch]@2
-    int v16; // [sp+20h] [bp-18h]@2
-    int16 v17; // [sp+26h] [bp-12h]@11
-    int16 v18; // [sp+28h] [bp-10h]@9
-    int16 count; // [sp+2Ah] [bp-Eh]@1
+void YodaDocument::ShuffleVector(vector<int16> &array)
+{
+    vector<int16> temp_array;
     
-    v2 = 0;
-    count = array.size();
-    if ( count > 0 )
-    {
-        v16 = count;
-        temp_array.resize(count, -1);
-        while ( count > v2 )
-        {
-            v3 = v2++;
-            temp_array[v3] = -1;
+    int16 count = array.size();
+    temp_array.resize(count, -1);
+    if ( count <= 0 ) return;
+    
+    for(int i=0; i < count; i++) {
+        int random = win_rand();
+        int idx = random % count;
+        if ( temp_array[idx] == -1 ) {
+            temp_array[idx] = array[i];
+            array[i] = -1;
         }
-        int v4 = 0;
-        if ( count > 0 )
-        {
-            do
-            {
-                int idx = win_rand() % v16;
-                if ( temp_array[idx] == -1 )
-                {
-                    int v6 = v4;
-                    temp_array[idx] = array[v6];
-                    array[v6] = -1;
-                }
-                ++v4;
-            }
-            while ( count > v4 );
-        }
-        v18 = count - 1;
-        if ( (count - 1) >= 0 )
-        {
-            do
-            {
-                v7 = 2 * v18;
-                if (array[7] != -1 )
-                {
-                    v8 = 0;
-                    v17 = 0;
-                    do
-                    {
-                        if ( count > 0 )
-                        {
-                            int v9 = 0;
-                            int v10 = v16;
-                            do
-                            {
-                                if ( temp_array[v9] == -1 )
-                                    v8 = 1;
-                                v9++;
-                                --v10;
-                            }
-                            while ( v10 );
-                        }
-                        if ( !v8 )
-                            break;
-                        
-                        int idx = win_rand() % v16;
-                        
-                        if ( temp_array[idx] == -1 )
-                        {
-                            ++v17;
-                            temp_array[idx] = array[v7];
-                            array[v7] = -1;
-                        }
+    }
+    
+    int16 v18 = count - 1;
+    if ( v18 >= 0 ) {
+        do {
+            if (array[v18] != -1 ) {
+                int did_find_free_spot = 0;
+                int16 v17 = 0;
+                do {
+                    for(int i=0; i < count; i++) {
+                        if ( temp_array[i] == -1 )
+                            did_find_free_spot = 1;
                     }
-                    while ( !v17 );
+                    
+                    if ( !did_find_free_spot ) break;
+                    
+                    int random = win_rand();
+                    int idx = random % count;
+                    
+                    if ( temp_array[idx] == -1 ) {
+                        ++v17;
+                        temp_array[idx] = array[v18];
+                        array[v18] = -1;
+                    }
                 }
-                --v18;
+                while ( !v17 );
             }
-            while ( v18 >= 0 );
+            --v18;
         }
-        v12 = 0;
-        while ( count > v12 )
-        {
-            v13 = v12++;
-            array[v13] = temp_array[v13];
-        }
+        while ( v18 >= 0 );
+    }
+
+    for(int i=0; i < count; i++) {
+        array[i] = temp_array[i];
     }
 }
 
@@ -116,7 +76,13 @@ int16 YodaDocument::GetNewPuzzleId(__uint16_t item_id, int a3, ZONE_TYPE zone_ty
         return -1;
     }
     
+    printf("Array::Shuffle (%lu items): ", puzzle_ids.size());
+    for(int16 id : puzzle_ids) printf("0x%02x, ", id);
+    printf("\n");
     ShuffleVector(puzzle_ids);
+    printf("Array::Shuffle: (%lu items): ", puzzle_ids.size());
+    for(int16 id : puzzle_ids) printf("0x%02x, ", id);
+    printf("\n");
     
     size_t count = puzzle_ids.size();
     int16 puzzle_idx = 0;
@@ -126,7 +92,7 @@ int16 YodaDocument::GetNewPuzzleId(__uint16_t item_id, int a3, ZONE_TYPE zone_ty
         puzzle_1 = this->puzzles[puzzle_id];
         if ( ContainsPuzzleId(puzzle_id) )
             goto LABEL_75;
-        if ( zone_type <= (signed int)ZONETYPE_Trade )
+        if ( zone_type <= ZONETYPE_Trade )
         {
             if ( zone_type == ZONETYPE_Trade )
             {
@@ -158,9 +124,10 @@ int16 YodaDocument::GetNewPuzzleId(__uint16_t item_id, int a3, ZONE_TYPE zone_ty
         }
         return -1;
     }
+    
     if ( zone_type != 9999 || puzzle_1->type != PuzzleTypeEnd )
         goto LABEL_75;
-
+    
     return puzzle_ids[puzzle_idx];
 }
 
@@ -185,7 +152,6 @@ void YodaDocument::GetPuzzleCandidates(vector<int16> &result, __uint16_t item_id
                 if ( puzzle->type || ContainsPuzzleId(puzzle_idx) )
                     goto do_break;
             use_puzzle:
-                printf("Add puzzle 0x%0x at %lu\n", puzzle_idx, result.size());
                 result.insert(result.end(), puzzle_idx);
                 goto do_break;
             }
@@ -198,7 +164,7 @@ void YodaDocument::GetPuzzleCandidates(vector<int16> &result, __uint16_t item_id
             if(PuzzleIsGoal(puzzle_idx, this->planet))
                 goto use_puzzle;
             goto do_break;
-        
+            
         do_break:
             if ( count_3 <= (int16)++puzzle_idx )
                 goto out_of_loop;

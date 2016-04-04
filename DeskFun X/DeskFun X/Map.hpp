@@ -45,8 +45,8 @@ public:
     int16 getPuzzle(int x, int y);
     
     void clear();
-    
-    void generate(uint16_t seed, WORLD_SIZE size);
+    int generate(uint16_t seed, WORLD_SIZE size);
+    void print();
 private:
     // Puzzles
     int tryPlacingTransport(int item_idx, int transport_count, int *placed_transport_count_ref, int iteration, int threshold_2, int v36);

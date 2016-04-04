@@ -59,7 +59,7 @@ int Map::GetDistanceToCenter(int x, int y) {
 }
 
 #pragma mark - Generation
-void Map::generate(uint16_t seed, WORLD_SIZE size) {
+int Map::generate(uint16_t seed, WORLD_SIZE size) {
     win_srand(seed);
     
     int transport_count = win_rand() % 3;
@@ -137,6 +137,12 @@ void Map::generate(uint16_t seed, WORLD_SIZE size) {
     placeTransports(placed_transport_count);
     
     placeSomethingOnTheMap();
+    
+    int c = 0;
+    for(int i=0; i<100; i++){
+        if(puzzles[i] > c) c = puzzles[i];
+    }
+    return c+1;
 }
 
 #pragma mark -
@@ -1135,4 +1141,14 @@ int Map::placeTransportRight()
     }
     
     return 1;
+}
+
+void Map::print() {
+    for(int y = 0; y < 10; y++) {
+        for(int x = 0; x < 10; x++) {
+            printf("%03d ", get(x,y));
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
