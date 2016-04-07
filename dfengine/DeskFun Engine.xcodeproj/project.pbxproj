@@ -57,7 +57,6 @@
 		83AA420C1B36CB9600A2FE8F /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41D81B36CB9600A2FE8F /* World.cpp */; };
 		83AA420D1B36CB9600A2FE8F /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41D81B36CB9600A2FE8F /* World.cpp */; };
 		83AA420E1B36CB9600A2FE8F /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41D91B36CB9600A2FE8F /* Zone.cpp */; };
-		83AA420F1B36CB9600A2FE8F /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41D91B36CB9600A2FE8F /* Zone.cpp */; };
 		83AA42101B36CB9600A2FE8F /* ZoneScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41DA1B36CB9600A2FE8F /* ZoneScene.cpp */; };
 		83AA42111B36CB9600A2FE8F /* ZoneScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41DA1B36CB9600A2FE8F /* ZoneScene.cpp */; };
 		83AA42121B36CB9600A2FE8F /* ZoneTransitionScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41DB1B36CB9600A2FE8F /* ZoneTransitionScene.cpp */; };
@@ -72,6 +71,11 @@
 		83AA42451B3707A900A2FE8F /* Store.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA42431B3707A900A2FE8F /* Store.cpp */; };
 		83AE0BBF1B4B1B0D00D41861 /* ZoneStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AE0BBD1B4B1B0D00D41861 /* ZoneStore.cpp */; };
 		83AE0BC41B4B1C6200D41861 /* ZoneStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AE0BBD1B4B1B0D00D41861 /* ZoneStore.cpp */; };
+		83B762861CB44DD900225FB3 /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA41D91B36CB9600A2FE8F /* Zone.cpp */; };
+		83B762881CB44DEB00225FB3 /* CppTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B762871CB44DEB00225FB3 /* CppTypes.h */; };
+		83B7628A1CB44DF900225FB3 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B762891CB44DF900225FB3 /* types.h */; };
+		83B7628D1CB44E0B00225FB3 /* win_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B7628B1CB44E0B00225FB3 /* win_rand.c */; };
+		83B7628E1CB44E0B00225FB3 /* win_rand.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B7628C1CB44E0B00225FB3 /* win_rand.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,7 +106,7 @@
 		835B469D1B3B25BE001BD0CA /* Tile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Tile.hpp; path = include/Tile.hpp; sourceTree = "<group>"; };
 		835B469E1B3B25BE001BD0CA /* TileStore.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = TileStore.hpp; path = include/TileStore.hpp; sourceTree = "<group>"; };
 		835B469F1B3B25BE001BD0CA /* World.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = World.hpp; path = include/World.hpp; sourceTree = "<group>"; };
-		835B46A01B3B25BE001BD0CA /* Zone.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = Zone.hpp; path = include/Zone.hpp; sourceTree = "<group>"; };
+		835B46A01B3B25BE001BD0CA /* Zone.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; name = Zone.hpp; path = include/Zone.hpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		835B46A11B3B25BE001BD0CA /* ZoneScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = ZoneScene.hpp; path = include/ZoneScene.hpp; sourceTree = "<group>"; };
 		835B46A21B3B25BE001BD0CA /* ZoneTransitionScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = ZoneTransitionScene.hpp; path = include/ZoneTransitionScene.hpp; sourceTree = "<group>"; };
 		835B46AF1B3B2EE5001BD0CA /* dfengine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = dfengine.hpp; path = include/dfengine.hpp; sourceTree = "<group>"; };
@@ -132,7 +136,7 @@
 		83AA41D51B36CB9600A2FE8F /* Tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tile.cpp; path = src/Tile.cpp; sourceTree = "<group>"; };
 		83AA41D61B36CB9600A2FE8F /* TileStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileStore.cpp; path = src/TileStore.cpp; sourceTree = "<group>"; };
 		83AA41D81B36CB9600A2FE8F /* World.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = World.cpp; path = src/World.cpp; sourceTree = "<group>"; };
-		83AA41D91B36CB9600A2FE8F /* Zone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Zone.cpp; path = src/Zone.cpp; sourceTree = "<group>"; };
+		83AA41D91B36CB9600A2FE8F /* Zone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Zone.cpp; path = src/Zone.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		83AA41DA1B36CB9600A2FE8F /* ZoneScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZoneScene.cpp; path = src/ZoneScene.cpp; sourceTree = "<group>"; };
 		83AA41DB1B36CB9600A2FE8F /* ZoneTransitionScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZoneTransitionScene.cpp; path = src/ZoneTransitionScene.cpp; sourceTree = "<group>"; };
 		83AA42141B36CE1A00A2FE8F /* dfengine.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = dfengine.pch; path = src/dfengine.pch; sourceTree = "<group>"; };
@@ -142,6 +146,10 @@
 		83AA42431B3707A900A2FE8F /* Store.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Store.cpp; path = src/Store.cpp; sourceTree = "<group>"; };
 		83AE0BBD1B4B1B0D00D41861 /* ZoneStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZoneStore.cpp; path = src/ZoneStore.cpp; sourceTree = "<group>"; };
 		83AE0BC11B4B1B8300D41861 /* ZoneStore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ZoneStore.hpp; path = include/ZoneStore.hpp; sourceTree = "<group>"; };
+		83B762871CB44DEB00225FB3 /* CppTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CppTypes.h; sourceTree = "<group>"; };
+		83B762891CB44DF900225FB3 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		83B7628B1CB44E0B00225FB3 /* win_rand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = win_rand.c; sourceTree = "<group>"; };
+		83B7628C1CB44E0B00225FB3 /* win_rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win_rand.h; sourceTree = "<group>"; };
 		83C46AFB1B35CEB200E73B02 /* libdfengine-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdfengine-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		83C46B6C1B35EB9C00E73B02 /* libdfengine-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdfengine-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -176,6 +184,10 @@
 		83AA41651B36CB7D00A2FE8F /* Files */ = {
 			isa = PBXGroup;
 			children = (
+				83B7628B1CB44E0B00225FB3 /* win_rand.c */,
+				83B7628C1CB44E0B00225FB3 /* win_rand.h */,
+				83B762891CB44DF900225FB3 /* types.h */,
+				83B762871CB44DEB00225FB3 /* CppTypes.h */,
 				835B46871B3B25BE001BD0CA /* dfengine.hpp */,
 				83AA41C21B36CB9600A2FE8F /* Camera.cpp */,
 				835B46851B3B25BE001BD0CA /* Camera.hpp */,
@@ -302,7 +314,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B7628E1CB44E0B00225FB3 /* win_rand.h in Headers */,
+				83B7628A1CB44DF900225FB3 /* types.h in Headers */,
 				83AA42161B36CF4100A2FE8F /* dfengine.pch in Headers */,
+				83B762881CB44DEB00225FB3 /* CppTypes.h in Headers */,
 				835B46D31B3B3E51001BD0CA /* Renderer.hpp in Headers */,
 				83AA42411B3707A400A2FE8F /* Store.hpp in Headers */,
 				836A20161B3DBFF500AB0FB0 /* GameState.hpp in Headers */,
@@ -409,6 +424,7 @@
 				83AA41FC1B36CB9600A2FE8F /* Puzzle.cpp in Sources */,
 				83AA42101B36CB9600A2FE8F /* ZoneScene.cpp in Sources */,
 				83AA42061B36CB9600A2FE8F /* Tile.cpp in Sources */,
+				83B7628D1CB44E0B00225FB3 /* win_rand.c in Sources */,
 				83AA41EC1B36CB9600A2FE8F /* GameDataParser.cpp in Sources */,
 				83AA41DC1B36CB9600A2FE8F /* Action.cpp in Sources */,
 				835B46C51B3B3C8E001BD0CA /* Renderer.cpp in Sources */,
@@ -428,6 +444,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B762861CB44DD900225FB3 /* Zone.cpp in Sources */,
 				83AA41E71B36CB9600A2FE8F /* Engine.cpp in Sources */,
 				83AA41F11B36CB9600A2FE8F /* Hero.cpp in Sources */,
 				83AA41E11B36CB9600A2FE8F /* Camera.cpp in Sources */,
@@ -435,7 +452,6 @@
 				83AA422E1B36F7EA00A2FE8F /* SoundStore.cpp in Sources */,
 				83AA41E91B36CB9600A2FE8F /* EngineTypes.cpp in Sources */,
 				83AA41EF1B36CB9600A2FE8F /* GameObject.cpp in Sources */,
-				83AA420F1B36CB9600A2FE8F /* Zone.cpp in Sources */,
 				83AA41FF1B36CB9600A2FE8F /* Scene.cpp in Sources */,
 				83AA41F91B36CB9600A2FE8F /* Palette.c in Sources */,
 				83AE0BC41B4B1C6200D41861 /* ZoneStore.cpp in Sources */,

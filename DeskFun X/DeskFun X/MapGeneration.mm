@@ -33,13 +33,9 @@
     document = new YodaDocument();
     document->puzzles.clear();
     
-    vector<Puzzle*> puzzles = self.data->_puzzles;
-    for(int i=0; i < puzzles.size(); i++) {
-        Puzzle *puzzle = puzzles[i];
-        if(i == 0xBD || i==0xC5)
-            puzzle->type = PUZZLE_TYPE_DISABLED;
-        document->puzzles.insert(document->puzzles.end(), puzzle);
-    }
+    [self _loadZones];
+    [self _loadPuzzles];
+    
     
     [self generateWorld:nil];
 }
@@ -51,6 +47,24 @@
     for(int i=817; i < 837; i++)
     [tileImages addObject:[self imageForTile:*store.GetTile(i)]];
     _mapView.tileImages = tileImages;
+}
+
+- (void)_loadZones {
+    document->zones.clear();
+    for(Zone* zone : self.data->_zones) {
+        document->zones.push_back(zone);
+    }
+}
+
+- (void)_loadPuzzles {
+    document->puzzles.clear();
+    vector<Puzzle*> puzzles = self.data->_puzzles;
+    for(int i=0; i < puzzles.size(); i++) {
+        Puzzle *puzzle = puzzles[i];
+        if(i == 0xBD || i==0xC5)
+            puzzle->type = PUZZLE_TYPE_DISABLED;
+        document->puzzles.insert(document->puzzles.end(), puzzle);
+    }
 }
 
 - (void)_initializeMap {

@@ -14,6 +14,8 @@
 #include <vector>
 #include <string>
 
+#include "CppTypes.h"
+
 #include "Tile.hpp"
 #include "Action.hpp"
 #include "EngineTypes.hpp"
@@ -106,6 +108,11 @@ public:
     Tile* getTile(int x, int y, int l);
     Tile* getTile(GamePoint p);
 
+    vector<uint16> providedItemIDs;
+    vector<uint16> requiredItemIDs;
+    vector<uint16> puzzleNPCTileIDs;
+    vector<uint16> assignedItemIDs;
+
 private:
     string _name;
     Sizei _size;
@@ -115,6 +122,10 @@ private:
 
     void _readScriptTiles(FILE *file);
     void _readAuxiliaryData(FILE* file);
+    void _readIZAX(FILE* file);
+    void _readIZX2(FILE* file);
+    void _readIZX3(FILE* file);
+    void _readIZX4(FILE* file);
     void _readActions(FILE *file);
 
     size_t _writeScriptTiles(char *buffer);

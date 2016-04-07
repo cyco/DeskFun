@@ -40,6 +40,8 @@
 		8374EAA21B35AD3C00B90F60 /* DeskFunUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */; };
 		837D7E961B0482C40006BB19 /* TileLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837D7E951B0482C40006BB19 /* TileLayer.mm */; };
 		837D7E9B1B048C430006BB19 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 837D7E9A1B048C430006BB19 /* LoadingView.m */; };
+		83B762801CB4361D00225FB3 /* WorldThing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B7627E1CB4361D00225FB3 /* WorldThing.cpp */; };
+		83B762851CB4390400225FB3 /* Quest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B762831CB4390400225FB3 /* Quest.cpp */; };
 		83C0907A1AE2A37600D5CD23 /* DASpeechBubbleWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C090791AE2A37600D5CD23 /* DASpeechBubbleWindow.m */; };
 		83C090891AE2B37200D5CD23 /* DASpeechBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C090881AE2B37200D5CD23 /* DASpeechBubbleView.m */; };
 		83C248D51B23AB550024C087 /* HostCallbacks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C248D31B23AB550024C087 /* HostCallbacks.mm */; };
@@ -157,7 +159,7 @@
 		8332CCFC19F0812900D153D9 /* CharsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CharsController.mm; sourceTree = "<group>"; };
 		8332CCFD19F0812900D153D9 /* CharsController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CharsController.xib; sourceTree = "<group>"; };
 		833A25021B8CED1800347930 /* SaveGameWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveGameWindowController.h; sourceTree = "<group>"; };
-		833A25031B8CED1800347930 /* SaveGameWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SaveGameWindowController.mm; sourceTree = "<group>"; };
+		833A25031B8CED1800347930 /* SaveGameWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = SaveGameWindowController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		833A25041B8CED1800347930 /* SaveGameWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SaveGameWindowController.xib; sourceTree = "<group>"; };
 		833BECD31B3C903700E2784B /* indy demo.data */ = {isa = PBXFileReference; lastKnownFileType = file; name = "indy demo.data"; path = "../../../Game Data/indy demo.data"; sourceTree = "<group>"; };
 		833BECD41B3C903700E2784B /* indy.data */ = {isa = PBXFileReference; lastKnownFileType = file; name = indy.data; path = "../../../Game Data/indy.data"; sourceTree = "<group>"; };
@@ -189,7 +191,7 @@
 		83645C201CB120E700845F16 /* win_rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win_rand.h; sourceTree = "<group>"; };
 		83645C2E1CB1283700845F16 /* ZoneTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZoneTypes.h; sourceTree = "<group>"; };
 		83645C2F1CB12A2D00845F16 /* Puzzles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Puzzles.h; sourceTree = "<group>"; };
-		83645C341CB1325100845F16 /* YodaDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YodaDocument.cpp; sourceTree = "<group>"; };
+		83645C341CB1325100845F16 /* YodaDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = YodaDocument.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		83645C351CB1325100845F16 /* YodaDocument.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = YodaDocument.hpp; sourceTree = "<group>"; };
 		83645C401CB1331500845F16 /* CppTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppTypes.h; sourceTree = "<group>"; };
 		83645C4B1CB139A700845F16 /* Map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
@@ -206,6 +208,10 @@
 		838FC8D61B3DC73000B4FDE7 /* CocoaSoundMixer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaSoundMixer.mm; path = ../DeskFunTests/CocoaSoundMixer.mm; sourceTree = "<group>"; };
 		838FC8D71B3DC73000B4FDE7 /* CocoaSoundMixer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CocoaSoundMixer.hpp; path = ../DeskFunTests/CocoaSoundMixer.hpp; sourceTree = "<group>"; };
 		83AA42191B36D21D00A2FE8F /* DeskFunX.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DeskFunX.pch; path = ../DeskFunX.pch; sourceTree = "<group>"; };
+		83B7627E1CB4361D00225FB3 /* WorldThing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldThing.cpp; sourceTree = "<group>"; };
+		83B7627F1CB4361D00225FB3 /* WorldThing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldThing.hpp; sourceTree = "<group>"; };
+		83B762831CB4390400225FB3 /* Quest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quest.cpp; sourceTree = "<group>"; };
+		83B762841CB4390400225FB3 /* Quest.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Quest.hpp; sourceTree = "<group>"; };
 		83C090781AE2A37600D5CD23 /* DASpeechBubbleWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DASpeechBubbleWindow.h; sourceTree = "<group>"; };
 		83C090791AE2A37600D5CD23 /* DASpeechBubbleWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DASpeechBubbleWindow.m; sourceTree = "<group>"; };
 		83C090871AE2B37200D5CD23 /* DASpeechBubbleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DASpeechBubbleView.h; sourceTree = "<group>"; };
@@ -243,7 +249,7 @@
 		83E192F01AC833BE00E9C2BA /* ZoneWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZoneWindowController.mm; sourceTree = "<group>"; };
 		83E192F11AC833BE00E9C2BA /* ZoneWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZoneWindowController.xib; sourceTree = "<group>"; };
 		83E192F51AC8345A00E9C2BA /* ZoneView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoneView.h; sourceTree = "<group>"; };
-		83E192F61AC8345A00E9C2BA /* ZoneView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZoneView.mm; sourceTree = "<group>"; };
+		83E192F61AC8345A00E9C2BA /* ZoneView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = ZoneView.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		83E3171819F0134C000476AB /* TileWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileWindowController.h; sourceTree = "<group>"; };
 		83E3171919F0134C000476AB /* TileWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TileWindowController.mm; sourceTree = "<group>"; };
 		83E3171A19F0134C000476AB /* TileWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TileWindowController.xib; sourceTree = "<group>"; };
@@ -398,6 +404,10 @@
 				83645C401CB1331500845F16 /* CppTypes.h */,
 				83645C4B1CB139A700845F16 /* Map.cpp */,
 				83645C4C1CB139A700845F16 /* Map.hpp */,
+				83B7627E1CB4361D00225FB3 /* WorldThing.cpp */,
+				83B7627F1CB4361D00225FB3 /* WorldThing.hpp */,
+				83B762831CB4390400225FB3 /* Quest.cpp */,
+				83B762841CB4390400225FB3 /* Quest.hpp */,
 			);
 			name = Stuff;
 			sourceTree = "<group>";
@@ -752,6 +762,7 @@
 				833DCEE01B4EF2190069D420 /* NSNumber+StringReading.m in Sources */,
 				83645C4D1CB139A700845F16 /* Map.cpp in Sources */,
 				83E3172119F013A0000476AB /* TileView.mm in Sources */,
+				83B762851CB4390400225FB3 /* Quest.cpp in Sources */,
 				8332CCF919F07EBA00D153D9 /* SoundsController.mm in Sources */,
 				837D7E961B0482C40006BB19 /* TileLayer.mm in Sources */,
 				8365D04D1AC86DC90031E23E /* PuzzleWindowController.mm in Sources */,
@@ -774,6 +785,7 @@
 				831F5A371AF8055D0060E762 /* ActionWindowController.mm in Sources */,
 				837D7E9B1B048C430006BB19 /* LoadingView.m in Sources */,
 				83645C281CB120E700845F16 /* win_rand.c in Sources */,
+				83B762801CB4361D00225FB3 /* WorldThing.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

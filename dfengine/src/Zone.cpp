@@ -130,26 +130,93 @@ void Zone::_readAuxiliaryData(FILE* file)
     if(context->getGameStyle() != GameStyleYoda)
         return;
 
-    for(int i=0; i<4; i++)
-    {
-        char identifier[4];
-        fread(identifier, 4, 1, file);
-        if(memcmp(identifier, AUXILIARY_MAKRS+i*5, 4) != 0)
-            printf("Did not find identifier '%s' at 0x%4lx\n", AUXILIARY_MAKRS+i*5, ftell(file)-4);
+    _readIZAX(file);
+    _readIZX2(file);
+    _readIZX3(file);
+    _readIZX4(file);
+}
 
-        uint32_t size;
-        fread(&size, sizeof(size), 1, file);
-
-        // IZX4 is different from all the others :/
-        if(size > 8) size -= 8;
-
-        auxiliaryDataLengths[i] = size;
-
-        uint8_t *buffer = new uint8_t[size];
-        fread(buffer, sizeof(uint8_t), size, file);
-        auxiliaryData[i] = (char*)malloc(size);
-        memcpy(auxiliaryData[i], buffer, size);
+void Zone::_readIZAX(FILE* file){
+    char identifier[4];
+    fread(identifier, 4, 1, file);
+    if(memcmp(identifier, AUXILIARY_MAKRS+0*5, 4) != 0)
+        printf("Did not find identifier '%s' at 0x%4lx\n", AUXILIARY_MAKRS+0*5, ftell(file)-4);
+    uint32_t size;
+    fread(&size, 1, sizeof(uint32_t), file);
+    
+    uint16_t count1, count2;
+    fread(&count1, sizeof(uint16_t), 1, file);
+    fread(&count2, sizeof(uint16_t), 1, file);
+    for(int i=0; i < count2; i++) { // NPCs?
+        uint16_t unknown1, unknown2,unknown3,unknown4;
+        uint32_t unknown5;
+        
+        fread(&unknown1, sizeof(uint16_t), 1, file);
+        fread(&unknown2, sizeof(uint16_t), 1, file);
+        fread(&unknown3, sizeof(uint16_t), 1, file);
+        fread(&unknown4, sizeof(uint16_t), 1, file);
+        uint8_t unknown[32];
+        fread(&unknown, 32, sizeof(uint8_t), file);
+        
+        fread(&unknown5, sizeof(uint32_t), 1, file);
     }
+    int16 count3;
+    fread(&count3, sizeof(uint16_t), 1, file);
+    for(int i=0; i < count3; i++) {
+        uint16_t itemID;
+        fread(&itemID, 1, sizeof(uint16), file);
+        requiredItemIDs.push_back(itemID);
+    }
+    int16 count4;
+    fread(&count4, sizeof(uint16), 1, file);
+    for(int i=0; i < count4; i++) {
+        uint16_t itemID;
+        fread(&itemID, 1, sizeof(uint16), file);
+        assignedItemIDs.push_back(itemID);
+    }
+}
+
+void Zone::_readIZX2(FILE* file){
+    char identifier[4];
+    fread(identifier, 4, 1, file);
+    if(memcmp(identifier, AUXILIARY_MAKRS+1*5, 4) != 0)
+        printf("Did not find identifier '%s' at 0x%4lx\n", AUXILIARY_MAKRS+0*5, ftell(file)-4);
+    uint32_t size;
+    fread(&size, 1, sizeof(uint32_t), file);
+    
+    int16_t count;
+    fread(&count, 1, sizeof(uint16_t), file);
+    for(int i=0; i < count; i++) {
+        uint16_t itemID;
+        fread(&itemID, 1, sizeof(uint16_t), file);
+        providedItemIDs.push_back(itemID);
+    }
+}
+void Zone::_readIZX3(FILE* file){
+    char identifier[4];
+    fread(identifier, 4, 1, file);
+    if(memcmp(identifier, AUXILIARY_MAKRS+2*5, 4) != 0)
+        printf("Did not find identifier '%s' at 0x%4lx\n", AUXILIARY_MAKRS+0*5, ftell(file)-4);
+    uint32_t size;
+    fread(&size, 1, sizeof(uint32_t), file);
+    
+    int16_t count1;
+    fread(&count1, sizeof(uint16_t), 1, file);
+    for(int i=0; i < count1; i++) {
+        uint16_t itemID;
+        fread(&itemID, 1, sizeof(uint16_t), file);
+        puzzleNPCTileIDs.push_back(itemID);
+    }
+}
+void Zone::_readIZX4(FILE* file){
+    char identifier[4];
+    fread(identifier, 4, 1, file);
+    if(memcmp(identifier, AUXILIARY_MAKRS+3*5, 4) != 0)
+        printf("Did not find identifier '%s' at 0x%4lx\n", AUXILIARY_MAKRS+0*5, ftell(file)-4);
+    uint32_t size;
+    fread(&size, 1, sizeof(uint32_t), file);
+    uint16_t unknown;
+    fread(&unknown, 1, sizeof(uint16_t), file);
 }
 
 void Zone::_readActions(FILE *file)

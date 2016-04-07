@@ -13,6 +13,10 @@
 @interface ZoneWindowController : NSWindowController
 
 @property (assign) IBOutlet NSTableView *tableView;
+@property (assign) IBOutlet NSTableView *itemsTableView1;
+@property (assign) IBOutlet NSTableView *itemsTableView2;
+@property (assign) IBOutlet NSTableView *itemsTableView3;
+@property (assign) IBOutlet NSTableView *itemsTableView4;
 @property (assign) IBOutlet ZoneView *zoneView;
 @property (assign) IBOutlet NSTableView *actionsView;
 @property (assign) IBOutlet ActionWindowController *actionController;
