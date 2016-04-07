@@ -101,7 +101,7 @@ Zone::Zone(FILE* file)
 
     if(context->getGameStyle() != GameStyleYoda) return;
 
-    this->_readScriptTiles(file);
+    this->_readHotspots(file);
     this->_readAuxiliaryData(file);
     this->_readActions(file);
 
@@ -112,7 +112,7 @@ Zone::~Zone()
 {
 }
 #pragma mark - Deserialization
-void Zone::_readScriptTiles(FILE *file)
+void Zone::_readHotspots(FILE *file)
 {
     if(context->getGameStyle() != GameStyleYoda)
         return;
@@ -120,9 +120,9 @@ void Zone::_readScriptTiles(FILE *file)
     // Parse script tiles
     uint16_t script_tile_count;
     fread(&script_tile_count, sizeof(script_tile_count), 1, file);
-    ScriptTile *script_tiles = new ScriptTile[script_tile_count];
-    fread(script_tiles, sizeof(ScriptTile), script_tile_count, file);
-    this->setScriptTiles(script_tiles, script_tile_count);
+    Hotspot *script_tiles = new Hotspot[script_tile_count];
+    fread(script_tiles, sizeof(Hotspot), script_tile_count, file);
+    this->setHotspots(script_tiles, script_tile_count);
 }
 
 void Zone::_readAuxiliaryData(FILE* file)
@@ -297,7 +297,7 @@ size_t Zone::write(char *buffer)
 
     if(!isYodaVersion) return bytesWritten;
 
-    bytesWritten += this->_writeScriptTiles(buffer ? buffer+bytesWritten : NULL);
+    bytesWritten += this->_writeHotspots(buffer ? buffer+bytesWritten : NULL);
     bytesWritten += this->_writeAuxiliaryData(buffer ? buffer+bytesWritten : NULL);
     bytesWritten += this->_writeActions(buffer ? buffer+bytesWritten : NULL);
 
@@ -306,19 +306,19 @@ size_t Zone::write(char *buffer)
     return bytesWritten;
 }
 
-size_t Zone::_writeScriptTiles(char *buffer)
+size_t Zone::_writeHotspots(char *buffer)
 {
     size_t bytesWritten = 0;
     if(context->getGameStyle() != GameStyleYoda) return 0;
 
-    if(!buffer) return sizeof(uint16_t) + _scriptTiles.size() * 12;
+    if(!buffer) return sizeof(uint16_t) + _hotspotss.size() * 12;
 
-    uint16_t_pack(buffer+bytesWritten, _scriptTiles.size());
+    uint16_t_pack(buffer+bytesWritten, _hotspotss.size());
     bytesWritten += sizeof(uint16_t);
 
-    for(int i=0; i < _scriptTiles.size(); i++)
+    for(int i=0; i < _hotspotss.size(); i++)
     {
-        ScriptTile &tile = _scriptTiles[i];
+        Hotspot &tile = _hotspotss[i];
         uint32_t_pack(buffer+bytesWritten, tile.type);
         bytesWritten += sizeof(uint32_t);
         uint16_t_pack(buffer+bytesWritten, tile.x);

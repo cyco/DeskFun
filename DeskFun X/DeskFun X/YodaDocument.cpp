@@ -314,7 +314,7 @@ int YodaDocument::GetLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut) {
 
 void YodaDocument::AddRequiredItemsFromHotspots(uint16 zoneID) {
     Zone* zone = zones[zoneID];
-    for (ScriptTile hotspot : zone->_scriptTiles) {
+    for (Hotspot hotspot : zone->_hotspotss) {
         switch (hotspot.type) {
             case CrateItem:
             case PuzzleNPC:
@@ -337,7 +337,7 @@ int YodaDocument::ZoneLeadsToItem(uint16 zoneID, uint16 itemID) {
     for(uint16 itemIDInZone : zone->providedItemIDs)
         if(itemIDInZone == itemID) return 1;
     
-    for(ScriptTile hotspot : zone->_scriptTiles)
+    for(Hotspot hotspot : zone->_hotspotss)
         if(hotspot.type == DoorIn && ZoneLeadsToItem(hotspot.arg1, itemID))
             return 1;
     
@@ -361,7 +361,7 @@ int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int 
         return itemIDs[rand() % itemIDs.size()];
     }
     
-    for(ScriptTile hotspot : zone->_scriptTiles){
+    for(Hotspot hotspot : zone->_hotspotss){
         if(hotspot.type == DoorIn) {
             uint16 itemID = GetItemIDThatsNotRequiredYet(hotspot.arg1, unused, use_array_2_ids);
             if(itemID >= 0) return itemID;

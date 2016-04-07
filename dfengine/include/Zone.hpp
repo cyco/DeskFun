@@ -39,15 +39,15 @@ typedef enum : uint32_t {
     Teleporter = 0x0D,
     xWingFromD = 0x0E,
     xWingToD = 0x0F
-} ScriptTileType;
+} HotspotType;
 
 typedef struct packed {
-    ScriptTileType type;
+    HotspotType type;
     uint16_t x;
     uint16_t y;
     uint16_t arg1;
     uint16_t arg2;
-} ScriptTile;
+} Hotspot;
 
 typedef enum : uint16_t {
     PlanetTypeNone     = 0,
@@ -120,7 +120,7 @@ private:
     PlanetType _planet;
     bool _solved;
 
-    void _readScriptTiles(FILE *file);
+    void _readHotspots(FILE *file);
     void _readAuxiliaryData(FILE* file);
     void _readIZAX(FILE* file);
     void _readIZX2(FILE* file);
@@ -128,7 +128,7 @@ private:
     void _readIZX4(FILE* file);
     void _readActions(FILE *file);
 
-    size_t _writeScriptTiles(char *buffer);
+    size_t _writeHotspots(char *buffer);
     size_t _writeAuxiliaryData(char *buffer);
     size_t _writeActions(char *buffer);
 
@@ -137,7 +137,7 @@ private:
 public:
     vector<Action> _actions;
     Tile **_tile_ptrs;
-    std::vector<ScriptTile>  _scriptTiles;
+    std::vector<Hotspot>  _hotspotss;
     bool _visited;
 
     void setTile(Tile *t, int x, int y, int l) {
@@ -148,14 +148,14 @@ public:
         _tile_ptrs[GamePointToIndex(p, _size.width, _size.height)] = t;
     }
 
-    void setScriptTiles(ScriptTile *tiles, int count){
-        _scriptTiles.resize(count);
+    void setHotspots(Hotspot *tiles, int count){
+        _hotspotss.resize(count);
         for(int i=0; i < count; i++)
-            _scriptTiles[i] = tiles[i];
+            _hotspotss[i] = tiles[i];
     };
 
-    std::vector<ScriptTile> getScriptTiles(){
-        return _scriptTiles;
+    std::vector<Hotspot> getHotspots(){
+        return _hotspotss;
     };
 
     bool tileWalkableAt(GamePoint p);

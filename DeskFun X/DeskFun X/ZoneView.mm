@@ -135,10 +135,10 @@ static NSCache *cache = nil;
     }
     highlightedTileIndicator = [highlightedTileIndicator stringByAppendingFormat:@"\n%@", tileIDs];
 
-    std::vector<ScriptTile> v = zone->getScriptTiles();
+    std::vector<Hotspot> v = zone->getHotspots();
     for(int i=0; i < v.size(); i++)
     {
-        ScriptTile st = v[i];
+        Hotspot st = v[i];
 
         int x = st.x;
         int y = st.y;
@@ -149,7 +149,7 @@ static NSCache *cache = nil;
 
         if(x != tileHighlight.x || y != tileHighlight.y) continue;
 
-        NSString *string = [NSString stringWithFormat:@"\n%d: %@(%x, %x)", i, [self scriptTileTypeName:type], arg1, arg2];
+        NSString *string = [NSString stringWithFormat:@"\n%d: %@(%x, %x)", i, [self HotspotTypeName:type], arg1, arg2];
         highlightedTileIndicator = [highlightedTileIndicator stringByAppendingString:string];
     }
 
@@ -168,7 +168,7 @@ static NSCache *cache = nil;
     [highlightedTileIndicator drawInRect:textFrame withAttributes:attributes];
 }
 
-- (NSString*)scriptTileTypeName:(uint32_t)type
+- (NSString*)HotspotTypeName:(uint32_t)type
 {
     switch (type)
     {
@@ -252,10 +252,10 @@ static NSCache *cache = nil;
         }
     }
 
-    std::vector<ScriptTile> v = z->getScriptTiles();
+    std::vector<Hotspot> v = z->getHotspots();
     for(int i=0; i < v.size(); i++)
     {
-        ScriptTile st = v[i];
+        Hotspot st = v[i];
 
         int x = st.x;
         int y = st.y;

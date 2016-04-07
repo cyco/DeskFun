@@ -38,7 +38,7 @@
 void parseWorld(int zoneCount, FILE *file, GameDataParser* _data);
 void parseZoneHeader(FILE* file, GameDataParser *_data);
 void parseZone(FILE* file, GameDataParser *_data);
-ScriptTile *parseHotspots(FILE *file, Zone *zone, GameDataParser* _data, uint32_t *outCount);
+Hotspot *parseHotspots(FILE *file, Zone *zone, GameDataParser* _data, uint32_t *outCount);
 void parsePuzzles(FILE *file, GameDataParser* _data);
 void parseState(FILE *file, GameDataParser* _data);
 
@@ -169,7 +169,7 @@ void parseZone(FILE* file, GameDataParser *_data){
     uint32_t visited, maybeSolved;
     fread(&visited, sizeof(uint32_t), 1, file);
     fread(&maybeSolved, sizeof(uint32_t), 1, file);
-    ScriptTile *hotspots = NULL;
+    Hotspot *hotspots = NULL;
     uint32_t hotspotCount = (uint32_t)~0;
 
     hotspots = parseHotspots(file, zone, _data, &hotspotCount);
@@ -213,7 +213,7 @@ void parseZone(FILE* file, GameDataParser *_data){
     }
 
     for(int i=0; i < hotspotCount && hotspots != NULL; i++){
-        ScriptTile &spot = hotspots[i];
+        Hotspot &spot = hotspots[i];
         if(spot.type == DoorIn && (uint16_t)~spot.arg2){
             Zone *room = _data->_zones[spot.arg2];
             room->_visited = zone->_visited;
@@ -226,14 +226,14 @@ void parseZone(FILE* file, GameDataParser *_data){
     delete [] hotspots;
 }
 
-ScriptTile *parseHotspots(FILE *file, Zone *zone, GameDataParser* _data, uint32_t* outCount){
+Hotspot *parseHotspots(FILE *file, Zone *zone, GameDataParser* _data, uint32_t* outCount){
     uint32_t hotspotCount;
     fread(&hotspotCount, sizeof(uint32_t), 1, file);
 
-    ScriptTile *hotspots = NULL;
+    Hotspot *hotspots = NULL;
 
     if((uint32_t)~hotspotCount){
-        hotspots = new ScriptTile[hotspotCount];
+        hotspots = new Hotspot[hotspotCount];
         for(int i=0; i < hotspotCount; i++){
             fread(&(hotspots[i].arg1), sizeof(uint16_t), 1, file);
             fread(&(hotspots[i].arg2), sizeof(uint16_t), 1, file);
