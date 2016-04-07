@@ -31,7 +31,7 @@ public: // Serialization
 
     size_t write(void* buffer);
 
-protected:
+public:
     uint32_t _specs;
     uint8_t* _data;
 

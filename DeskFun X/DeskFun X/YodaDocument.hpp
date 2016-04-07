@@ -29,15 +29,25 @@ public:
     WorldSize size;
     uint16 seed;
     
+    int field_68, field_3390, wg_item_id, wg_last_added_item_id, field_2E64;
+    vector<int> some_array;
+    
     vector<WorldThing> world_things;
     vector<Zone*> zones;
+    vector<Tile*> tiles;
     vector<Puzzle*> puzzles;
-    vector<uint16> chosen_puzzle_ids;
+    vector<uint16> puzzle_ids;
     vector<uint16> chosen_zone_ids;
     vector<Zone*> chosen_zones;
     
+    vector<uint16> puzzle_ids_1;
+    vector<uint16> puzzle_ids_2;
+    vector<uint16> item_ids;
+    
     vector<Quest*> providedItems;
     vector<Quest*> requiredItems;
+    
+    vector<Zone*> worldZones;
     
     int puzzles_can_be_reused;
     
@@ -64,6 +74,11 @@ public:
     void AddRequiredItemsFromHotspots(uint16 zoneID);
     int ZoneLeadsToItem(uint16 zoneID, uint16 itemID);
     int GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int use_array_2_ids);
+    signed int GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap);
+    int SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2, int use_required_items_array);
+    signed int ZoneDoesNOTProvideRequiredItemID(__int16 zone_id);
+    int16 GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, __int16 item_id_3, int a8);
+    int AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int a4);
 };
 
 #endif /* YodaDocument_hpp */

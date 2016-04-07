@@ -137,7 +137,7 @@ private:
 public:
     vector<Action> _actions;
     Tile **_tile_ptrs;
-    std::vector<Hotspot>  _hotspotss;
+    std::vector<Hotspot>  _hotspots;
     bool _visited;
 
     void setTile(Tile *t, int x, int y, int l) {
@@ -149,13 +149,13 @@ public:
     }
 
     void setHotspots(Hotspot *tiles, int count){
-        _hotspotss.resize(count);
+        _hotspots.resize(count);
         for(int i=0; i < count; i++)
-            _hotspotss[i] = tiles[i];
+            _hotspots[i] = tiles[i];
     };
 
     std::vector<Hotspot> getHotspots(){
-        return _hotspotss;
+        return _hotspots;
     };
 
     bool tileWalkableAt(GamePoint p);

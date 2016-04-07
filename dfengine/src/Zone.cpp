@@ -311,14 +311,14 @@ size_t Zone::_writeHotspots(char *buffer)
     size_t bytesWritten = 0;
     if(context->getGameStyle() != GameStyleYoda) return 0;
 
-    if(!buffer) return sizeof(uint16_t) + _hotspotss.size() * 12;
+    if(!buffer) return sizeof(uint16_t) + _hotspots.size() * 12;
 
-    uint16_t_pack(buffer+bytesWritten, _hotspotss.size());
+    uint16_t_pack(buffer+bytesWritten, _hotspots.size());
     bytesWritten += sizeof(uint16_t);
 
-    for(int i=0; i < _hotspotss.size(); i++)
+    for(int i=0; i < _hotspots.size(); i++)
     {
-        Hotspot &tile = _hotspotss[i];
+        Hotspot &tile = _hotspots[i];
         uint32_t_pack(buffer+bytesWritten, tile.type);
         bytesWritten += sizeof(uint32_t);
         uint16_t_pack(buffer+bytesWritten, tile.x);
