@@ -50,6 +50,8 @@ public:
     Tile* getQuestItem(unsigned short index);
     string& getText(unsigned short index);
     
+    uint16_t item_1, item_2;
+    int unknown_3;
 public:
     string name;
     PuzzleType type;

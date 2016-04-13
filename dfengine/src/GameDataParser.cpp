@@ -33,7 +33,6 @@ GameDataParser::GameDataParser(const string& path) : GameDataParser(path.c_str()
 
 GameDataParser::GameDataParser(const char *path)
 {
-    printf("Allocate parser\n");
     _isYodaVersion = false;
 
     _file = fopen(path, "r");
@@ -65,7 +64,6 @@ GameDataParser::GameDataParser(const char *path)
 
 GameDataParser::~GameDataParser()
 {
-    printf("Deallocate parser\n");
     fclose(_file);
 }
 

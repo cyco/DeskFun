@@ -43,6 +43,7 @@ void Map::clear(){
 }
 
 int Map::GetDistanceToCenter(int x, int y) {
+    printf("Map::GetDistanceToCenter %dx%d\n", x, y);
     static int distances[] = {
         5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
         5, 4, 4, 4, 4, 4, 4, 4, 4, 5,
@@ -761,8 +762,8 @@ int Map::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_count) {
         if (placed_puzzles >= total_puzzle_count)
             break;
         
-        
-        if (GetDistanceToCenter(x, y) >= 3 || i >= 150)
+        int distance = GetDistanceToCenter(x, y);
+        if (distance >= 3 || i >= 150)
         {
             uint16_t item = get(x, y);
             if ( (item == 1 || item == 300)
@@ -779,7 +780,7 @@ int Map::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_count) {
                 break;
         }
         
-        if(GetDistanceToCenter(x, y) < 3 && i >= 50) i--;
+        if(distance < 3 && i >= 50) i--;
         
         if(do_break) break;
     }

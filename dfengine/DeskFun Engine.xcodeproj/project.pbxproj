@@ -76,6 +76,8 @@
 		83B7628A1CB44DF900225FB3 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B762891CB44DF900225FB3 /* types.h */; };
 		83B7628D1CB44E0B00225FB3 /* win_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B7628B1CB44E0B00225FB3 /* win_rand.c */; };
 		83B7628E1CB44E0B00225FB3 /* win_rand.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B7628C1CB44E0B00225FB3 /* win_rand.h */; };
+		83BC19C51CBC487500D90C7A /* Hotspot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BC19C31CBC487500D90C7A /* Hotspot.cpp */; };
+		83BC19C81CBC4BCE00D90C7A /* Hotspot.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83BC19C71CBC4BCE00D90C7A /* Hotspot.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -150,6 +152,8 @@
 		83B762891CB44DF900225FB3 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		83B7628B1CB44E0B00225FB3 /* win_rand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = win_rand.c; sourceTree = "<group>"; };
 		83B7628C1CB44E0B00225FB3 /* win_rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win_rand.h; sourceTree = "<group>"; };
+		83BC19C31CBC487500D90C7A /* Hotspot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hotspot.cpp; sourceTree = "<group>"; };
+		83BC19C71CBC4BCE00D90C7A /* Hotspot.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Hotspot.hpp; path = include/Hotspot.hpp; sourceTree = "<group>"; };
 		83C46AFB1B35CEB200E73B02 /* libdfengine-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdfengine-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		83C46B6C1B35EB9C00E73B02 /* libdfengine-osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libdfengine-osx.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -268,6 +272,8 @@
 				835B469F1B3B25BE001BD0CA /* World.hpp */,
 				83AA41D91B36CB9600A2FE8F /* Zone.cpp */,
 				835B46A01B3B25BE001BD0CA /* Zone.hpp */,
+				83BC19C31CBC487500D90C7A /* Hotspot.cpp */,
+				83BC19C71CBC4BCE00D90C7A /* Hotspot.hpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -330,6 +336,7 @@
 			files = (
 				83AA42421B3707A400A2FE8F /* Store.hpp in Headers */,
 				835B46D41B3B3E51001BD0CA /* Renderer.hpp in Headers */,
+				83BC19C81CBC4BCE00D90C7A /* Hotspot.hpp in Headers */,
 				83AA42151B36CF4100A2FE8F /* dfengine.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -408,6 +415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				83AA41E61B36CB9600A2FE8F /* Engine.cpp in Sources */,
+				83BC19C51CBC487500D90C7A /* Hotspot.cpp in Sources */,
 				83AA41F01B36CB9600A2FE8F /* Hero.cpp in Sources */,
 				83AA41E01B36CB9600A2FE8F /* Camera.cpp in Sources */,
 				83AA42081B36CB9600A2FE8F /* TileStore.cpp in Sources */,

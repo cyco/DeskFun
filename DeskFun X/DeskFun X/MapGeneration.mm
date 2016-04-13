@@ -151,7 +151,8 @@
 - (void)_generateWorld:(uint16_t)seed withSize:(int)size {
     if(!document) return;
     
-
+    printf("Generate New World (calc)\n");
+    
     self.seedField.stringValue = [NSString stringWithFormat:@"0x%04X", seed];
     self.sizeSlider.doubleValue = size;
     
@@ -166,22 +167,19 @@
     Map *nmap = new Map();
     int puzzle_count = nmap->generate(seed, (WORLD_SIZE)size);
     memcpy(map, nmap->tiles, sizeof(uint16) * 100);
+    memcpy(puzzles, nmap->puzzles, sizeof(uint16) * 100);
     
     [_mapView setNeedsDisplay:true];
 
-    int s1, s2;
-    vector<int16> array1, array2;
-    
+    int puzzles1_count, puzzles2_count;
     if ( (char)puzzle_count % -2 ) {
-        s1 = (puzzle_count + 1) / 2;
-        s2 = (puzzle_count + 1) / 2;
+        puzzles1_count = (puzzle_count + 1) / 2;
+        puzzles2_count = (puzzle_count + 1) / 2;
     } else {
-        s1 = puzzle_count / 2;
-        s2 = puzzle_count / 2 + 1;
+        puzzles2_count = puzzle_count / 2;
+        puzzles1_count = puzzle_count / 2 + 1;
     }
     
-    array1.resize(s1+1, -1);
-    array2.resize(s2+1, -1);
     // TODO: add goal puzzle to planet array
     // // // // // // // // // // // // // // // // // // // // // // //
     // nmap->print();
@@ -237,55 +235,41 @@
     int zone_count; // esi@142
     int zone_offset; // ecx@143
     Zone *zone; // eax@144
-    int goal_puzzle_id; // esi@158
     Puzzle **puzzle_ptrs; // ecx@161
-    Puzzle *goal_puzzle; // eax@161
     int puzzle_count_1; // ecx@161
     Planet planet_6; // eax@161
     Zone *world_zones_1; // esi@168
     signed int count_3; // edx@168
     void *world_thing_plus_4; // esi@170
-    __int16 distance_11; // ax@174
     int v65; // ST60_4@174
-    __int16 zone_id_8; // cx@174
-    void *zone_id; // eax@175
+    int zone_id; // eax@175
     int v68; // edi@175
     Zone *zone_1; // ecx@175
     int hotspot_count; // edx@175
-    Hotspot **hotspots; // ecx@176
     signed int did_find_travel_zone; // ecx@181
     int class1idx; // edi@182
-    Zone **world_zones_2; // eax@182
-    int *v75; // edx@182
     int v76; // edx@189
-    Zone *zone_3; // edi@189
     int *world_item; // eax@189
     int v79; // edx@196
-    Zone *v80; // eax@196
     __int16 *v81; // edi@196
     int v82; // edx@202
     Zone *v83; // eax@203
     __int16 *v84; // edi@203
     __int16 zone_id_9; // di@210
-    int idx_3; // ecx@211
     Zone *v87; // edx@211
     char *v88; // eax@211
     void *v89; // ecx@212
     __int16 *puzzle_ids_1; // ecx@216
-    void *v91; // edx@216
     int y_1; // edi@216
     __int16 v93; // ax@216
     int v94; // ecx@216
-    __int16 *v95; // edx@216
     int x_1; // esi@217
-    __int16 *v97; // eax@217
     signed int zone_id_3; // ebp@225
-    Puzzle **puzzles_1; // ecx@225
     Puzzle *v100; // eax@225
     int v101; // ebp@228
     __int16 distance_17; // ST54_2@228
     int v103; // eax@228
-    int v104; // ST58_4@228
+    int v104 = 1; // ST58_4@228
     int v105; // eax@230
     __int16 distance_12; // ax@230
     int v107; // ST58_4@230
@@ -296,9 +280,7 @@
     int world_idx_1; // ecx@239
     char *v113; // eax@239
     __int16 distance; // ax@240
-    __int16 distance_1; // ax@243
     int v116; // ST40_4@243
-    __int16 zone_id_4; // ax@243
     int idx_4; // edx@244
     __int16 *v119; // ecx@248
     int y_3; // edi@248
@@ -387,26 +369,22 @@
     int v204; // [sp+0h] [bp-1ECh]@0
     int v205; // [sp+4h] [bp-1E8h]@0
     int v206; // [sp+8h] [bp-1E4h]@0
-    void *zone_id_11; // [sp+Ch] [bp-1E0h]@174
-    WorldThing *x_2; // [sp+10h] [bp-1DCh]@3
+    int zone_id_11; // [sp+Ch] [bp-1E0h]@174
+    int x_2; // [sp+10h] [bp-1DCh]@3
     int zone_id_10; // [sp+14h] [bp-1D8h]@46
     int x_8; // [sp+18h] [bp-1D4h]@46
-    Zone *zone_2; // [sp+1Ch] [bp-1D0h]@46
+    int zone_2; // [sp+1Ch] [bp-1D0h]@46
     int y_6; // [sp+20h] [bp-1CCh]@46
     int x_7; // [sp+24h] [bp-1C8h]@3
     __int16 *world_1; // [sp+28h] [bp-1C4h]@3
     int transport_count; // [sp+2Ch] [bp-1C0h]@3
     int x; // [sp+30h] [bp-1BCh]@53
     Zone **world_zones; // [sp+34h] [bp-1B8h]@3
-    int puzzles1_count; // [sp+38h] [bp-1B4h]@46
     int y_7; // [sp+3Ch] [bp-1B0h]@3
-    int puzzles2_count; // [sp+40h] [bp-1ACh]@152
     int v221; // [sp+48h] [bp-1A4h]@71
     int placed_transports_count; // [sp+4Ch] [bp-1A0h]@3
     int placed_blockades_count; // [sp+50h] [bp-19Ch]@3
-    int world_2; // [sp+54h] [bp-198h]@1
     int array_7_count; // [sp+58h] [bp-194h]@33
-    __int16 world[100]; // [sp+5Ch] [bp-190h]@4
     int v227; // [sp+124h] [bp-C8h]@4
     __int16 v228; // [sp+12Eh] [bp-BEh]@199
     int v229; // [sp+1C4h] [bp-28h]@274
@@ -420,298 +398,307 @@
     if ( document->game_count < 10 )
         CWordArray::SetAtGrow(&document->hoth_puzzle_ids, document->hoth_puzzle_ids.count, 0xC5u);// add hoth puzzle
      */
-    int16 goalID = document->GetNewPuzzleId(-1, -1, (ZONE_TYPE)9999, 0);
-    printf("Goal ID: 0x%0x\n", goalID);
+    int16 goalID = document->puzzles_can_be_reused;
+    if(goalID < 0) {
+        goalID = document->GetNewPuzzleId(-1, -1, (ZONE_TYPE)9999, 0);
+    }
     
-    array1[s1] = goalID;
-    array2[s2] = goalID;
+    if(goalID < 0) {
+        return;
+    }
     
-    Puzzle *goalPuzzle = document->puzzles[goalID];
-    document->puzzle_ids.insert(document->puzzle_ids.end(), goalID);
+    document->puzzle_ids_1.clear();
+    document->puzzle_ids_1.resize(puzzles1_count+1, -1);
     
-    int16 puzzle_id = document->GetNewPuzzleId(466, 1652, (ZONE_TYPE)10, 0);
-    printf("YodaDocument::GetNewPuzzleId => 0x%0x (%d)", puzzle_id, puzzle_id);
+    document->puzzle_ids_2.clear();
+    document->puzzle_ids_2.resize(puzzles2_count+1, -1);
+    
+    document->puzzle_ids.push_back(goalID);
+    document->puzzle_ids_1[puzzles1_count] = goalID;
+    document->puzzle_ids_2[puzzles2_count] = goalID;
 
-    document->puzzle_ids_1[puzzles1_count] = goal_puzzle_id;
-    document->puzzle_ids_2[puzzles2_count] = goal_puzzle_id;
-    /*
-    puzzle_ptrs = document->puzzles.ptrs;
-    document->goal_puzzle_id_again = goal_puzzle_id;
-    goal_puzzle = puzzle_ptrs[goal_puzzle_id];
-    puzzle_count_1 = document->puzzle_ids.count;
-    document->goal_tile_id_1 = goal_puzzle->item_1;
-    document->goal_tile_id_2 = goal_puzzle->item_2;
-    */
+    Puzzle *goalPuzzle = document->puzzles[goalID];
+    document->goal_puzzle_id_again = goalID;
+    document->goal_tile_id_1 = goalPuzzle->item_1;
+    document->goal_tile_id_2 = goalPuzzle->item_2;
     
     document->worldZones.clear();
     document->worldZones.resize(100, 0);
 
-    /*
-    int world_thing_idx = 0;
-    y_6 = 0;
-    int world_zone_idx = 0;
-    world_1 = world;
-    do {
-        x_8 = 0;
-        do
-        {
+    // TODO: add goal puzzle to planet puzzle ids
+    for(int y=0; y < 10; y++) {
+        for(int x=0; x < 10; x++) {
+            int idx = x + y * 10;
+            
             document->field_3390 = -1;
             document->wg_item_id = -1;
             document->wg_last_added_item_id = -1;
-            if ( *world_1 == 101 && !*world_zones )
-            {
-                
-                distance_11 = Map::GetDistanceToCenter(x_8, y_6);
-                zone_id_10 = -1;
-                zone_id_8 = document->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance_11, v65);
-     /**//*
-                zone_id_11 = zone_id_8;
-                if ( zone_id_8 >= 0 )
-                {
-                    world_thing_plus_4->zone_id = zone_id_8;
-                    zone_id = zone_id_11;
-                    world_thing_plus_4->zone_type = ZONETYPE_TravelStart;
-                    v68 = 0;
-                    world_thing_plus_4->required_item_id = document->wg_item_id;
-                    zone_1 = document->zones.ptrs[(_DWORD)zone_id];
-                    zone_2 = zone_1;
-                    hotspot_count = zone_1->hotspots.count;
-                    if ( hotspot_count > 0 )
-                    {
-                        hotspots = zone_1->hotspots.ptrs;
-                        while ( (*hotspots)->type != VehicleTo )
-                        {
-                            ++hotspots;
-                            if ( ++v68 >= hotspot_count )
-                                goto LABEL_181;
-                        }
-                        zone_id_10 = (*hotspots)->arg1;
-                    }
-                LABEL_181:
-                    did_find_travel_zone = 0;
-                    if ( zone_id_10 >= 0 )
-                    {
-                        class1idx = 0;
-                        world_zones_2 = (Zone **)document->world_zones;
-                        v75 = &world_2;
-                        x_7 = 0;
-                        y_7 = 0;
-                        while ( *(_WORD *)v75 != 102 || *world_zones_2 )
-                        {
-                            world_zones_2 += 10;
-                            v75 += 5;
-                            ++class1idx;
-                            if ( v75 >= (int *)&world[96] )
-                                goto LABEL_188;
-                        }
-                        did_find_travel_zone = 1;
-                        y_7 = class1idx;
-                    LABEL_188:
-                        if ( !did_find_travel_zone )
-                        {
-                            v76 = 0;
-                            zone_3 = (Zone *)&document->world_zones[10 * y_7];
-                            world_item = &world_2 + 5 * y_7;
-                            while ( *(_WORD *)world_item != 102 || zone_3->vtable )
-                            {
-                                zone_3 = (Zone *)((char *)zone_3 + 4);
-                                world_item = (int *)((char *)world_item + 2);
-                                if ( ++v76 >= 10 )
-                                    goto LABEL_195;
-                            }
-                            did_find_travel_zone = 1;
-                            x_7 = v76;
-                        LABEL_195:
-                            if ( !did_find_travel_zone )
-                            {
-                                v79 = 0;
-                                v80 = (Zone *)&document->world_zones[9];
-                                x_7 = 9;
-                                v81 = &world[5];
-                                while ( *v81 != 102 || v80->vtable )
-                                {
-                                    v80 = (Zone *)((char *)v80 + 40);
-                                    v81 += 10;
-                                    ++v79;
-                                    if ( v81 >= &v228 )
-                                        goto LABEL_202;
-                                }
-                                did_find_travel_zone = 1;
-                                y_7 = v79;
-                            }
-                        }
-                    LABEL_202:
-                        v82 = 0;
-                        if ( did_find_travel_zone )
-                            goto LABEL_382;
-                        v83 = (Zone *)&document->world_zones[90];
-                        v84 = &world[86];
-                        y_7 = 9;
-                        x_7 = 0;
-                        while ( *v84 != 102 || v83->vtable )
-                        {
-                            v83 = (Zone *)((char *)v83 + 4);
-                            ++v84;
-                            ++v82;
-                            if ( v84 >= &world[96] )
-                                goto LABEL_209;
-                        }
-                        did_find_travel_zone = 1;
-                        x_7 = v82;
-                    LABEL_209:
-                        if ( did_find_travel_zone )
-                        {
-                        LABEL_382:
-                            zone_id_9 = zone_id_10;
-                            if ( !YodaDocument::WorldContainsZoneId(document, zone_id_10) )
-                            {
-                                idx_3 = x_7 + 10 * y_7;
-                                document->world_zones[idx_3] = document->zones.ptrs[zone_id_10];
-                                document->world_things_1[idx_3].zone_id = zone_id_9;
-                                v87 = zone_2;
-                                v88 = (char *)document + 0x34 * idx_3;
-                                *((_DWORD *)v88 + 0x12E) = 7;
-                                *((_WORD *)v88 + 0x260) = document->wg_item_id;
-                                LOWORD(idx_3) = (_WORD)zone_id_11;
-                                *(_DWORD *)transport_count = v87;
-                                YodaDocument::AddZoneWithIdToWorld(document, idx_3);
-                                YodaDocument::AddZoneWithIdToWorld(document, zone_id_9);
-                            }
-                        }
-                        else
-                        {
-                            YodaDocument::RemoveQuestProvidingItemID(document, document->wg_item_id);
-                            v89 = (_DWORD *)transport_count;
-                            *(_WORD *)y_6 = 1;
-                            *v89 = 0;
-                            world_thing_plus_4->zone_id = -1;
-                            world_thing_plus_4->zone_type = -1;
-                            world_thing_plus_4->required_item_id = -1;
-                        }
-                    }
-                }
-            }
-            ++world_thing_plus_4;
-            x_2 = (WorldThing *)((char *)x_2 + 1);
-            transport_count += 4;
-            y_6 += 2;
+            
+            
+            if(map[idx] != WORLD_ITEM_TRAVEL_START)
+                continue;
+            
+            if(document->worldZones[idx] == NULL)
+                continue;
+            
+            printf("[WARN] Transports are not implementd yet!\n");
+            /*
+             int distance_11 = Map::GetDistanceToCenter(x_8, y_6);
+
+             zone_id_10 = -1;
+             int16 zone_id_8 = document->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance_11, v65);
+             
+             zone_id_11 = zone_id_8;
+             if ( zone_id_8 >= 0 )
+             {
+             // world_thing_plus_4->zone_id = zone_id_8;
+             zone_id = zone_id_11;
+             // world_thing_plus_4->zone_type = ZONETYPE_TravelStart;
+             v68 = 0;
+             // world_thing_plus_4->required_item_id = document->wg_item_id;
+             zone_1 = document->zones[zone_id];
+             zone_2 = zone_1;
+             hotspot_count = (int)zone_1->_hotspots.size();
+             if ( hotspot_count > 0 )
+             {
+             int idx = 0;
+             while ( zone_1->_hotspots[idx].type != VehicleTo )
+             {
+             idx ++;
+             if ( ++v68 >= hotspot_count )
+             goto LABEL_181;
+             }
+             zone_id_10 = zone_1->_hotspots[idx].arg1;
+             }
+             LABEL_181:
+             did_find_travel_zone = 0;
+             if ( zone_id_10 >= 0 )
+             {
+             class1idx = 0;
+             int idx = 0;
+             int mapIdx = 0;
+             x_7 = 0;
+             y_7 = 0;
+             while ( map[mapIdx] != 102 || document->worldZones[idx] )
+             {
+             idx += 10;
+             mapIdx += 5;
+             ++class1idx;
+             if ( mapIdx >= 96 )
+             goto LABEL_188;
+             }
+             did_find_travel_zone = 1;
+             y_7 = class1idx;
+             LABEL_188:
+             if ( !did_find_travel_zone )
+             {
+             v76 = 0;
+             int worldZoneIdx = 10 * y_7;
+             int worldItemIdx = 5 * y_7;
+             while ( map[worldItemIdx] != 102 || document->worldZones[worldZoneIdx] )
+             {
+             worldZoneIdx++;
+             worldItemIdx++;
+             if ( ++v76 >= 10 )
+             goto LABEL_195;
+             }
+             did_find_travel_zone = 1;
+             x_7 = v76;
+             LABEL_195:
+             if ( !did_find_travel_zone )
+             {
+             v79 = 0;
+             int worldZoneIdx = 9;
+             x_7 = 9;
+             v81 = &world[5];
+             int mapIdx = 5;
+             
+             while ( map[mapIdx] != 102 || document->worldZones[worldZoneIdx])
+             {
+             worldZoneIdx += 10;
+             mapIdx += 10;
+             // ++t;
+             if ( mapIdx >= 100)
+             goto LABEL_202;
+             }
+             did_find_travel_zone = 1;
+             y_7 = v79;
+             }
+             }
+             LABEL_202:
+             v82 = 0;
+             if ( did_find_travel_zone ){
+             
+             zone_id_9 = zone_id_10;
+             if ( !document->worldContainsZoneId(zone_id_10) )
+             {
+             int idx_3 = x_7 + 10 * y_7;
+             document->worldZones[idx_3] = document->zones[zone_id_10];
+             document->world_things[idx_3].zone_id = zone_id_9;
+             v87 = zone_2;
+             /*
+             v88 = (char *)document + 0x34 * idx_3;
+             *((_DWORD *)v88 + 0x12E) = 7;
+             *((_WORD *)v88 + 0x260) = document->wg_item_id;
+             LOWORD(idx_3) = (_WORD)zone_id_11;
+             *(_DWORD *)transport_count = v87;
+            document->AddZoneWithIdToWorld(idx_3);
+            document->AddZoneWithIdToWorld(zone_id_9);
         }
-        while ( (signed int)x_2 < 10 );
+        
+        
+        //            ++world_thing_plus_4;
+        x_2 = x_2 + 1;
+        transport_count += 4;
+        y_6 += 2;
     }
-    while ( x_8 + 1 < 10 );
+    int worldZoneIdx = 90;
+    int worldIdx = 86;
+    y_7 = 9;
+    x_7 = 0;
+    while ( map[worldIdx] != 102 || document->worldZones[worldZoneIdx] )
+    {
+        worldZoneIdx++;
+        worldIdx++;
+        if ( worldZoneIdx >= 96)
+            goto LABEL_209;
+    }
+    did_find_travel_zone = 1;
+    x_7 = v82;
+LABEL_209:
+    if ( did_find_travel_zone )
+    {
+    LABEL_382:
+        zone_id_9 = zone_id_10;
+        if ( !document->worldContainsZoneId(zone_id_10) )
+        {
+            int idx_3 = x_7 + 10 * y_7;
+            document->worldZones[idx_3] = document->zones[zone_id_10];
+            document->world_things[idx_3].zone_id = zone_id_9;
+            v87 = zone_2;
+             v88 = (char *)document + 0x34 * idx_3;
+             *((_DWORD *)v88 + 0x12E) = 7;
+             *((_WORD *)v88 + 0x260) = document->wg_item_id;
+             LOWORD(idx_3) = (_WORD)zone_id_11;
+             *(_DWORD *)transport_count = v87;
+            document->AddZoneWithIdToWorld(idx_3);
+            document->AddZoneWithIdToWorld(zone_id_9);
+        }
+    }
+    else
+    {
+        document->RemoveQuestProvidingItem(document->wg_item_id);
+         v89 = (_DWORD *)transport_count;
+         *(_WORD *)y_6 = 1;
+         *v89 = 0;
+         world_thing_plus_4->zone_id = -1;
+         world_thing_plus_4->zone_type = -1;
+         world_thing_plus_4->required_item_id = -1;
+    }
+}
+}
+*/
+        }
+    }
+    printf("After Transport Loop\n");
     
-    
-    zone_id_11 = (DWORD *)x;
+    zone_id_11 = x = puzzle_count; //TODO: check where the 3 comes from
     x_8 = puzzles1_count;
-    zone_id_10 = puzzles2_count;
+    zone_id_10 = puzzles1_count+1; // puzzle_count
+    zone_id_11 = puzzles2_count+1;
     if ( x <= 0 )
         goto LABEL_246;
+
+    /*
+    printf("World:\n");
+    for(int y=0; y < 10; y++){
+        for(int x=0; x < 10; x++){
+            printf("%3d ", puzzles[x+y*10]);
+        }
+        printf("\n");
+    }
+    //*/
     do
     {
         document->wg_zone_type = -1;
-        document->wg_last_added_item_id? = -1;
-        document->wg_item_id_unknown_2 = -1;
         document->wg_item_id = -1;
+        document->wg_item_id_unknown_2 = -1;
         document->wg_item_id_unknown_3 = -1;
-        puzzle_ids_1 = document->puzzle_ids_1.ptrs;
+        document->wg_last_added_item_id = -1;
         document->field_3390 = -1;
         document->field_3394 = -1;
-        v91 = zone_id_11;
-        y_1 = 0;
         document->field_3398 = -1;
-        v93 = puzzle_ids_1[(_DWORD)v91];
+
+        y_1 = 0;
         v94 = 0;
-        v95 = &world[96];
-        zone_2 = (Zone *)(uint16)v93;
+        int row = 0;
+        zone_2 = document->puzzle_ids_1[zone_id_11];
         x_2 = 0;
+        
+        int x = 0, y = 0;
         do
         {
+            int foundSomething = 0;
             x_1 = 0;
-            v97 = v95;
-            while ( *v97 - zone_id_10 != -1 )
+            x = 0;
+            while ( puzzles[x+10*y] - zone_id_10 != -1 ) // use puzzles here instead?
             {
-                ++v97;
-                if ( ++x_1 >= 10 )
+                x++;
+                if ( ++x >= 10 )
                     goto LABEL_222;
             }
-            ++v94;
+            foundSomething = 1;
+            
         LABEL_222:
-            if ( v94 )
+            if ( foundSomething )
             {
                 zone_id_3 = -1;
-                puzzles_1 = document->puzzles.ptrs;
                 y_6 = 0;
-                v100 = puzzles_1[(_DWORD)zone_2];
-                LOWORD(puzzles_1) = v100->item_1;
-                LOWORD(v100) = v100->item_2;
-                LOWORD(x_7) = (_WORD)puzzles_1;
-                LOWORD(transport_count) = (_WORD)v100;
-                while ( 1 )
-                {
+                transport_count = document->puzzles[zone_2]->item_2;
+                while (1) {
                     if ( zone_id_3 >= 0 )
                         goto LABEL_242;
-                    if ( zone_id_10 == puzzles2_count )
-                    {
-                        HIWORD(v101) = HIWORD(zone_id_11);
-                        LOWORD(v101) = (_WORD)zone_id_11 - 1;
-                        distance_17 = Map::GetDistanceToCenter(x_1, y_1);
-                        HIWORD(v103) = HIWORD(x_2);
-                        LOWORD(v103) = (_WORD)x_2 - 1;
-                        zone_id_3 = YodaDocument::GetZoneIdWithType(document, Goal, v101, v103, (int)zone_2, x_7, distance_17, v104);
+                    
+                    if ( zone_id_10 == puzzle_count ) {
+                        zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Goal, zone_id_11 - 1, x - 1, document->puzzles[zone_2]->item_1, document->puzzles[zone_2]->item_2, Map::GetDistanceToCenter(x, y), v104);
                         if ( zone_id_3 < 0 )
                             break;
-                        document->wg_zone_type = Goal;
-                        document->field_3394 = v205 - 1;
-                        document->field_3398 = (int)&x_2[-1].field_E + 1;
+                        
+                        document->wg_zone_type = ZONETYPE_Goal;
+                        // document->field_3394 = v205 - 1;
+                        // document->field_3398 = (int)&x_2[-1].field_E + 1;
                     }
                     else
                     {
-                        v105 = ::rand();
-                        zone_2 = (Zone *)(((unsigned int)((((unsigned __int64)v105 >> 32) ^ abs(v105) & 1)
-                                                          - ((unsigned __int64)v105 >> 32)) < 1)
-                                          + 15);
-                        LOWORD(x_2) = (_WORD)zone_id_11 - 1;
+                        v105 = win_rand();
+                        zone_2 = (v105 & 1) + 15;
+                        x_2 = zone_id_11 - 1;
                         distance_12 = Map::GetDistanceToCenter(x_1, y_1);
-                        zone_id_3 = YodaDocument::GetZoneIdWithType(
-                                                                    document,
-                                                                    (ZONE_TYPE)zone_id_10,
-                                                                    v206,
-                                                                    -1,
-                                                                    (int)zone_2,
-                                                                    -1,
-                                                                    distance_12,
-                                                                    v107);
-                        if ( zone_id_3 < 0 )
-                        {
-                            if ( zone_id_10 == Use )
-                            {
+                        zone_id_3 = document->GetZoneIdWithType((ZONE_TYPE)zone_id_10, v206, -1, (int)zone_2, -1, distance_12, v107);
+                        if ( zone_id_3 < 0 ) {
+                            if ( zone_id_10 == ZONETYPE_Use ) {
                                 distance_13 = Map::GetDistanceToCenter(x_1, y_1);
-                                zone_id_3 = YodaDocument::GetZoneIdWithType(document, Trade, v204, -1, Use, -1, distance_13, v109);
+                                zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Trade, v204, -1, ZONETYPE_Use, -1, distance_13, v109);
                                 if ( zone_id_3 < 0 )
                                     break;
-                                document->wg_zone_type = Trade;
-                            }
-                            else
-                            {
+                                document->wg_zone_type = ZONETYPE_Trade;
+                            } else {
                                 distance_14 = Map::GetDistanceToCenter(x_1, y_1);
-                                zone_id_3 = YodaDocument::GetZoneIdWithType(document, Use, v204, -1, zone_id_10, -1, distance_14, v111);
-                                if ( zone_id_3 < 0 )
-                                    break;
-                                document->wg_zone_type = Use;
+                                zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Use, v204, -1, zone_id_10, -1, distance_14, v111);
+                                if ( zone_id_3 < 0 ) break;
+                                document->wg_zone_type = ZONETYPE_Use;
                             }
                             document->field_3394 = y_2 - 1;
-                        }
-                        else
-                        {
+                        } else {
                             document->wg_zone_type = zone_id_10;
                             document->field_3394 = v205 - 1;
                         }
                     }
-                    YodaDocument::AddZoneWithIdToWorld(document, zone_id_3);
-                    if ( zone_id_3 < 0 )
-                        break;
+                    document->AddZoneWithIdToWorld(zone_id_3);
+                    if ( zone_id_3 < 0 ) break;
                     world_idx_1 = x_1 + 10 * y_1;
                     v204 = 1;
+                    /*
                     document->world_things_1[world_idx_1].zone_type = document->wg_zone_type;
                     v113 = (char *)document + 0x34 * world_idx_1;
                     *((_WORD *)v113 + 610) = document->wg_last_added_item_id?;
@@ -724,84 +711,48 @@
                     *((_WORD *)v113 + 624) = 1;
                     document->world_zones[world_idx_1] = document->zones.ptrs[zone_id_3];
                     *((_WORD *)v113 + 602) = zone_id_3;
-                    if ( y_2 == 1 )
-                    {
+                     */
+                    if ( y_2 == 1 ) {
                         distance = Map::GetDistanceToCenter(x_1, y_1);
-                        YodaDocument::AddProvidedQuestWithItemID(document, document->wg_item_id, distance);
+                        document->AddProvidedQuestWithItemID(document->wg_item_id, distance);
                     }
+                    
                     if ( ++v206 > 200 )
                         goto LABEL_242;
                 }
-                CWordArray::SetSize(&document->puzzle_ids_1, 0, -1);
-                CWordArray::SetSize(&document->puzzle_ids_2, 0, -1);
-                CWordArray::SetSize(&document->item_ids, 0, -1);
-                planet_3 = document->planet;
-                if ( planet_3 == TATOOINE )
-                {
-                    puzzles = (char *)&document->tatooine_puzzle_ids;
-                }
-                else if ( planet_3 == HOTH )
-                {
-                    puzzles = (char *)&document->hoth_puzzle_ids;
-                }
-                else
-                {
-                    if ( planet_3 != ENDOR )
-                        goto LABEL_261;
-                    puzzles = (char *)&document->endor_puzzle_ids;
-                }
-                CWordArray::SetSize((WordArray *)puzzles, 0, -1);
-            LABEL_261:
-                v128 = document->provided_quests.count;
-                if ( v128 > 0 )
-                {
-                    v129 = 0;
-                    do
-                    {
-                        v130 = document->provided_quests.ptrs[v129];
-                        if ( v130 )
-                            ((void (__stdcall *)(signed int))v130->vtable->Deallocate)(1);
-                        ++v129;
-                        --v128;
-                    }
-                    while ( v128 );
-                }
-                CObArray::SetSize((Array *)&document->provided_quests, 0, -1);
-                v131 = document->required_quests.count;
-                if ( v131 > 0 )
-                {
-                    v132 = 0;
-                    do
-                    {
-                        v133 = document->required_quests.ptrs[v132];
-                        if ( v133 )
-                            ((void (__stdcall *)(signed int))v133->vtable->Deallocate)(1);
-                        ++v132;
-                        --v131;
-                    }
-                    while ( v131 );
-                }
-                CObArray::SetSize((Array *)&document->required_quests, 0, -1);
-                CWordArray::SetSize(&document->puzzle_ids, 0, -1);
-                CWordArray::SetSize(&document->world_zone_ids?, 0, -1);
-                return 0;
+                
+                // TODO: clear panet puzzle id array
+                // TODO: clear provided quests
+                // TODO: clear required quest
+                
+                document->puzzle_ids_1.clear();
+                document->puzzle_ids_2.clear();
+                document->item_ids.clear();
+                document->providedItems.clear();
+                document->requiredItems.clear();
+                document->puzzle_ids.clear();
+                document->chosen_zone_ids.clear();
+                
+                return;
             }
-            v95 += 10;
+            row++;
             ++y_1;
+            
+            y++;
+            x = 0;
         }
-        while ( v95 < (__int16 *)&v230 );
+        while ( row < 100); // (__int16 *)&v230;
     LABEL_242:
-        if ( !x_4 )
-        {
-            distance_1 = Map::GetDistanceToCenter((int)x_2, y_2);
-            zone_id_4 = YodaDocument::GetZoneIdWithType(document, EMPTY, -1, -1, -1, -1, distance_1, v116);
+        if ( !x_4 ) {
+            int distance_1 = Map::GetDistanceToCenter((int)x_2, y_2);
+            int zone_id_4 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_1, v116);
             if ( zone_id_4 >= 0 )
             {
                 idx_4 = x_1 + 10 * y_1;
-                document->world_things_1[idx_4].zone_type = document->wg_zone_type;
-                document->world_zones[idx_4] = document->zones.ptrs[zone_id_4];
-                document->world_things_1[idx_4].zone_id = zone_id_4;
-                YodaDocument::AddZoneWithIdToWorld(document, zone_id_4);
+                document->world_things[idx_4].zone_type = (ZONE_TYPE)document->wg_zone_type;
+                document->worldZones[idx_4] = document->zones[zone_id_4];
+                document->world_things[idx_4].zone_id = zone_id_4;
+                document->AddZoneWithIdToWorld(zone_id_4);
             }
         }
         --zone_type;
@@ -809,10 +760,11 @@
         --v198;
     }
     while ( v198 > 0 );
-    
-    
-LABEL_246:
-    v199 = x_8 - 1;
+
+    printf("After Loop 2\n");
+LABEL_246:;
+    /*
+        v199 = x_8 - 1;
     if ( x_8 - 1 <= 0 )
         goto LABEL_296;
     HIWORD(v197) = 0;
@@ -867,7 +819,7 @@ LABEL_246:
                     }
                     else
                     {
-                        rand_2 = ::rand();
+                        rand_2 = win_rand();
                         LOWORD(idx_6) = v199 - 1;
                         y_2 = 16
                         - ((unsigned int)((((unsigned __int64)rand_2 >> 32) ^ abs(rand_2) & 1) - ((unsigned __int64)rand_2 >> 32)) < 1);
@@ -1299,5 +1251,6 @@ LABEL_296:
     document->field_7C = 0;
     */
 #pragma mark -
+    printf("End Generate New World\n");
 }
 @end

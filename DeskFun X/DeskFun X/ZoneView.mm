@@ -135,17 +135,17 @@ static NSCache *cache = nil;
     }
     highlightedTileIndicator = [highlightedTileIndicator stringByAppendingFormat:@"\n%@", tileIDs];
 
-    std::vector<Hotspot> v = zone->getHotspots();
+    std::vector<Hotspot*> v = zone->getHotspots();
     for(int i=0; i < v.size(); i++)
     {
-        Hotspot st = v[i];
+        Hotspot* st = v[i];
 
-        int x = st.x;
-        int y = st.y;
+        int x = st->x;
+        int y = st->y;
 
-        int type = st.type;
-        int arg1 = st.arg1;
-        int arg2 = st.arg2;
+        int type = st->type;
+        int arg1 = st->arg1;
+        int arg2 = st->arg2;
 
         if(x != tileHighlight.x || y != tileHighlight.y) continue;
 
@@ -252,13 +252,13 @@ static NSCache *cache = nil;
         }
     }
 
-    std::vector<Hotspot> v = z->getHotspots();
+    std::vector<Hotspot*> v = z->getHotspots();
     for(int i=0; i < v.size(); i++)
     {
-        Hotspot st = v[i];
+        Hotspot* st = v[i];
 
-        int x = st.x;
-        int y = st.y;
+        int x = st->x;
+        int y = st->y;
         
         NSRect tileRect = NSMakeRect(x*tileSize.width, imageHeight - y*tileSize.height - tileSize.height, tileSize.width, tileSize.height);
         [[[NSColor purpleColor] colorWithAlphaComponent:0.6] setFill];

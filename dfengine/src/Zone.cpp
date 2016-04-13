@@ -118,11 +118,54 @@ void Zone::_readHotspots(FILE *file)
         return;
 
     // Parse script tiles
-    uint16_t script_tile_count;
-    fread(&script_tile_count, sizeof(script_tile_count), 1, file);
-    Hotspot *script_tiles = new Hotspot[script_tile_count];
-    fread(script_tiles, sizeof(Hotspot), script_tile_count, file);
-    this->setHotspots(script_tiles, script_tile_count);
+    uint16_t hotspot_count;
+    fread(&hotspot_count, sizeof(hotspot_count), 1, file);
+    Hotspot **hotspots = new Hotspot*[hotspot_count];
+    for(int i=0; i < hotspot_count; i++) {
+        Hotspot *hotspot = new Hotspot();
+        
+        uint32_t type;
+        fread(&type, sizeof(uint32_t), 1, file);
+        uint16_t data[3];
+        fread(data, sizeof(uint16_t), 3, file);
+        
+        hotspot->type = (HotspotType)type;
+        hotspot->x = data[0];
+        hotspot->y = data[1];
+        hotspot->enabled = data[2];
+
+        uint16_t v9;
+        fread(&v9, sizeof(uint16_t), 1, file);
+        hotspot->arg1 = v9;
+
+        switch (type) {
+            case 0:
+            case 1:
+            case 2:
+            case 5:
+                 hotspot->enabled = 0;
+                break;
+            case 3:
+            case 4:
+            case 9:
+            case 12:
+            case 14:
+            case 15:
+            case 6:
+            case 7:
+            case 8:
+                hotspot->enabled = 1;
+                break;
+            default:
+                hotspot->arg1 = -1;
+                hotspot->enabled = 1;
+                break;
+        }
+        
+        hotspots[i] = hotspot;
+    }
+    
+    this->setHotspots(hotspots, hotspot_count);
 }
 
 void Zone::_readAuxiliaryData(FILE* file)
@@ -318,16 +361,16 @@ size_t Zone::_writeHotspots(char *buffer)
 
     for(int i=0; i < _hotspots.size(); i++)
     {
-        Hotspot &tile = _hotspots[i];
-        uint32_t_pack(buffer+bytesWritten, tile.type);
+        Hotspot* tile = _hotspots[i];
+        uint32_t_pack(buffer+bytesWritten, tile->type);
         bytesWritten += sizeof(uint32_t);
-        uint16_t_pack(buffer+bytesWritten, tile.x);
+        uint16_t_pack(buffer+bytesWritten, tile->x);
         bytesWritten += sizeof(uint16_t);
-        uint16_t_pack(buffer+bytesWritten, tile.y);
+        uint16_t_pack(buffer+bytesWritten, tile->y);
         bytesWritten += sizeof(uint16_t);
-        uint16_t_pack(buffer+bytesWritten, tile.arg1);
+        uint16_t_pack(buffer+bytesWritten, tile->arg1);
         bytesWritten += sizeof(uint16_t);
-        uint16_t_pack(buffer+bytesWritten, tile.arg2);
+        uint16_t_pack(buffer+bytesWritten, tile->arg2);
         bytesWritten += sizeof(uint16_t);
     }
 

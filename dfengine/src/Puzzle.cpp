@@ -88,6 +88,8 @@ Puzzle::Puzzle(FILE *file)
 
     questItemIDs[0] = itemIDs[0];
     questItemIDs[1] = itemIDs[1];
+    item_1 = itemIDs[0];
+    item_2 = itemIDs[1];
 
     /*
      if(questItemIDs[0] == 0x63c)
