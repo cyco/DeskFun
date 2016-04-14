@@ -30,6 +30,7 @@ public:
     uint16 seed;
     
     int field_68, field_3390, wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, goal_puzzle_id_again, goal_tile_id_1, goal_tile_id_2, wg_zone_type;
+    int lastAddedQuestItemId=-1;
     vector<int> some_array;
     
     vector<WorldThing> world_things;
