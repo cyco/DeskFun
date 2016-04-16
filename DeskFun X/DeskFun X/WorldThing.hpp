@@ -16,12 +16,12 @@ class WorldThing
 {
 public:
     uint16 zone_id;
-    ZONE_TYPE zone_type;
+    ZONE_TYPE zone_type; // 602
     
-    uint16 unknown606;
-    uint16 unknown608;
-    uint16 unknown610;
-    uint16 unknown612;
+    uint16 unknown606; // 606
+    uint16 requiredItemID; // 608
+    uint16 findItemID; // 610
+    uint16 unknown612; // 612
 };
 
 #endif /* WorldThing_hpp */

@@ -17,6 +17,10 @@ YodaDocument::YodaDocument(){
     for(int i=0; i < 100; i++) {
         world_things[i].zone_type = (ZONE_TYPE)0;
         world_things[i].zone_id = -1;
+        world_things[i].findItemID = -1;
+        world_things[i].unknown606 = -1;
+        world_things[i].requiredItemID = -1;
+        world_things[i].unknown612 = -1;
     }
 }
 
@@ -1189,7 +1193,7 @@ int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int
             result = 0;
         } else {
             this->field_3390 = -1;
-            this->wg_last_added_item_id = item;
+            this->wg_last_added_item_id = puzzle3->item_1;
             this->wg_item_id = puzzle1->item_1;
             this->field_3394 = puzzle_idx;
             this->wg_item_id_unknown_2 = puzzle1->item_1;
@@ -1386,7 +1390,6 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
     Hotspot *hotspot_1; // eax@27
     int zone_id_1; // edx@28
     vector<uint16> v20; // [sp+Ch] [bp-30h]@13
-    int item_id_1; // [sp+20h] [bp-1Ch]@13
     int v24; // [sp+24h] [bp-18h]@19
     int didFindSuitableHotspot; // [sp+28h] [bp-14h]@1
     
@@ -1420,7 +1423,6 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
                     {
                         v20.clear();
                         v20.resize(0);
-                        item_id_1 = item_id;
                         tile_specs = tiles[item_id]->_specs;
                         if ( tile_specs & TILE_SPEC_THE_FORCE )
                         {
@@ -1455,7 +1457,7 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
                             hotspot->arg1 = item_id;
                             hotspot->enabled = 1;
                             AddRequiredQuestWithItemID(item_id, a4);
-                            wg_last_added_item_id = item_id_1;
+                            wg_last_added_item_id = item_id;
                         }
                     }
                     else
@@ -1780,7 +1782,6 @@ int YodaDocument::Unknown_5(int16* world){
     Zone *zone = NULL; // ecx@27
     int hotspot_count = 0; // eax@28
     WorldSize world_size = WorldSize_LARGE; // eax@35
-    int v22 = 0; // edx@57
     int v24 = 0; // ST1C_4@62
     int v25 = 0; // ST18_4@62
     int v27 = 0; // ST18_4@62
@@ -1829,16 +1830,18 @@ int YodaDocument::Unknown_5(int16* world){
         v38 = 0;
         zone_id_1 = 0;
         y = 0;
+        
+        int y_1 = 0, x_1 = 0;
         do
         {
             x = 0;
             do
             {
+                y_1 = 0, x_1 = 0;
                 intermediate_puzzle_item = world[x + 10 * y];
                 if ( intermediate_puzzle_item == 1 || intermediate_puzzle_item == 300 || intermediate_puzzle_item == 104 )
                 {
                     distance = Map::GetDistanceToCenter(x, y);
-                    v15 = distance;
                     this->field_2E64 = intermediate_puzzle_item == 104 || distance < 2;
                     if ( this->field_2E64 )
                     {
@@ -1875,15 +1878,15 @@ int YodaDocument::Unknown_5(int16* world){
                         }
                         if ( !has_hotspot_that_can_provide_item )
                             break;
-                        if ( !y )
+                        if ( !y_1 )
                         {
-                            y = 1;
+                            y_1 = 1;
                             v39 = v33;
                             v38 = v34;
-                            if ( !x )
+                            if ( !x_1 )
                                 break;
                         LABEL_56:
-                            x = 0;
+                            x_1 = 0;
                             zone_id_1 = -1;
                             break;
                         }
@@ -1893,10 +1896,10 @@ int YodaDocument::Unknown_5(int16* world){
                             // if ( abs((char *)v39 - (char *)v33) > 1 || abs((char *)v38 - (char *)v34) > 1 )
                             if ( abs(v39 - v33) > 1 || abs(v38 - v34) > 1 )
                             {
-                                ++y;
+                                ++y_1;
                                 v39 = v33;
                                 v38 = v34;
-                                if ( !x )
+                                if ( !x_1 )
                                     break;
                                 goto LABEL_56;
                             }
@@ -1906,10 +1909,10 @@ int YodaDocument::Unknown_5(int16* world){
                             //                            if ( abs((char *)v39 - (char *)v33) > 1 || abs((char *)v38 - (char *)v34) > 1 )
                             if ( abs(v39 - v33) > 1 || abs(v38 - v34) > 1 )
                             {
-                                ++y;
+                                ++y_1;
                                 v39 = v33;
                                 v38 = v34;
-                                if ( !x )
+                                if ( !x_1 )
                                     break;
                                 goto LABEL_56;
                             }
@@ -1921,17 +1924,17 @@ int YodaDocument::Unknown_5(int16* world){
                             //                            if ( abs((char *)v39 - (char *)v33) > 2 || abs((char *)v38 - (char *)v34) > 2 )
                             if ( abs(v39 - v33) > 2 || abs(v38 - v34) > 2 )
                             {
-                                ++y;
+                                ++y_1;
                                 v39 = v33;
                                 v38 = v34;
-                                if ( !x )
+                                if ( !x_1 )
                                     break;
                                 goto LABEL_56;
                             }
                         }
                         zone_id_1 = zone_id;
-                        x = 1;
-                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, v15, 0);
+                        x_1 = 1;
+                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance-1, 0);
                         if ( zone_id < 0 )
                             return 0;
                     }
@@ -1940,9 +1943,9 @@ int YodaDocument::Unknown_5(int16* world){
                     this->world_things[v22].zone_id = zone_id;
                     this->world_things[v22].zone_type = ZONETYPE_Empty;
                     this->world_things[v22].unknown606 = -1;
-                    this->world_things[v22].unknown608 = -1;
-                    this->world_things[v22].unknown610 = -1;
+                    this->world_things[v22].requiredItemID = -1;
                     this->world_things[v22].unknown612 = -1;
+                    this->world_things[v22].findItemID = -1;
                     
                     this->AddZoneWithIdToWorld(zone_id);
                     if ( zone_id == zone_id_1 )
@@ -1958,7 +1961,7 @@ int YodaDocument::Unknown_5(int16* world){
         }
         while ( y < 10 );
         
-        if ( y == 1 )
+        if ( y_1 == 1 )
         {
             v24 = v38;
             v25 = v39;
@@ -1973,8 +1976,8 @@ int YodaDocument::Unknown_5(int16* world){
                 this->worldZones[idx] = zone_1;
                 this->world_things[idx].zone_id = zone_id_3;
                 this->world_things[idx].unknown606 = -1;
-                this->world_things[idx].unknown608 = -1;
-                this->world_things[idx].unknown610 = -1;
+                this->world_things[idx].requiredItemID = -1;
+                this->world_things[idx].findItemID = -1;
                 this->AddZoneWithIdToWorld(zone_id_3);
             }
         }
@@ -1997,9 +2000,9 @@ int YodaDocument::Unknown_5(int16* world){
             ++v3;
             int word_idy = x + 10 * y;
             
-            this->world_things[word_idy].unknown610 = this->wg_last_added_item_id;
             this->world_things[word_idy].zone_type = ZONETYPE_Find;
             this->world_things[word_idy].zone_id = zone_id_2;
+            this->world_things[word_idy].findItemID = this->wg_last_added_item_id;
             this->worldZones[word_idy] = this->zones[(int16)zone_id_2];
             world[word_idy] = 306;
             

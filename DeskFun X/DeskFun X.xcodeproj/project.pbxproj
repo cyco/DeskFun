@@ -199,6 +199,7 @@
 		8365D04A1AC86DC90031E23E /* PuzzleWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PuzzleWindowController.h; sourceTree = "<group>"; };
 		8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PuzzleWindowController.mm; sourceTree = "<group>"; };
 		8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PuzzleWindowController.xib; sourceTree = "<group>"; };
+		836C5AEC1CC2CA0900988087 /* complete_samples.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = complete_samples.h; sourceTree = "<group>"; };
 		8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = DeskFunUI.framework; path = "/Users/chris/Library/Developer/Xcode/DerivedData/DeskFun-bqfulufdmfmqghgbybwodglzrzhz/Build/Products/Debug/DeskFunUI.framework"; sourceTree = "<absolute>"; };
 		8374EAA41B35AD5600B90F60 /* DeskFunUI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeskFunUI.xcodeproj; path = ../../DeskFunUI/DeskFunUI.xcodeproj; sourceTree = "<group>"; };
 		837D7E941B0482C40006BB19 /* TileLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileLayer.h; sourceTree = "<group>"; };
@@ -372,6 +373,7 @@
 				83645C061CB106FE00845F16 /* MapGeneration.h */,
 				83645C071CB106FE00845F16 /* MapGeneration.mm */,
 				83645C081CB106FE00845F16 /* MapGeneration.xib */,
+				836C5AEC1CC2CA0900988087 /* complete_samples.h */,
 			);
 			name = MapGeneration;
 			sourceTree = "<group>";
