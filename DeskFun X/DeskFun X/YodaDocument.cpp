@@ -21,9 +21,11 @@ int TILE_SPEC_MAP    = 0x100000;
 void YodaDocument::ShuffleVector(vector<int16> &array) {
     vector<int16> temp_array;
     
-    printf("Array::Shuffle (%lu items): ", array.size());
-    for(int16 item : array) printf("%d, ", item);
-    printf("\n");
+    /*
+     printf("Array::Shuffle (%lu items): ", array.size());
+     for(int16 item : array) printf("%d, ", item);
+     printf("\n");
+     //*/
     
     int16 count = array.size();
     temp_array.resize(count, -1);
@@ -43,27 +45,27 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
     if ( v18 >= 0 ) {
         do {
             // if (array[v18] != -1 || true) {
-                int did_find_free_spot = 0;
-                int16 v17 = 0;
-                do {
-                    for(int i=0; i < count; i++) {
-                        if ( temp_array[i] == -1 )
-                            did_find_free_spot = 1;
-                    }
-                    
-                    if ( !did_find_free_spot ) break;
-                    
-                    int random = win_rand();
-                    if(PRINT_ARRAY_SHUFFLE_RANDS) printf("Array::Shuffle rand 2: %x\n", random);
-                    int idx = random % count;
-                    
-                    if ( temp_array[idx] == -1 ) {
-                        ++v17;
-                        temp_array[idx] = array[v18];
-                        array[v18] = -1;
-                    }
+            int did_find_free_spot = 0;
+            int16 v17 = 0;
+            do {
+                for(int i=0; i < count; i++) {
+                    if ( temp_array[i] == -1 )
+                        did_find_free_spot = 1;
                 }
-                while ( !v17 );
+                
+                if ( !did_find_free_spot ) break;
+                
+                int random = win_rand();
+                if(PRINT_ARRAY_SHUFFLE_RANDS) printf("Array::Shuffle rand 2: %x\n", random);
+                int idx = random % count;
+                
+                if ( temp_array[idx] == -1 ) {
+                    ++v17;
+                    temp_array[idx] = array[v18];
+                    array[v18] = -1;
+                }
+            }
+            while ( !v17 );
             // }
             --v18;
         }
@@ -74,9 +76,11 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
         array[i] = temp_array[i];
     }
     
-    printf("=> (%lu items): ", array.size());
-    for(int16 item : array) printf("%d, ", item);
-    printf("\n");
+    /*
+     printf("=> (%lu items): ", array.size());
+     for(int16 item : array) printf("%d, ", item);
+     printf("\n");
+     //*/
 }
 
 int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5)
@@ -215,10 +219,8 @@ int YodaDocument::PuzzleUsedInLastGame(uint16 puzzle_id, Planet planet) {
 }
 
 int YodaDocument::PuzzleIsGoal(uint16 puzzle_id, Planet planet){
-    if ( planet == TATOOINE )
-    {
-        switch ( puzzle_id )
-        {
+    if ( planet == TATOOINE ) {
+        switch ( puzzle_id ) {
             case GOAL_FALCON:
             case GOAL_HAN:
             case GOAL_AMULET:
@@ -230,10 +232,8 @@ int YodaDocument::PuzzleIsGoal(uint16 puzzle_id, Planet planet){
         }
     }
     
-    if ( planet == HOTH )
-    {
-        switch ( puzzle_id )
-        {
+    if ( planet == HOTH ) {
+        switch ( puzzle_id ) {
             case GOAL_GENERAL_MARUTZ:
             case GOAL_HIDDEN_FACTORY:
             case GOAL_WARN_THE_REBELS:
@@ -248,10 +248,9 @@ int YodaDocument::PuzzleIsGoal(uint16 puzzle_id, Planet planet){
     if ( planet == ENDOR
         && puzzle_id >= (signed int)GOAL_FIND_LEIA
         && (puzzle_id <= (signed int)GOAL_IMPERIAL_BATTLE_STATION
-            || puzzle_id == GOAL_LANTERN_OF_SACRED_LIGHT) )
-    {
-        return 1;
-    }
+            || puzzle_id == GOAL_LANTERN_OF_SACRED_LIGHT) ) {
+            return 1;
+        }
     
     return 0;
 }
@@ -268,6 +267,7 @@ int YodaDocument::worldContainsZoneId(uint16 zoneID) {
     return 0;
 }
 void YodaDocument::AddZoneWithIdToWorld(uint16 zoneID){
+    printf("YodaDocument::AddZoneWithIdToWorld(%d)\n", zoneID);
     chosen_zone_ids.push_back(zoneID);
 }
 
@@ -292,8 +292,8 @@ Quest* YodaDocument::AddProvidedQuestWithItemID(uint16 itemID, uint16 unknown){
 
 Quest* YodaDocument::AddRequiredQuestWithItemID(uint16 itemID, uint16 unknown){
     printf("YodaDocument::AddRequiredQuestWithItemID(%d, %d)\n", itemID, unknown);
-    for(Quest *quest : requiredItems)
-        if(quest->itemID == itemID) return quest;
+    //    for(Quest *quest : requiredItems)
+    //        if(quest->itemID == itemID) return quest;
     
     lastAddedQuestItemId = itemID;
     requiredItems.push_back(new Quest(itemID, unknown));
@@ -301,6 +301,7 @@ Quest* YodaDocument::AddRequiredQuestWithItemID(uint16 itemID, uint16 unknown){
 }
 
 void YodaDocument::RemoveQuestProvidingItem(uint16 itemID) {
+    printf("YodaDocument::RemoveQuestProvidingItem(%d)\n", itemID);
     for(int i=0; i < providedItems.size(); i++)
         if(providedItems[i]->itemID == itemID) {
             providedItems.erase(providedItems.begin()+i);
@@ -309,6 +310,7 @@ void YodaDocument::RemoveQuestProvidingItem(uint16 itemID) {
 }
 
 void YodaDocument::RemoveQuestRequiringItem(uint16 itemID) {
+    printf("YodaDocument::RemoveQuestRequiringItem(%d)\n", itemID);
     for(int i=0; i < requiredItems.size(); i++)
         if(requiredItems[i]->itemID == itemID) {
             requiredItems.erase(requiredItems.begin()+i);
@@ -373,6 +375,7 @@ int YodaDocument::ZoneLeadsToItem(uint16 zoneID, uint16 itemID) {
 
 int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int use_array_2_ids)
 {
+    printf("YodaDocument::GetItemIDThatsNotRequiredYet(%d, %d, %d)\n", zone_id, unused, use_array_2_ids);
     vector<uint16> itemIDs;
     Zone *zone = zones[zone_id];
     
@@ -382,7 +385,7 @@ int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int 
             itemIDs.push_back(itemID);
         }
     }
-
+    
     if(itemIDs.size()){
         return itemIDs[win_rand() % itemIDs.size()];
     }
@@ -397,8 +400,7 @@ int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int 
     return -1;
 }
 #pragma mark -
-signed int YodaDocument::GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap)
-{
+signed int YodaDocument::GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap) {
     return 0;
 }
 
@@ -490,7 +492,7 @@ LABEL_15:
 signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
 {
     printf("YodaDocument::ChooseItemIDFromZone_0(%d, %d)\n", zone_id, item_id);
-
+    
     Zone *zone_1; // eax@1
     Zone *zone; // esi@1
     signed int result; // eax@2
@@ -604,7 +606,7 @@ signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
 signed int YodaDocument::ChooseItemIDFromZone_1(__int16 a2, int a3, int a4, __int16 a5, int a6)
 {
     printf("YodaDocument::ChooseItemIDFromZone_1(%d, %d, %d, %d, %d)\n", a2, a3, a4, a6, a6);
-
+    
     signed int result; // eax@1
     signed int v7; // ebx@1
     Zone *zone; // esi@2
@@ -720,7 +722,7 @@ LABEL_26:
 signed int YodaDocument::ChooseItemIDFromZone_2(__int16 zone_id, __int16 a3, int a4)
 {
     printf("YodaDocument::ChooseItemIDFromZone_2(%d, %d, %d)\n", zone_id, a3, a4);
-
+    
     Zone *zone; // eax@1
     Zone *zone_1; // edi@1
     int v7; // eax@4
@@ -808,86 +810,41 @@ LABEL_17:
 signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
 {
     printf("YodaDocument::ChoosePuzzleNPCForZone(%d)\n", zone_id);
-    signed int result; // eax@2
-    int v4; // edi@3
-    int v5; // esi@3
-    uint16 v6; // bx@5
-    int v7; // esi@8
-    int v8; // esi@12
-    int v9; // edi@13
-    int v10; // ebx@13
-    Hotspot *v11; // eax@14
-    __int16 zone_id_1; // ax@16
-    vector<uint16> v13; // [sp+Ch] [bp-2Ch]@4
-    int v15; // [sp+14h] [bp-24h]@6
-    Zone *zone; // [sp+24h] [bp-14h]@1
-    int v18; // [sp+28h] [bp-10h]@1
-    int v19; // [sp+34h] [bp-4h]@4
+    int v4 = 0; // edi@3
+    int v5 = 0; // esi@3
+    uint16 v6 = 0; // bx@5
+    int v8 = 0; // esi@12
+    int v9 = 0; // edi@13
+    int v10 = 0; // ebx@13
+    Hotspot *v11 = NULL; // eax@14
+    __int16 zone_id_1 = 0; // ax@16
+    ; // [sp+Ch] [bp-2Ch]@4
+    Zone *zone = NULL; // [sp+24h] [bp-14h]@1
+    int v18 = 0; // [sp+28h] [bp-10h]@1
     
     v18 = -1;
     zone = getZoneByID(zone_id);
-    if ( zone )
-    {
-        v4 = 0;
-        v5 = (int)zone->puzzleNPCTileIDs.size();
-        if ( v5 > 0 )
-        {
-            v13.clear();
-            v19 = 0;
-            int idx = 0;
-            if ( v5 > 0 )
-            {
-                do
-                {
-                    v6 = zone->puzzleNPCTileIDs[v4];
-                    if ( !HasQuestRequiringItem(zone->puzzleNPCTileIDs[v4]) ) {
-                        v13.insert(v13.begin()+idx, v6);
-                        idx++;
-                    }
-                    ++v4;
-                    --v5;
-                }
-                while ( v5 );
-            }
-            if ( idx > 0 )
-                v18 = win_rand() % idx;
-            else
-                v18 = -1;
-            v19 = -1;
+    if (!zone) return -1;
+    
+    vector<uint16> v13;
+    for(int i=0; i < zone->puzzleNPCTileIDs.size(); i++) {
+        if(!HasQuestRequiringItem(zone->puzzleNPCTileIDs[i])) {
+            v13.push_back(i);
         }
-        v8 = 0;
-        if ( v18 < 0 )
-        {
-            v9 = 0;
-            v10 = (int)zone->_hotspots.size();
-            if ( v10 > 0 )
-            {
-                do
-                {
-                    v11 = zone->_hotspots[v8];
-                    if ( v11 && v11->type == DoorIn )
-                    {
-                        zone_id_1 = v11->arg1;
-                        if ( zone_id_1 >= 0 )
-                            v18 = ChoosePuzzleNPCForZone(zone_id_1);
-                        if ( v18 >= 0 )
-                            break;
-                    }
-                    ++v8;
-                    ++v9;
-                }
-                while ( v10 > v9 );
-            }
-        } else {
-            return zone->puzzleNPCTileIDs[v18];
+    }
+    
+    if(v13.size()) {
+        return zone->puzzleNPCTileIDs[v13[win_rand() % v13.size()]];
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChoosePuzzleNPCForZone(hotspot->arg1);
+            if(result >= 0) return result;
         }
-        result = v18;
     }
-    else
-    {
-        result = -1;
-    }
-    return result;
+    
+    return -1;
 }
 
 signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
@@ -961,8 +918,7 @@ signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
                             }
                         }
                     }
-                    if ( v22 >= 0 )
-                        break;
+                    if ( v22 >= 0 ) return v22;
                 }
                 v18 += 2;
                 ++v19;
@@ -982,10 +938,8 @@ signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
                     if ( v13 && v13->type == 9 )
                     {
                         v14 = v13->arg1;
-                        if ( v14 >= 0 )
-                            v22 = ChooseSpawnForPuzzleNPC(v14, a3);
-                        if ( v22 >= 0 )
-                            break;
+                        if ( v14 >= 0 ) v22 = ChooseSpawnForPuzzleNPC(v14, a3);
+                        if ( v22 >= 0 ) return v22;
                     }
                     ++v12;
                     ++v11;
@@ -1007,7 +961,6 @@ signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
 signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int16 item_id_1, __int16 a5)
 {
     printf("YodaDocument::use_ids_from_array_1(%d, %d, %d, %d)\n", zone_id, a3, item_id_1, a5);
-    signed int result; // eax@2
     Zone *zone; // eax@3
     __int16 v8; // cx@10
     vector<uint16> *v9; // eax@14
@@ -1019,8 +972,6 @@ signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int
     signed int v15; // ebx@27
     __int16 a3a; // [sp+12h] [bp-Ah]@25
     Puzzle *a3_2; // [sp+14h] [bp-8h]@0
-    int a3_2a; // [sp+14h] [bp-8h]@29
-    signed int v19; // [sp+18h] [bp-4h]@29
     
     if ( zone_id < 0 )
         return 0;
@@ -1071,35 +1022,26 @@ LABEL_19:
     if ( v10 >= 0 )
         item_id = v13->item_1;
     v15 = ChoosePuzzleNPCForZone(zone_id);
-    if ( v15 >= 0 )
-    {
-        v19 = 1;
-        a3_2a = ChooseItemIDFromZone_2(zone_id, a3a, 0);
-        if ( item_id >= 0 )
-            v19 = ZoneLeadsToItem(zone_id, item_id);
-        if ( a3_2a && v19 ) {
-            if ( ChooseSpawnForPuzzleNPC(zone_id, v15) < 0 ) {
-                result = 0;
-            } else {
-                this->field_3390 = v15;
-                this->wg_last_added_item_id = item_id;
-                this->wg_item_id = a3a;
-                this->field_3394 = a3;
-                AddRequiredQuestWithItemID(v15, item_id_1);
-                AddRequiredItemsFromHotspots(zone_id);
-                result = 1;
-            }
-        }
-        else
-        {
-            result = 0;
-        }
-    }
-    else
-    {
-        result = 0;
-    }
-    return result;
+    if ( v15 < 0 ) return 0;
+    
+    int v19 = 1;
+    int a3_2a = ChooseItemIDFromZone_2(zone_id, a3a, 0);
+    if ( item_id >= 0 )
+        v19 = ZoneLeadsToItem(zone_id, item_id);
+    
+    if ( !a3_2a || !v19 ) return 0;
+    
+    if ( ChooseSpawnForPuzzleNPC(zone_id, v15) < 0 ) return 0;
+    
+    this->field_3390 = v15;
+    this->wg_last_added_item_id = item_id;
+    this->wg_item_id = a3a;
+    this->field_3394 = a3;
+    
+    AddRequiredQuestWithItemID(v15, item_id_1);
+    AddRequiredItemsFromHotspots(zone_id);
+    
+    return 1;
 }
 
 signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unknown)
@@ -1209,7 +1151,7 @@ int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int
     Puzzle *puzzle1 = puzzles[this->puzzle_ids_1[puzzle_idx]];
     Puzzle *puzzle3 = puzzles[this->puzzle_ids_1[puzzle_idx+1]];
     Puzzle *puzzle2 = puzzles[this->puzzle_ids_2[a4]];
-
+    
     puzzle1->unknown_3 = 0;
     v14 = ChoosePuzzleNPCForZone(zone_id);
     v15 = v14;
@@ -1327,6 +1269,7 @@ signed int YodaDocument::ZoneDoesNOTProvideRequiredItemID(__int16 zone_id)
 
 signed int YodaDocument::SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2, int use_required_items_array)
 {
+    printf("YodaDocument::SetupRequiredItemForZone_(%d, %d, %d)\n", zone_id, arg2, use_required_items_array);
     int count; // esi@6
     int idx; // edi@12
     uint16 item_id; // bx@13
@@ -1393,7 +1336,7 @@ signed int YodaDocument::SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2
         }
         while ( count );
     }
-
+    
     if ( !item_ids_1.size() ) {
         v22 = -1;
         return 0;
@@ -1449,6 +1392,7 @@ LABEL_31:
 
 int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int a4)
 {
+    printf("YodaDocument::AssociateItemWithZoneHotspot(%d, %d, %d)\n", zone_id, item_id, a4);
     signed int found_item_id_in_zone_items; // esi@1
     Zone *zone; // edi@3
     int item_ids; // eax@6
@@ -1577,258 +1521,225 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
 }
 
 int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, __int16 item_id_3, int a8) {
-    
     printf("YodaDocument::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, a3, a4, item_id_1, item_id_2, item_id_3, a8);
     
-    int zone_count; // esi@1
-    int zone_index; // ebx@3
-    Zone *zone; // ecx@4
-    int type; // eax@9
-    Zone *zone_1; // esi@17
-    int count_1; // edx@24
-    int idx_1; // ecx@25
-    __int16 v20; // eax@50
-    int v21; // eax@52
-    int v22; // esi@52
-    int puzzle_id; // eax@54
-    int v24; // esi@58
-    int v25; // eax@65
-    int16 v26; // si@65
-    int v28; // eax@74
-    int16 v29; // si@74
-    int zone_type; // eax@80
-    vector<int16> usable_zone_ids; // [sp+Ch] [bp-40h]@3
-    unsigned int v33; // [sp+20h] [bp-2Ch]@58
-    int break_1; // [sp+24h] [bp-28h]@1
-    __int16 item_id[2]; // [sp+28h] [bp-24h]@50
-    __int16 item_ids; // [sp+2Ch] [bp-20h]@50
-    int a5a; // [sp+30h] [bp-1Ch]@1
-    __int16 v38; // [sp+34h] [bp-18h]@54
-    __int16 count; // [sp+3Ah] [bp-12h]@16
-    __int16 idx; // [sp+3Ch] [bp-10h]@16
-    int zone_id; // [sp+3Eh] [bp-Eh]@17
-    int v42; // [sp+48h] [bp-4h]@3
-    
-    
-    break_1 = 0;
-    zone_count = (int)this->zones.size();
-    a5a = 0;
-    if ( !a3 ) a5a = 1;
-    zone_index = 0;
-
-    usable_zone_ids.clear();
-    v42 = 0;
-    if ( zone_count > 0 ) {
-        do {
-            zone = this->zones[zone_index];
-            if ( (size_t)zone != -1 && zone && zone->getPlanet() == this->planet ) {
-                switch ( type_1 ) {
-                    case ZONETYPE_Empty:
-                    case ZONETYPE_BlockadeNorth:
-                    case ZONETYPE_BlockadeSouth:
-                    case ZONETYPE_BlockadeEast:
-                    case ZONETYPE_BlockadeWest:
-                    case ZONETYPE_TravelStart:
-                    case ZONETYPE_TravelEnd:
-                    case ZONETYPE_Goal:
-                    case ZONETYPE_Town:
-                    case ZONETYPE_Trade:
-                    case ZONETYPE_Use:
-                        if ( zone->getType() == type_1 )
-                            goto add_to_temp_array;
-                        break;
-                    case ZONETYPE_Find:
-                        case ZONETYPE_FindTheForce: // ?
-                        type = zone->getType();
-                        if ( type == ZONETYPE_Find || type == ZONETYPE_FindTheForce )
-                            add_to_temp_array:
-                            usable_zone_ids.push_back(zone_index);
-                        break;
-                    default:
-                        break;
-                }
+    // item_id_1 = first required quest->itemID, last required quest->itemID
+    vector<int16> usable_zone_ids;
+    for(int zone_index=0; zone_index < this->zones.size(); zone_index++) {
+        Zone *zone = this->zones[zone_index];
+        if ( (size_t)zone == -1 || !zone || zone->getPlanet() != this->planet )
+            continue;
+        
+        switch ( type_1 ) {
+            case ZONETYPE_Empty:
+            case ZONETYPE_BlockadeNorth:
+            case ZONETYPE_BlockadeSouth:
+            case ZONETYPE_BlockadeEast:
+            case ZONETYPE_BlockadeWest:
+            case ZONETYPE_TravelStart:
+            case ZONETYPE_TravelEnd:
+            case ZONETYPE_Goal:
+            case ZONETYPE_Town:
+            case ZONETYPE_Trade:
+            case ZONETYPE_Use:
+                if ( zone->getType() == type_1 )
+                    usable_zone_ids.push_back(zone_index);
+                break;
+            case ZONETYPE_Find:
+            case ZONETYPE_FindTheForce: {// ?
+                Zone::Type type = zone->getType();
+                if ( type == ZONETYPE_Find || type == ZONETYPE_FindTheForce )
+                    usable_zone_ids.push_back(zone_index);
+                break;
             }
-            zone_index = zone_index + 1;
+            default:
+                break;
         }
-        while (zone_index < zone_count );
+        
     }
     
-    if ( !usable_zone_ids.size() ) {
-    return_failure:
+    int v42 = 0;
+    if (usable_zone_ids.size() == 0) {
         v42 = -1;
         return -1;
     }
     
     ShuffleVector(usable_zone_ids);
     
-    idx = 0;
-    zone_index = item_id_3;
-    count = usable_zone_ids.size();
-    int zone_idx = 0;
-    while ( 1 ) {
-        zone_idx = 0;
-        zone_id = usable_zone_ids[idx];
+    for(int idx=0; idx < usable_zone_ids.size(); idx++){
+        Zone *zone_1; // esi@17
+        int count_1; // edx@24
+        __int16 v20; // eax@50
+        int v21; // eax@52
+        int v22; // esi@52
+        int puzzle_id; // eax@54
+        int v24; // esi@58
+        int v25; // eax@65
+        int16 v26; // si@65
+        int zone_type; // eax@80
+        unsigned int v33; // [sp+20h] [bp-2Ch]@58
+        __int16 item_id[2]; // [sp+28h] [bp-24h]@50
+        __int16 item_ids; // [sp+2Ch] [bp-20h]@50
+        __int16 v38; // [sp+34h] [bp-18h]@54
+        
+        int zone_id = usable_zone_ids[idx];
         zone_1 = this->zones[zone_id];
-        if ( !worldContainsZoneId(zone_id) || (type_1 == ZONETYPE_Goal && puzzles_can_be_reused > 0) )
-        {
-            switch (type_1) {
-                case ZONETYPE_Empty:
-                    if ( field_2E64 ) {
-                        count_1 = (int)zone_1->_hotspots.size();
-                        if ( count_1 <= 0 ) {
-                            v42 = -1;
-                            return zone_id;
-                        }
-                        idx_1 = 0;
-                        int hotspot_idx;
-                        do {
-                            if ( (zone->_hotspots[hotspot_idx])->type == 13 )
-                                break;
-                            ++hotspot_idx;
-                            ++idx_1;
-                        }
-                        while ( idx_1 < count_1 );
-                    } else if ( zone_1->getType() == ZONETYPE_Empty ) {
+        if (worldContainsZoneId(zone_id) && (type_1 != ZONETYPE_Goal || puzzles_can_be_reused <= 0) )
+            continue;
+        
+        switch (type_1) {
+            case ZONETYPE_Empty:
+                if ( field_2E64 ) {
+                    count_1 = (int)zone_1->_hotspots.size();
+                    if ( count_1 <= 0 ) {
                         v42 = -1;
                         return zone_id;
                     }
-                    goto return_failure_if_at_end;
-                case ZONETYPE_BlockadeNorth:
-                    if ( zone_1->getType() != ZONETYPE_BlockadeNorth
-                        || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
-                    {
-                        goto return_failure_if_at_end;
+                    int idx_1 = 0;
+                    int hotspot_idx = 0;
+                    do {
+                        if ( (zone_1->_hotspots[hotspot_idx])->type == 13 )
+                            break;
+                        ++hotspot_idx;
+                        ++idx_1;
                     }
+                    while ( idx_1 < count_1 );
+                } else if ( zone_1->getType() == ZONETYPE_Empty ) {
                     v42 = -1;
                     return zone_id;
-                case ZONETYPE_BlockadeSouth:
-                    if ( zone_1->getType() != ZONETYPE_BlockadeSouth
-                        || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
-                    {
-                        goto return_failure_if_at_end;
-                    }
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_BlockadeEast:
-                    if ( zone_1->getType() != ZONETYPE_BlockadeEast || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
-                        goto return_failure_if_at_end;
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_BlockadeWest:
-                    if ( zone_1->getType() != ZONETYPE_BlockadeWest || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
-                        goto return_failure_if_at_end;
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_TravelStart:
-                    if ( zone_1->getType() != ZONETYPE_TravelStart || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
-                        goto return_failure_if_at_end;
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_TravelEnd:
-                    if ( zone_1->getType() != ZONETYPE_TravelEnd || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
-                        goto return_failure_if_at_end;
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_Goal:
-                    if ( zone_1->getType() != ZONETYPE_Goal )
-                        goto return_failure_if_at_end;
-                    if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 )
-                        goto return_failure_if_at_end;
-                    if ( ZoneLeadsToItem(zone_id, item_id_2) != 1 )
-                        goto return_failure_if_at_end;
-                    
-                    item_id[0] = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
-                    v20 = GetItemIDThatsNotRequiredYet(zone_id, a4, 1);
-                    item_ids = v20;
-                    if ( item_id[0] < 0 || (signed int)v20 < 0 )
-                        goto return_failure_if_at_end;
-                    v21 = GetNewPuzzleId(item_id[0], item_id_1, ZONETYPE_Goal, a5a);
-                    v22 = v21;
-                    if ( v21 >= 0 )
-                        this->puzzle_ids.push_back(v21);
-                    puzzle_id = GetNewPuzzleId((__int16)item_ids, item_id_2, ZONETYPE_Goal, a5a);
-                    v38 = puzzle_id;
-                    if ( puzzle_id >= 0 ) {
-                        this->puzzle_ids.push_back(puzzle_id);
-                    }
-                    if ( v22 < 0 || v38 < 0 )
-                        goto return_failure_if_at_end;
-                    
-                    this->puzzle_ids_1[(int16)a3] = v22;
-                    v33 = 2 * (int16)a3;
-                    v24 = (int16)a4;
-                    this->puzzle_ids_2[v24] = v38;
-                    if ( Unknown_7(zone_id, a3, a4, zone_index, a8) != 1 ) {
-                        this->puzzle_ids_1[v33 / 2] = -1;
-                        this->puzzle_ids_2[v24] = -1;
-                        goto return_failure_if_at_end;
-                    }
-                    AddRequiredQuestWithItemID(item_id[0], item_id_3);
-                    AddRequiredQuestWithItemID((__int16)item_ids, item_id_3);
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_Town:
-                    if ( zone_1->getType() != 11 ) goto return_failure_if_at_end;
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_Trade:
-                    if ( zone_1->getType() != 15 ) goto return_failure_if_at_end;
-                    if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 ) goto return_failure_if_at_end;
-                    v38 = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
-                    if ( v38 < 0 ) goto return_failure_if_at_end;
-                    v25 = GetNewPuzzleId(v38, item_id_1, ZONETYPE_Trade, a5a);
-                    v26 = v25;
-                    if ( v25 < 0 ) goto return_failure_if_at_end;
-                    
-                    if(a8) this->puzzle_ids_1[a3] = v25;
-                    else  this->puzzle_ids_2[a3] = v25;
-                    
-                    if ( Unknown_1(zone_id, a3, zone_index, a8) != 1 ) goto return_failure_if_at_end;
-                    this->puzzle_ids.push_back(v26);
-                    AddRequiredQuestWithItemID(v38, item_id_3);
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_Use:
-                    if ( zone_1->getType() != 16 )
-                        goto return_failure_if_at_end;
-                    if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 )
-                        goto return_failure_if_at_end;
-                    v38 = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
-                    if ( v38 < 0 ) goto return_failure_if_at_end;
-                    v28 = GetNewPuzzleId(v38, item_id_1, ZONETYPE_Use, a5a);
-                    v29 = v28;
-                    if ( v28 < 0 ) goto return_failure_if_at_end;
-                    if(a8) this->puzzle_ids_1[a3] = v28;
-                    else this->puzzle_ids_2[a3] = v28;
-                    
-                    if ( use_ids_from_array_1(zone_id, a3, item_id_3, a8) != 1 ) goto return_failure_if_at_end;
-                    this->puzzle_ids.push_back(v29);
-                    AddRequiredQuestWithItemID(v38, item_id_3);
-                    v42 = -1;
-                    return zone_id;
-                case ZONETYPE_Find:
-                    zone_type = zone_1->getType();
-                    if ( (zone_type != ZONETYPE_Find && zone_type != ZONETYPE_FindTheForce)
-                        || AssociateItemWithZoneHotspot(zone_id, item_id_1, zone_index) != 1 )
-                    {
-                        goto return_failure_if_at_end;
-                    }
-                    v42 = -1;
-                    return zone_id;
-                default:
-                    goto return_failure_if_at_end;
+                }
+                continue;
+            case ZONETYPE_BlockadeNorth:
+                if ( zone_1->getType() != ZONETYPE_BlockadeNorth
+                    || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
+                    continue;
+                }
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_BlockadeSouth:
+                if ( zone_1->getType() != ZONETYPE_BlockadeSouth
+                    || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
+                    continue;
+                }
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_BlockadeEast:
+                if ( zone_1->getType() != ZONETYPE_BlockadeEast || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                    continue;
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_BlockadeWest:
+                if ( zone_1->getType() != ZONETYPE_BlockadeWest || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                    continue;
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_TravelStart:
+                if ( zone_1->getType() != ZONETYPE_TravelStart || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                    continue;
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_TravelEnd:
+                if ( zone_1->getType() != ZONETYPE_TravelEnd || SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                    continue;
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_Goal:
+                if ( zone_1->getType() != ZONETYPE_Goal )
+                    continue;
+                if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 )
+                    continue;
+                if ( ZoneLeadsToItem(zone_id, item_id_2) != 1 )
+                    continue;
+                
+                item_id[0] = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
+                v20 = GetItemIDThatsNotRequiredYet(zone_id, a4, 1);
+                item_ids = v20;
+                if ( item_id[0] < 0 || (signed int)v20 < 0 )
+                    continue;
+                v21 = GetNewPuzzleId(item_id[0], item_id_1, ZONETYPE_Goal, !a3);
+                v22 = v21;
+                if ( v21 >= 0 )
+                    this->puzzle_ids.push_back(v21);
+                puzzle_id = GetNewPuzzleId((__int16)item_ids, item_id_2, ZONETYPE_Goal, !a3);
+                v38 = puzzle_id;
+                if ( puzzle_id >= 0 ) {
+                    this->puzzle_ids.push_back(puzzle_id);
+                }
+                if ( v22 < 0 || v38 < 0 )
+                    continue;
+                
+                this->puzzle_ids_1[(int16)a3] = v22;
+                v33 = 2 * (int16)a3;
+                v24 = (int16)a4;
+                this->puzzle_ids_2[v24] = v38;
+                if ( Unknown_7(zone_id, a3, a4, item_id_3, a8) != 1 ) {
+                    this->puzzle_ids_1[v33 / 2] = -1;
+                    this->puzzle_ids_2[v24] = -1;
+                    continue;
+                }
+                AddRequiredQuestWithItemID(item_id[0], item_id_3);
+                AddRequiredQuestWithItemID((__int16)item_ids, item_id_3);
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_Town:
+                if ( zone_1->getType() != 11 ) continue;
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_Trade:
+                if ( zone_1->getType() != 15 ) continue;
+                if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 ) continue;
+                v38 = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
+                if ( v38 < 0 ) continue;
+                v25 = GetNewPuzzleId(v38, item_id_1, ZONETYPE_Trade, !a3);
+                v26 = v25;
+                if ( v25 < 0 ) continue;
+                
+                if(a8) this->puzzle_ids_1[a3] = v25;
+                else  this->puzzle_ids_2[a3] = v25;
+                
+                if ( Unknown_1(zone_id, a3, item_id_3, a8) != 1 ) continue;
+                this->puzzle_ids.push_back(v26);
+                AddRequiredQuestWithItemID(v38, item_id_3);
+                v42 = -1;
+                return zone_id;
+            case ZONETYPE_Use:
+            {
+                if ( zone_1->getType() != 16 )
+                    continue;
+                if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 )
+                    continue;
+                int16 puzzleID1 = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
+                if ( puzzleID1 < 0 ) continue;
+                
+                int16 puzzleID2 = GetNewPuzzleId(puzzleID1, item_id_1, ZONETYPE_Use, !a3);
+                if ( puzzleID2 < 0 ) continue;
+                
+                if(a8) this->puzzle_ids_1[a3] = puzzleID2;
+                else this->puzzle_ids_2[a3] = puzzleID2;
+                
+                if ( use_ids_from_array_1(zone_id, a3, item_id_3, a8) != 1 ) continue;
+                this->puzzle_ids.push_back(puzzleID2);
+                
+                AddRequiredQuestWithItemID(puzzleID1, item_id_3);
+                v42 = -1;
+                return zone_id;
             }
+            case ZONETYPE_Find:
+                zone_type = zone_1->getType();
+                if ( (zone_type != ZONETYPE_Find && zone_type != ZONETYPE_FindTheForce)
+                    || AssociateItemWithZoneHotspot(zone_id, item_id_1, item_id_3) != 1 )
+                {
+                    continue;
+                }
+                v42 = -1;
+                return zone_id;
+            default:
+                continue;
         }
-    return_failure_if_at_end:
-        if ( ++idx >= count )
-            ++break_1;
-        if ( break_1 )
-            goto return_failure;
     }
     
-    
     return -1;
- }
+}
 
 
 signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8) {
@@ -1844,7 +1755,7 @@ signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 zone_index, in
     if(!ZoneDoesNOTProvideRequiredItemID(0)) {
         RemoveQuestRequiringItem(0);
         RemoveQuestRequiringItem(0);
-     
+        
         return 0x10;
     }
     
@@ -1856,3 +1767,5 @@ signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 zone_index, in
     
     return 0;
 }
+void YodaDocument::RemoveEmptyZoneIdsFromWorld(){}
+int YodaDocument::Unknown_5(int unknown){ return 0; }

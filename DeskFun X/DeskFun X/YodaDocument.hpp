@@ -50,6 +50,11 @@ public:
     
     vector<Zone*> worldZones;
     
+    
+    vector<uint16> tatooine_puzzle_ids;
+    vector<uint16> hoth_puzzle_ids;
+    vector<uint16> endor_puzzle_ids;
+    
     int puzzles_can_be_reused;
     
     YodaDocument();
@@ -90,6 +95,9 @@ public:
     signed int ChoosePuzzleNPCForZone(__int16 zone_id);
     signed int ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unknown);
     signed int Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8);
+    
+    void RemoveEmptyZoneIdsFromWorld();
+    int Unknown_5(int unknown);
 };
 
 #endif /* YodaDocument_hpp */
