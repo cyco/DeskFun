@@ -17,6 +17,12 @@ class WorldThing
 public:
     uint16 zone_id;
     ZONE_TYPE zone_type;
+    
+    uint32 unknown602;
+    uint16 unknown606;
+    uint16 unknown608;
+    uint16 unknown610;
+    uint16 unknown612;
 };
 
 #endif /* WorldThing_hpp */

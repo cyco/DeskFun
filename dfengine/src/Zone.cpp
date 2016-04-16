@@ -166,6 +166,7 @@ void Zone::_readHotspots(FILE *file)
     }
     
     this->setHotspots(hotspots, hotspot_count);
+    delete [] hotspots;
 }
 
 void Zone::_readAuxiliaryData(FILE* file)

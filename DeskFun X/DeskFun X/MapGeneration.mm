@@ -185,109 +185,81 @@
     // nmap->print();
     // // // // // // // // // // // // // // // // // // // // // // //
 #pragma mark -
-    int v65; // ST60_4@174
-    int zone_id; // eax@175
-    int v68; // edi@175
+    int zone_id = 0; // eax@175
+    int v68 = 0; // edi@175
     Zone *zone_1; // ecx@175
-    int hotspot_count; // edx@175
-    signed int did_find_travel_zone; // ecx@181
-    int class1idx; // edi@182
-    int v76; // edx@189
-    int v79; // edx@196
-    int v82; // edx@202
-    __int16 zone_id_9; // di@210
-    char *v88; // eax@211
-    int y_1; // edi@216
-    int v94; // ecx@216
-    int x_1; // esi@217
-    signed int zone_id_3; // ebp@225
-    int v104 = 1; // ST58_4@228
-    __int16 distance_12; // ax@230
-    int v107 = 0; // ST58_4@230
-    __int16 distance_13; // ax@233
-    int v109; // ST50_4@233
-    __int16 distance_14; // ax@235
-    int v111; // ST50_4@235
-    int world_idx_1; // ecx@239
-    int v116; // ST40_4@243
-    vector<uint16> *v119; // ecx@248
-    __int16 v121; // ax@248
-    int v122; // ecx@248
-    signed int zone_id_5; // ebp@276
-    __int16 distance_15; // ST34_2@279
-    int v136; // eax@279
-    int v137; // ST38_4@279
-    int v138; // eax@280
-    __int16 distance_3; // ax@281
-    int v141; // ST38_4@281
-    __int16 distance_2; // ax@284
-    int v143; // ST30_4@284
-    __int16 distance_4; // ax@286
-    int v145; // ST30_4@286
-    char *v147; // eax@291
-    __int16 distance_5; // ax@293
-    int v149; // ST28_4@293
-    __int16 zone_id_6; // ax@293
-    int world_idx_2; // edx@294
-    int y_5; // ebp@296
-    WorldThing *worldThing; // edi@296
-    int x_5; // esi@297
-    signed int did_not_place_zone; // ecx@298
-    signed int zone_id_1; // edx@301
+    int hotspot_count = 0; // edx@175
+    signed int did_find_travel_zone = 0; // ecx@181
+    int class1idx = 0; // edi@182
+    int v76 = 0; // edx@189
+    int v79 = 0; // edx@196
+    int v82 = 0; // edx@202
+    __int16 zone_id_9 = 0; // di@210
+    int y_1 = 0; // edi@216
+    signed int zone_id_3 = 0; // ebp@225
+    __int16 distance_12 = 0; // ax@230
+    __int16 distance_13 = 0; // ax@233
+    __int16 distance_14 = 0; // ax@235
+    int world_idx_1 = 0; // ecx@239
+    int v122 = 0; // ecx@248
+    signed int zone_id_5 = 0; // ebp@276
+    __int16 distance_15 = 0; // ST34_2@279
+    int v136 = 0; // eax@279
+    int v138 = 0; // eax@280
+    __int16 distance_3 = 0; // ax@281
+    __int16 distance_2 = 0; // ax@284
+    __int16 distance_4 = 0; // ax@286
+    __int16 distance_5 = 0; // ax@293
+    __int16 zone_id_6 = 0; // ax@293
+    int world_idx_2 = 0; // edx@294
+    int x_5 = 0; // esi@297
+    signed int did_not_place_zone = 0; // ecx@298
+    signed int zone_id_1 = 0; // edx@301
     Planet planet_7; // eax@303
     vector<uint16> *puzzle_ids; // ecx@307
-    int count_1; // edi@311
-    int idx_1; // esi@312
-    Quest *quest_3; // ecx@313
-    int count_2; // edi@316
-    int idx_2; // esi@317
+    int count_1 = 0; // edi@311
+    int idx_1 = 0; // esi@312
+    Quest *quest_3 = 0; // ecx@313
+    int count_2 = 0; // edi@316
+    int idx_2 = 0; // esi@317
     Quest *quest_2; // ecx@318
-    __int16 distance_6; // ax@322
-    int v166; // ST20_4@322
-    __int16 distance_7; // ax@324
-    int v168; // ST20_4@324
-    __int16 distance_8; // ax@326
-    int v170; // ST20_4@326
-    __int16 distance_9; // ax@328
-    int v172; // ST20_4@328
-    __int16 distance_16; // ax@330
-    int v174; // ST20_4@330
-    __int16 distance_10; // ax@341
-    int v176 = 0; // ST18_4@341
-    signed int zone_id_2; // ecx@341
+    __int16 distance_6 = 0; // ax@322
+    __int16 distance_7 = 0; // ax@324
+    __int16 distance_8 = 0; // ax@326
+    __int16 distance_9 = 0; // ax@328
+    __int16 distance_16 = 0; // ax@330
+    __int16 distance_10 = 0; // ax@341
+    signed int zone_id_2 = 0; // ecx@341
     Planet planet_4; // eax@347
     vector<uint16> *puzzle_array_1; // ecx@351
-    int v180; // edi@355
-    int v181; // esi@356
+    int v180 = 0; // edi@355
+    int v181 = 0; // esi@356
     Quest *v182; // ecx@357
-    int count; // edi@360
-    int idx; // esi@361
+    int count = 0; // edi@360
+    int idx = 0; // esi@361
     Quest *v185; // ecx@362
-    uint16 zone_id_7; // [sp-54h] [bp-240h]@0
-    int64_t v192; // [sp-30h] [bp-21Ch]@0
-    void *v193; // [sp-28h] [bp-214h]@0
-    int v194; // [sp-24h] [bp-210h]@0
-    int v195; // [sp-20h] [bp-20Ch]@51
-    int y_4; // [sp-1Ch] [bp-208h]@51
-    int v197; // [sp-18h] [bp-204h]@51
-    int v198; // [sp-14h] [bp-200h]@51
-    int v199; // [sp-14h] [bp-200h]@246
-    int idx_6; // [sp-10h] [bp-1FCh]@248
-    int zone_type; // [sp-Ch] [bp-1F8h]@51
+    int v192 = 0; // [sp-30h] [bp-21Ch]@0
+    int v194 = 0; // [sp-24h] [bp-210h]@0
+    int v195 = 0; // [sp-20h] [bp-20Ch]@51
+    int y_4 = 0; // [sp-1Ch] [bp-208h]@51
+    int v197 = 0; // [sp-18h] [bp-204h]@51
+    int v199 = 0; // [sp-14h] [bp-200h]@246
+    int idx_6 = 0; // [sp-10h] [bp-1FCh]@248
+    int zone_type = 0; // [sp-Ch] [bp-1F8h]@51
     int x_4 = 1; // [sp-8h] [bp-1F4h]@161
-    int y_2; // [sp-4h] [bp-1F0h]@161
-    int v204; // [sp+0h] [bp-1ECh]@0
+    int v204 = 0; // [sp+0h] [bp-1ECh]@0
     int v206 = 0; // [sp+8h] [bp-1E4h]@0
     int zone_id_11; // [sp+Ch] [bp-1E0h]@174
-    int x_2; // [sp+10h] [bp-1DCh]@3
-    int zone_id_10; // [sp+14h] [bp-1D8h]@46
-    int x_8; // [sp+18h] [bp-1D4h]@46
-    int zone_2; // [sp+1Ch] [bp-1D0h]@46
-    int y_6; // [sp+20h] [bp-1CCh]@46
-    int x_7; // [sp+24h] [bp-1C8h]@3
-    int transport_count; // [sp+2Ch] [bp-1C0h]@3
-    int x; // [sp+30h] [bp-1BCh]@53
-    int y_7; // [sp+3Ch] [bp-1B0h]@3
+    int x_2 = 0; // [sp+10h] [bp-1DCh]@3
+    int zone_id_10 = 0; // [sp+14h] [bp-1D8h]@46
+    int x_8 = 0; // [sp+18h] [bp-1D4h]@46
+    int zone_2 = 0; // [sp+1Ch] [bp-1D0h]@46
+    int y_6 = 0; // [sp+20h] [bp-1CCh]@46
+    int x_7 = 0; // [sp+24h] [bp-1C8h]@3
+    int transport_count = 0; // [sp+2Ch] [bp-1C0h]@3
+    int x = 0; // [sp+30h] [bp-1BCh]@53
+    int y_7 = 0; // [sp+3Ch] [bp-1B0h]@3
+    int v198 = 0;
     
     // view->field_4C = 1;
     document->field_68 = 0;
@@ -434,7 +406,7 @@
                             document->worldZones[idx_3] = document->zones[zone_id_10];
                             document->world_things[idx_3].zone_id = zone_id_9;
                             // v87 = zone_2;
-                            v88 = (char *)document + 0x34 * idx_3;
+                            // v88 = (char *)document + 0x34 * idx_3;
                             /*
                              *((_DWORD *)v88 + 0x12E) = 7;
                              *((_WORD *)v88 + 0x260) = document->wg_item_id;
@@ -475,7 +447,7 @@
                             document->worldZones[idx_3] = document->zones[zone_id_10];
                             document->world_things[idx_3].zone_id = zone_id_9;
                             // v87 = zone_2;
-                            v88 = (char *)document + 0x34 * idx_3;
+                            // v88 = (char *)document + 0x34 * idx_3;
                             /*
                              *((_DWORD *)v88 + 0x12E) = 7;
                              *((_WORD *)v88 + 0x260) = document->wg_item_id;
@@ -503,7 +475,7 @@
     }
     printf("After Transport Loop\n");
     
-    zone_id_11 = x = puzzle_count; //TODO: check where the 3 comes from
+    x = puzzle_count; //TODO: check where the 3 comes from
     x_8 = puzzles1_count;
     zone_id_10 = puzzles1_count+1; // puzzle_count
     zone_id_11 = puzzles2_count+1;
@@ -521,16 +493,13 @@
         document->field_3398 = -1;
         
         y_1 = 0;
-        v94 = 0;
         int row = 0;
         zone_2 = document->puzzle_ids_1[zone_id_11];
-        x_2 = 0;
         
         int x = 0, y = 0;
         do
         {
             int foundSomething = 0;
-            x_1 = 0;
             for(x=0; x < 10; x++) {
                 if(puzzles[x + 10 * y] == zone_id_10 - 1) {
                     foundSomething = 1;
@@ -543,8 +512,6 @@
             {
                 int world_puz_idx = puzzles[x + 10 * y];
                 zone_id_3 = -1;
-                y_6 = 0;
-                transport_count = document->puzzles[zone_2]->item_2;
                 while (1) {
                     if ( zone_id_3 >= 0 ) goto LABEL_242;
                     if ( zone_id_10 == puzzle_count ) {
@@ -621,7 +588,7 @@
                     }
                     
                     printf("v206 = %d\n", v206);
-                    if ( v206 > 200 ) goto LABEL_242;
+                    if (v206 > 200 ) goto LABEL_242;
                     if (v198 == 1) goto LABEL_242;
                 }
                 
@@ -637,6 +604,7 @@
                 document->puzzle_ids.clear();
                 document->chosen_zone_ids.clear();
                 
+                printf("-= FAILURE 2 =-");
                 return;
             }
             
@@ -677,7 +645,6 @@ LABEL_246:;
     v199 = x_8 - 1;
     if ( x_8 - 1 <= 0 )
         goto LABEL_296;
-    v197 = 0;
     
     zone_type = 1;
     
@@ -688,7 +655,6 @@ LABEL_246:;
         document->wg_item_id_unknown_2 = -1;
         document->wg_item_id = -1;
         document->wg_item_id_unknown_3 = -1;
-        v119 = &document->puzzle_ids_2;
         document->field_3390 = -1;
         document->field_3394 = -1;
         document->field_3398 = -1;
@@ -696,7 +662,6 @@ LABEL_246:;
         // v121 = v119[v199];
         v122 = 0;
         // row = &puzzles;
-        y_2 = (uint16)v121;
         int x =0, y=0, row = 0;
         printf("zone_type = %d\n", zone_type);
 
@@ -716,14 +681,11 @@ LABEL_246:;
             if ( foundSomething )
             {
                 zone_id_5 = -1;
-                v204 = 0;
-                /*LOWORD*/ x_4 = document->puzzles[y_2]->item_1;
                 while ( 1 )
                 {
                     if ( zone_id_5 >= 0 ) goto LABEL_292;
                     if ( v199 == x_8 ) {
                         distance_15 = Map::GetDistanceToCenter(x, y);
-                        v136 = v199;
                         /* HIWORD(v136) = HIWORD(v199); */
                         /* LOWORD(v136) = v199 - 1; */
                         v136 = v199-1;
@@ -811,11 +773,9 @@ LABEL_246:;
                         
                     LABEL_311:
                         count_1 = (int)document->providedItems.size();
-                        if ( count_1 > 0 )
-                        {
+                        if ( count_1 > 0 ) {
                             idx_1 = 0;
-                            do
-                            {
+                            do {
                                 quest_3 = document->providedItems[idx_1];
                                 if ( quest_3 )
                                     ; // dealloc quest 3
@@ -827,8 +787,7 @@ LABEL_246:;
                         document->providedItems.clear();
                         
                         count_2 = (int)document->requiredItems.size();
-                        if ( count_2 > 0 )
-                        {
+                        if ( count_2 > 0 ) {
                             idx_2 = 0;
                             do
                             {
@@ -844,23 +803,25 @@ LABEL_246:;
                         document->puzzle_ids.clear();
                         document->chosen_zone_ids.clear();
                         
+                        printf("-= FAILURE 1 =-\n");
                         return;
                     }
                     ++idx_6;
                     int idx_5 = x + 10 * y;
                     v195 = 1;
-                    // document->world_things[idx_5].zone_type = (ZONE_TYPE)document->wg_zone_type;
-                    v147 = (char *)document + 52 * idx_5;
+                    document->world_things[idx_5].zone_type = (ZONE_TYPE)document->wg_zone_type;
+                    // v147 = (char *)document + 52 * idx_5;
                     /*
                      *((_WORD *)v147 + 610) = document->wg_last_added_item_id?;
                      *((_WORD *)v147 + 608) = document->wg_item_id;
                      *((_WORD *)v147 + 612) = document->field_3390;
                      *((_WORD *)v147 + 606) = document->field_3394;
                      *((_WORD *)v147 + 624) = 0;
-                     document->world_zones[idx_5] = document->zones.ptrs[zone_id_5];
                      *((_WORD *)v147 + 602) = zone_id_5;
                      */
-                    if ( idx_6 > 200 ) goto LABEL_292;
+                    document->worldZones[idx_5] = document->zones[zone_id_5];
+
+                    if ( idx_6 > 200) goto LABEL_292;
                 }
             }
             row += 10;
@@ -891,7 +852,6 @@ LABEL_246:;
     
     
 LABEL_296:
-    y_5 = 0;
     printf("After Loop 2\n");
 #pragma mark - Third Loop
     // worldThing = (WorldThing *)((char *)&document->world_things_1[0] + 8);
@@ -912,7 +872,6 @@ LABEL_296:
             if ( zone_2 && zone_2 != 305 && !document->worldZones[idx])
             {
                 zone_id_1 = -1;
-                v193 = (void*)zone_2;
                 if ( (unsigned int)((__int16)zone_2 - 201) <= 103 )
                 {
                     switch ( (__int16)zone_2 )
@@ -969,7 +928,6 @@ LABEL_296:
                             zone_id_2 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_10, 0);
                             if ( zone_id_2 >= 0 )
                             {
-                                zone_id_7 = zone_id_2;
                                 zone_id_1 = zone_id_2;
                                 worldThing->zone_type = ZONETYPE_Empty;
                                 /*
@@ -1060,6 +1018,7 @@ LABEL_296:
                 document->requiredItems.clear();
                 document->puzzle_ids.clear();
                 document->chosen_zone_ids.clear();
+                printf("-= FAILURE 3 =-\n");
                 return;
             }
             puzzle_array_1 = &document->endor_puzzle_ids;
