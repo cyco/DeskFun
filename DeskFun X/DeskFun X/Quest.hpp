@@ -20,4 +20,15 @@ public:
         this->unknown = unknown;
     }
 };
+
+class MapPoint {
+public:
+    int x;
+    int y;
+    
+    MapPoint(int x, int y){
+        this->x = x;
+        this->y = y;
+    }
+};
 #endif /* Quest_hpp */

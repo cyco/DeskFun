@@ -253,7 +253,7 @@
     __int16 distance_16; // ax@330
     int v174; // ST20_4@330
     __int16 distance_10; // ax@341
-    int v176; // ST18_4@341
+    int v176 = 0; // ST18_4@341
     signed int zone_id_2; // ecx@341
     Planet planet_4; // eax@347
     vector<uint16> *puzzle_array_1; // ecx@351
@@ -344,7 +344,7 @@
             int distance_11 = Map::GetDistanceToCenter(x_8, y_6);
             
             zone_id_10 = -1;
-            int16 zone_id_8 = document->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance_11, v65);
+            int16 zone_id_8 = document->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance_11, 0);
             
             zone_id_11 = zone_id_8;
             if ( zone_id_8 >= 0 )
@@ -551,7 +551,7 @@
                         int16 item_1 = document->puzzles[zone_2]->item_1;
                         int16 item_2 = document->puzzles[zone_2]->item_2;
                         int distance = Map::GetDistanceToCenter(x, y);
-                        zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Goal, zone_id_11 - 1, x - 1, item_1, item_2, distance, v104);
+                        zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Goal, zone_id_11 - 1, x - 1, item_1, item_2, distance, 1);
                         if ( zone_id_3 < 0 ) break;
                         
                         document->wg_zone_type = ZONETYPE_Goal;
@@ -576,16 +576,16 @@
                                                                 item_id,
                                                                 -1,
                                                                 distance_12,
-                                                                v107+1);
+                                                                0+1);
                         if ( zone_id_3 < 0) {
                             if ( zone_id_10 == ZONETYPE_Use ) {
                                 distance_13 = Map::GetDistanceToCenter(x, y);
-                                zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Trade, v204, -1, ZONETYPE_Use, -1, distance_13, v109);
+                                zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Trade, v204, -1, ZONETYPE_Use, -1, distance_13, 0);
                                 if ( zone_id_3 < 0 ) break;
                                 document->wg_zone_type = ZONETYPE_Trade;
                             } else {
                                 distance_14 = Map::GetDistanceToCenter(x, y);
-                                zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Use, v204, -1, zone_id_10, -1, distance_14, v111);
+                                zone_id_3 = document->GetZoneIdWithType(ZONETYPE_Use, v204, -1, zone_id_10, -1, distance_14, 0);
                                 if ( zone_id_3 < 0 ) break;
                                 document->wg_zone_type = ZONETYPE_Use;
                             }
@@ -652,7 +652,7 @@
         printf("x_4 = %d\n", x_4);
         if ( !x_4 ) {
             int distance_1 = Map::GetDistanceToCenter(x, y);
-            int zone_id_4 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_1, v116);
+            int zone_id_4 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_1, 0);
             if ( zone_id_4 >= 0 )
             {
                 int idx_4 = x + 10 * y;
@@ -671,9 +671,9 @@
     while ( v198 > 0 );
     
 LABEL_246:;
+    printf("After Loop 1\n");
+    printf("After Loop 1\n");
 #pragma mark - Second Loop
-    printf("After Loop 1\n");
-    printf("After Loop 1\n");
     v199 = x_8 - 1;
     if ( x_8 - 1 <= 0 )
         goto LABEL_296;
@@ -727,7 +727,7 @@ LABEL_246:;
                         /* HIWORD(v136) = HIWORD(v199); */
                         /* LOWORD(v136) = v199 - 1; */
                         v136 = v199-1;
-                        zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Goal, v136, -1, idx_6, -1, distance_15, v137);
+                        zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Goal, v136, -1, idx_6, -1, distance_15, 0);
                         if ( zone_id_5 < 0 )
                             goto LABEL_303;
                         document->wg_zone_type = ZONETYPE_Goal;
@@ -767,7 +767,7 @@ LABEL_246:;
                         if ( zone_type == ZONETYPE_Use )
                         {
                             distance_2 = Map::GetDistanceToCenter(x, y);
-                            zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, v197, -1, distance_2, v143);
+                            zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, v197, -1, distance_2, 0);
                             if ( zone_id_5 < 0 )
                                 goto LABEL_303;
                             document->wg_zone_type = 15;
@@ -775,7 +775,7 @@ LABEL_246:;
                         else
                         {
                             distance_4 = Map::GetDistanceToCenter(x, y);
-                            zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Use, v195, -1, v197, -1, distance_4, v145);
+                            zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Use, v195, -1, v197, -1, distance_4, 0);
                             if ( zone_id_5 < 0 )
                                 goto LABEL_303;
                             document->wg_zone_type = 16;
@@ -873,7 +873,7 @@ LABEL_246:;
         if ( !v195 )
         {
             distance_5 = Map::GetDistanceToCenter(x, y);
-            zone_id_6 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_5, v149);
+            zone_id_6 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_5, 0);
             if ( zone_id_6 >= 0 )
             {
                 world_idx_2 = x + 10 * y;
@@ -899,7 +899,7 @@ LABEL_296:
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
             int idx = x + 10 * y;
-            int16 zone_2 = map[idx];
+            int zone_2 = map[idx];
             
             did_not_place_zone = 0;
             document->field_3394 = -1;
@@ -907,47 +907,49 @@ LABEL_296:
             document->wg_item_id = -1;
             document->wg_last_added_item_id = -1;
             
+            WorldThing *worldThing = &document->world_things[idx];
+            
             if ( zone_2 && zone_2 != 305 && !document->worldZones[idx])
             {
                 zone_id_1 = -1;
                 v193 = (void*)zone_2;
-                if (zone_2 - 201 <= 103 )
+                if ( (unsigned int)((__int16)zone_2 - 201) <= 103 )
                 {
                     switch ( (__int16)zone_2 )
                     {
                         case WORLD_ITEM_SPACEPORT:
-                            distance_6 = Map::GetDistanceToCenter(x_5, y_5);
-                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance_6, v166);
+                            distance_6 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance_6, 0);
                             if ( zone_id_1 >= 0 )
-                                //     worldThing->vtable = (void *)ZONETYPE_Town;
+                                worldThing->zone_type = ZONETYPE_Town;
                                 goto did_not_find_zone_with_required_type;
                         case WORLD_ITEM_BLOCK_WEST:
-                            distance_7 = Map::GetDistanceToCenter(x_5, y_5);
-                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance_7, v168);
+                            distance_7 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance_7, 0);
                             if ( zone_id_1 < 0 )
                                 goto did_not_find_zone_with_required_type;
-                            //     worldThing->vtable = (void *)ZONETYPE_BlockadeWest;
+                            worldThing->zone_type = ZONETYPE_BlockadeWest;
                             goto LABEL_332;
                         case WORLD_ITEM_BLOCK_EAST:
-                            distance_8 = Map::GetDistanceToCenter(x_5, y_5);
-                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance_8, v170);
+                            distance_8 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance_8, 0);
                             if ( zone_id_1 < 0 )
                                 goto did_not_find_zone_with_required_type;
-                            //     worldThing->vtable = (void *)ZONETYPE_BlockadeEast;
+                            worldThing->zone_type = ZONETYPE_BlockadeEast;
                             goto LABEL_332;
                         case WORLD_ITEM_BLOCK_NORTH:
-                            distance_9 = Map::GetDistanceToCenter(x_5, y_5);
-                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance_9, v172);
+                            distance_9 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance_9, 0);
                             if ( zone_id_1 < 0 )
                                 goto did_not_find_zone_with_required_type;
-                            //     worldThing->vtable = (void *)ZONETYPE_BlockadeNorth;
+                            worldThing->zone_type = ZONETYPE_BlockadeNorth;
                             goto LABEL_332;
                         case WORLD_ITEM_BLOCK_SOUTH:
-                            distance_16 = Map::GetDistanceToCenter(x_5, y_5);
-                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance_16, v174);
+                            distance_16 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance_16, 0);
                             if ( zone_id_1 >= 0 )
                             {
-                                //     worldThing->vtable = (void *)ZONETYPE_BlockadeSouth;
+                               worldThing->zone_type= ZONETYPE_BlockadeSouth;
                             LABEL_332:;
                                 //     worldThing->zone_type = document->wg_item_id;
                             }
@@ -963,15 +965,16 @@ LABEL_296:
                     {
                         if ( did_not_place_zone )
                         {
-                            distance_10 = Map::GetDistanceToCenter(x_5, y_5);
-                            zone_id_2 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_10, v176);
+                            distance_10 = Map::GetDistanceToCenter(x, y);
+                            zone_id_2 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_10, 0);
                             if ( zone_id_2 >= 0 )
                             {
                                 zone_id_7 = zone_id_2;
+                                zone_id_1 = zone_id_2;
+                                worldThing->zone_type = ZONETYPE_Empty;
                                 /*
                                  *(_DWORD *)v192 = document->zones.ptrs[zone_id_2];
                                  worldThing[-1].field_30 = zone_id_2;
-                                 worldThing->vtable = (void *)EMPTY;
                                  worldThing->field_C = -1;
                                  LOWORD(worldThing->zone_type) = -1;
                                  worldThing->required_item_id = -1;
@@ -988,9 +991,9 @@ LABEL_296:
                      worldThing[-1].field_30 = zone_id_1;
                      worldThing->field_C = -1;
                      */
-                    if ( false /*worldThing->vtable != (void *)Town*/ )
+                    if ( worldThing->zone_type != ZONETYPE_Town)
                         add_zone_to_world:
-                        document->AddZoneWithIdToWorld(zone_id_7);
+                        document->AddZoneWithIdToWorld(zone_id_1);
                 }
             }
             ++worldThing;
@@ -1002,7 +1005,7 @@ LABEL_296:
     
     
     printf("After Loop 3\n");
-    if ( !document->Unknown_5(zone_id_11) ) // &zone_id_11
+    if ( !document->Unknown_5((int16*)map) ) // &zone_id_11
     {
         document->puzzle_ids_1.clear();
         document->puzzle_ids_2.clear();

@@ -7,12 +7,21 @@
 //
 
 #include "YodaDocument.hpp"
+#include "Map.hpp"
 
 #define PRINT_ARRAY_SHUFFLE_RANDS 0
 
 YodaDocument::YodaDocument(){
     puzzles_can_be_reused = -1;
+    world_things.resize(100);
+    for(int i=0; i < 100; i++) {
+        world_things[i].zone_type = (ZONE_TYPE)-1;
+        world_things[i].zone_id = -1;
+    }
 }
+
+#define THE_FORCE 0x1ff
+#define LOCATOR 0x1a5
 
 int TILE_SPEC_THE_FORCE  = 0x40;
 int TILE_SPEC_USEFUL  = 0x80;
@@ -25,8 +34,7 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
      printf("Array::Shuffle (%lu items): ", array.size());
      for(int16 item : array) printf("%d, ", item);
      printf("\n");
-     //*/
-    
+    //*/
     int16 count = array.size();
     temp_array.resize(count, -1);
     if ( count <= 0 ) return;
@@ -80,7 +88,7 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
      printf("=> (%lu items): ", array.size());
      for(int16 item : array) printf("%d, ", item);
      printf("\n");
-     //*/
+    //*/
 }
 
 int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5)
@@ -268,7 +276,7 @@ int YodaDocument::worldContainsZoneId(uint16 zoneID) {
 }
 void YodaDocument::AddZoneWithIdToWorld(uint16 zoneID){
     printf("YodaDocument::AddZoneWithIdToWorld(%d)\n", zoneID);
-    chosen_zone_ids.push_back(zoneID);
+    chosen_zone_ids.insert(chosen_zone_ids.begin(), zoneID);
 }
 
 uint16 YodaDocument::getZoneID(Zone *zone){
@@ -281,22 +289,22 @@ uint16 YodaDocument::getZoneIDAt(int x, int y){
     return world_things[x + 10 * y].zone_id;
 }
 
-Quest* YodaDocument::AddProvidedQuestWithItemID(uint16 itemID, uint16 unknown){
-    printf("YodaDocument::AddProvidedQuestWithItemID(%d, %d)\n", itemID, unknown);
+Quest* YodaDocument::AddProvidedQuestWithItemID(uint16 itemID, uint16 maximumDistance){
+    printf("YodaDocument::AddProvidedQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
     for(Quest *quest : providedItems)
         if(quest->itemID == itemID) return quest;
     
-    providedItems.push_back(new Quest(itemID, unknown));
+    providedItems.insert(providedItems.begin() , new Quest(itemID, maximumDistance));
     return providedItems[providedItems.size()-1];
 }
 
-Quest* YodaDocument::AddRequiredQuestWithItemID(uint16 itemID, uint16 unknown){
-    printf("YodaDocument::AddRequiredQuestWithItemID(%d, %d)\n", itemID, unknown);
+Quest* YodaDocument::AddRequiredQuestWithItemID(uint16 itemID, uint16 maximumDistance){
+    printf("YodaDocument::AddRequiredQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
     //    for(Quest *quest : requiredItems)
     //        if(quest->itemID == itemID) return quest;
     
     lastAddedQuestItemId = itemID;
-    requiredItems.push_back(new Quest(itemID, unknown));
+    requiredItems.push_back(new Quest(itemID, maximumDistance));
     return requiredItems[requiredItems.size()-1];
 }
 
@@ -810,20 +818,7 @@ LABEL_17:
 signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
 {
     printf("YodaDocument::ChoosePuzzleNPCForZone(%d)\n", zone_id);
-    int v4 = 0; // edi@3
-    int v5 = 0; // esi@3
-    uint16 v6 = 0; // bx@5
-    int v8 = 0; // esi@12
-    int v9 = 0; // edi@13
-    int v10 = 0; // ebx@13
-    Hotspot *v11 = NULL; // eax@14
-    __int16 zone_id_1 = 0; // ax@16
-    ; // [sp+Ch] [bp-2Ch]@4
-    Zone *zone = NULL; // [sp+24h] [bp-14h]@1
-    int v18 = 0; // [sp+28h] [bp-10h]@1
-    
-    v18 = -1;
-    zone = getZoneByID(zone_id);
+    Zone *zone = getZoneByID(zone_id);
     if (!zone) return -1;
     
     vector<uint16> v13;
@@ -1467,7 +1462,6 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
                                 if ( zone->_hotspots[idx]->type == hotspot_type )
                                 {
                                     v20.push_back(idx);
-                                    // CWordArray::SetAtGrow((WordArray *)&v20, hotspot_indexes, idx);
                                     didFindSuitableHotspot = 1;
                                 }
                                 ++idx;
@@ -1477,7 +1471,7 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
                         if ( didFindSuitableHotspot == 1 )
                         {
                             v13 = hotspot_indexes;
-                            hotspot = zone->_hotspots[win_rand() % v13];
+                            hotspot = zone->_hotspots[v20[win_rand() % v20.size()]];
                             hotspot->arg1 = item_id;
                             hotspot->enabled = 1;
                             AddRequiredQuestWithItemID(item_id, a4);
@@ -1547,8 +1541,7 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
                 break;
             case ZONETYPE_Find:
             case ZONETYPE_FindTheForce: {// ?
-                Zone::Type type = zone->getType();
-                if ( type == ZONETYPE_Find || type == ZONETYPE_FindTheForce )
+                if ( zone->getType() == ZONETYPE_Find || zone->getType() == ZONETYPE_FindTheForce )
                     usable_zone_ids.push_back(zone_index);
                 break;
             }
@@ -1768,4 +1761,422 @@ signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 zone_index, in
     return 0;
 }
 void YodaDocument::RemoveEmptyZoneIdsFromWorld(){}
-int YodaDocument::Unknown_5(int unknown){ return 0; }
+int YodaDocument::Unknown_5(int16* world){
+    printf("YodaDocument::Unknown_5(...)\n");
+    
+    int v3; // edi@1
+    int v4; // eax@1
+    Quest *quest; // ebp@2
+    __int16 v6; // bx@2
+    uint16 zone_id_2; // ax@3
+    int word_idy; // ebx@4
+    char *v9; // edx@4
+    int v10; // ebx@6
+    int v11; // edi@6
+    Quest *v12; // ecx@7
+    int intermediate_puzzle_item; // edi@12
+    int distance; // eax@15
+    __int16 v15; // bx@15
+    signed int result; // eax@18
+    int zone_id; // edi@22
+    Zone *zone; // ecx@27
+    int hotspot_count; // eax@28
+    WorldSize world_size; // eax@35
+    int v22; // edx@57
+    char *v23; // eax@57
+    int v24; // ST1C_4@62
+    int v25; // ST18_4@62
+    __int16 v26; // ax@62
+    int v27; // ST18_4@62
+    int zone_id_3; // eax@62
+    Zone *zone_1; // ecx@63
+    int idx; // ebp@63
+    char *v31; // edx@63
+    int v33; // [sp+8h] [bp-28h]@0
+    int v34; // [sp+Ch] [bp-24h]@0
+    int x; // [sp+10h] [bp-20h]@2
+    int y; // [sp+14h] [bp-1Ch]@2
+    int zone_id_1; // [sp+18h] [bp-18h]@10
+    int v38; // [sp+1Ch] [bp-14h]@1
+    int v39; // [sp+20h] [bp-10h]@39
+    int has_hotspot_that_can_provide_item; // [sp+24h] [bp-Ch]@28
+    int v41; // [sp+2Ch] [bp-4h]@1
+    
+    this->AddProvidedQuestWithItemID(THE_FORCE, 2);
+    this->AddProvidedQuestWithItemID(LOCATOR, 1);
+    
+    v3 = 0;
+    v4 = (int)this->providedItems.size();
+    v41 = 0;
+    v38 = v4;
+    
+   
+    if ( this->providedItems.size() <= 0 ) {
+    LABEL_5:
+        printf("YodaDocument::Unknown_5 -> cleanup\n");
+        if ( v38 > 0 ) {
+            v10 = 0;
+            v11 = v38;
+            do
+            {
+                v12 = this->providedItems[v10];
+                if ( v12 )
+                    ; // dealloc v12
+                
+                ++v10;
+                v11--;
+            }
+            while ( v11 );
+        }
+        this->providedItems.clear();
+        this->item_ids.clear();
+        
+        v38 = 0;
+        zone_id_1 = 0;
+        y = 0;
+        do
+        {
+            x = 0;
+            do
+            {
+                intermediate_puzzle_item = world[x + 10 * y];
+                if ( intermediate_puzzle_item == 1 || intermediate_puzzle_item == 300 || intermediate_puzzle_item == 104 )
+                {
+                    distance = Map::GetDistanceToCenter(x, y);
+                    v15 = distance;
+                    this->field_2E64 = intermediate_puzzle_item == 104 || distance < 2;
+                    if ( this->field_2E64 )
+                    {
+                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+                    }
+                    else if ( false ) // used to be x
+                    {
+                        zone_id = zone_id_1;
+                    }
+                    else
+                    {
+                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+                    }
+                    if ( zone_id < 0 )
+                        return 0;
+                    while ( 1 )
+                    {
+                        zone = this->zones[zone_id];
+                        if ( this->field_2E64 )
+                            break;
+                        has_hotspot_that_can_provide_item = 0;
+                        hotspot_count = (int)zone->_hotspots.size();
+                        if ( hotspot_count > 0 )
+                        {
+                            int idx = 0;
+                            do
+                            {
+                                if ( (zone->_hotspots[idx])->type == 13 )
+                                    has_hotspot_that_can_provide_item = 1;
+                                ++idx;
+                                --hotspot_count;
+                            }
+                            while ( hotspot_count );
+                        }
+                        if ( !has_hotspot_that_can_provide_item )
+                            break;
+                        if ( !y )
+                        {
+                            y = 1;
+                            v39 = v33;
+                            v38 = v34;
+                            if ( !x )
+                                break;
+                        LABEL_56:
+                            x = 0;
+                            zone_id_1 = -1;
+                            break;
+                        }
+                        world_size = this->size;
+                        if ( world_size == WORLD_SIZE_SMALL )
+                        {
+                            if ( abs((char *)v39 - (char *)v33) > 1 || abs((char *)v38 - (char *)v34) > 1 )
+                            {
+                                ++y;
+                                v39 = v33;
+                                v38 = v34;
+                                if ( !x )
+                                    break;
+                                goto LABEL_56;
+                            }
+                        }
+                        else if ( world_size == WORLD_SIZE_MEDIUM )
+                        {
+                            if ( abs((char *)v39 - (char *)v33) > 1 || abs((char *)v38 - (char *)v34) > 1 )
+                            {
+                                ++y;
+                                v39 = v33;
+                                v38 = v34;
+                                if ( !x )
+                                    break;
+                                goto LABEL_56;
+                            }
+                        }
+                        else
+                        {
+                            if ( world_size != WORLD_SIZE_LARGE )
+                                break;
+                            if ( abs((char *)v39 - (char *)v33) > 2 || abs((char *)v38 - (char *)v34) > 2 )
+                            {
+                                ++y;
+                                v39 = v33;
+                                v38 = v34;
+                                if ( !x )
+                                    break;
+                                goto LABEL_56;
+                            }
+                        }
+                        zone_id_1 = zone_id;
+                        x = 1;
+                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, v15, 0);
+                        if ( zone_id < 0 )
+                            return 0;
+                    }
+//                    v22 = (int)v33 + 10 * (_DWORD)v34;
+                    v23 = (char *)this + 52 * v22;
+  //                  *((_DWORD *)v23 + 302) = 1;
+                    this->worldZones[v22] = zone;
+                    *((int *)v23 + 602) = zone_id;
+                    *((int *)v23 + 608) = -1;
+                    *((int *)v23 + 606) = -1;
+                    *((int *)v23 + 610) = -1;
+                    *((int *)v23 + 612) = -1;
+                    this->AddZoneWithIdToWorld(zone_id);
+                    if ( zone_id == zone_id_1 )
+                    {
+                        zone_id_1 = -1;
+                        x = 0;
+                    }
+                }
+                x++;
+            }
+            while ( x < 10 );
+            y++;
+        }
+        while ( y < 10 );
+        
+        if ( y == 1 )
+        {
+            v24 = v38;
+            v25 = v39;
+            this->field_2E64 = 1;
+            v26 = Map::GetDistanceToCenter(v25, v24);
+            zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, v26, v27);
+            if ( (int16)zone_id_3 >= 0 )
+            {
+                zone_1 = this->zones[zone_id_3];
+                idx = zone_id_1 + 10 * y;
+                this->world_things[idx].zone_type = (ZONE_TYPE)1;
+                // v31 = (char *)this + 52 * idx;
+                this->worldZones[idx] = zone_1;
+                /*
+                *((int *)v31 + 602) = zone_id_3;
+                *((int *)v31 + 608) = -1;
+                *((int *)v31 + 606) = -1;
+                *((int *)v31 + 610) = -1;
+                *((int *)v31 + 612) = -1;
+                 */
+                this->AddZoneWithIdToWorld(zone_id_3);
+            }
+        }
+        result = 1;
+    }
+    else
+    {
+        while ( 1 )
+        {
+            int x = 0, y = 0;
+            printf("v3 = %d\n", v3);
+            printf("v3 = %d\n", v3);
+            quest = this->providedItems[v3];
+            if ( place_puzzles__(quest->unknown, world, &x, &y) != 1 )
+                break;
+            zone_id_2 = this->GetZoneIdWithType(ZONETYPE_Find, -1, -1, quest->itemID, -1, quest->unknown, 0);
+            if ( zone_id_2 < 0 )
+                return 0;
+            
+            ++v3;
+            word_idy = x + 10 * y;
+/*            v9 = (char *)document + offsetof(YodaDocument, field_34) * word_idy;
+            *((_DWORD *)v9 + 302) = 17;
+            *((int *)v9 + 610) = this->wg_last_added_item_id?;*/
+            this->worldZones[word_idy] = this->zones[(int16)zone_id_2];
+//            *((int *)v9 + 602) = zone_id_2;
+         
+            world[word_idy] = 306;
+          
+            this->AddZoneWithIdToWorld(zone_id_2);
+            if ( ++v41 >= v38 ) {
+                goto LABEL_5;
+            }
+        }
+        result = 0;
+    }
+    
+    return result;
+}
+
+int YodaDocument::place_puzzles__(int a1 /*maxDistance*/, int16 *a2, int* a3, int* a4) {
+    printf("YodaDocument::place_puzzles__(%d, .., .., ..)\n", a1);
+    // a3 = xref
+    // a4 = yref
+    // a2 = world
+    int v5; // esi@1
+    int v6; // ebx@2
+    MapPoint* v8; // eax@6
+    MapPoint *v9; // eax@28
+    signed int v10; // esi@34
+    bool v11; // zf@34
+    bool v12; // sf@34
+    signed int v13; // esi@37
+    int v14; // edx@37
+    vector<MapPoint*>*v15; // eax@37
+    signed int v17; // esi@42
+    MapPoint* v18; // eax@44
+    int v19; // edi@46
+    int v20; // esi@46
+    int v21; // edi@49
+    int v22; // esi@49
+    int v23; // edi@52
+    int v24; // esi@52
+    vector<MapPoint*> v27; // [sp+14h] [bp-64h]@1
+    vector<MapPoint*> v30; // [sp+28h] [bp-50h]@1
+    vector<MapPoint*> v33; // [sp+3Ch] [bp-3Ch]@1
+   
+    int v41; // [sp+64h] [bp-14h]@1
+    void *v42; // [sp+68h] [bp-10h]@6
+    int v43; // [sp+74h] [bp-4h]@1
+    
+    v5 = 0;
+    v43 = 0;
+    v43 = 1;
+    v41 = 0;
+    v43 = 2;
+    
+    for(int v5=0; v5 < 10; v5++) {
+        v6 = 0;
+        for(int v6=0; v6 < 10; v6++) {
+            int idx = v6 + 10 * v5;
+            int item = a2[idx];
+            if ( Map::GetDistanceToCenter(v6, v5) > a1 )  {
+                if ( item == 1 ) {
+                    v9 = new MapPoint(v6, v5);
+                    v42 = v9;
+                    v43 = 4;
+                    v43 = 2;
+                    v27.push_back(v9);
+                }
+            }
+            else if ( item == 1 || item == 300 )
+            {
+                v8 = new MapPoint(v6, v5);
+                v42 = v8;
+                v43 = 3;
+                
+                v43 = 2;
+                
+                if (( v6 < 1 || a2[idx-1] != 306 )
+                    && ( v6 > 8 || a2[idx+1] != 306 )
+                    && ( v5 < 1 || a2[idx-10] != 306 )
+                    && ( v5 > 8 || a2[idx+10] != 306 ))
+                    v30.push_back(v8);
+                else
+                    v33.push_back(v8);
+            }
+        }
+    }
+
+    v10 = (int)v30.size();
+    v11 = v30.size() == 0;
+    v12 = 0;
+    v15 = &v30;
+    if ( !v30.size() )
+    {
+        if ( !v33.size() )
+        {
+            if ( v27.size() )
+            {
+                v13 = (int)v27.size();
+                v14 = win_rand() % v13;
+                v15 = &v27;
+                goto LABEL_44;
+            }
+            printf("No Place to put puzzle!\n");
+            v41 = 0;
+        }
+        v11 = v10 == 0;
+        v12 = v10 < 0;
+    }
+    
+    if ( v12 || v11 )
+    {
+        v17 = (int)v33.size();
+        if ( v33.size() <= 0 )
+            goto LABEL_45;
+        v14 = win_rand() % v17;
+        v15 = &v33;
+    }
+    else
+    {
+        v14 = win_rand() % v10;
+        v15 = &v30;
+    }
+LABEL_44:
+    v18 = (*v15)[v14];
+    v41 = 1;
+    *a3 = v18->x;
+    *a4 = v18->y;
+    printf("YodaDocument::place_puzzles__: %dx%d\n", v18->x, v18->y);
+LABEL_45:
+    if ( v30.size() > 0 )
+    {
+        v19 = 0;
+        v20 = (int)v30.size();
+        do
+        {
+            v19 += 4;
+            // TODO: clear point
+            ; // operator delete(*(void **)(v31 + v19 - 4));
+            --v20;
+        }
+        while ( v20 );
+    }
+    v30.clear();
+    if ( v33.size() > 0 )
+    {
+        v21 = 0;
+        v22 = (int)v33.size();
+        do
+        {
+            // TODO: clear point
+            v21 += 4;
+            // operator delete(*(void **)(&v33[0] + v21 - 4));
+            --v22;
+        }
+        while ( v22 );
+    }
+    v33.clear();
+    if ( v27.size() > 0 )
+    {
+        v23 = 0;
+        v24 = (int)v27.size();
+        do
+        {
+            v23 += 4;
+            // TODO: clear point
+            // operator delete(*(void **)(&v27[0] + v23 - 4));
+            --v24;
+        }
+        while ( v24 );
+    }
+    v27.clear();
+    v43 = 1;
+    v43 = 0;
+    v43 = -1;
+    return v41;
+}

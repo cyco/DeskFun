@@ -97,7 +97,8 @@ public:
     signed int Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8);
     
     void RemoveEmptyZoneIdsFromWorld();
-    int Unknown_5(int unknown);
+    int Unknown_5(int16* unknown);
+    int place_puzzles__(int maxDistance, int16* world, int* xref, int* yref);
 };
 
 #endif /* YodaDocument_hpp */
