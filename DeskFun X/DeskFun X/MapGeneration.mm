@@ -212,7 +212,6 @@
     __int16 distance_5 = 0; // ax@293
     __int16 zone_id_6 = 0; // ax@293
     int world_idx_2 = 0; // edx@294
-    int x_5 = 0; // esi@297
     signed int did_not_place_zone = 0; // ecx@298
     signed int zone_id_1 = 0; // edx@301
     Planet planet_7; // eax@303
@@ -228,8 +227,6 @@
     __int16 distance_8 = 0; // ax@326
     __int16 distance_9 = 0; // ax@328
     __int16 distance_16 = 0; // ax@330
-    __int16 distance_10 = 0; // ax@341
-    signed int zone_id_2 = 0; // ecx@341
     Planet planet_4; // eax@347
     vector<uint16> *puzzle_array_1; // ecx@351
     int v180 = 0; // edi@355
@@ -321,9 +318,9 @@
             zone_id_11 = zone_id_8;
             if ( zone_id_8 >= 0 )
             {
-                // world_thing_plus_4->zone_id = zone_id_8;
+                document->world_things[x_8 + 10 * y_6].zone_id = zone_id_8;
+                document->world_things[x_8 + 10 * y_6].zone_type = ZONETYPE_TravelStart;
                 zone_id = zone_id_11;
-                // world_thing_plus_4->zone_type = ZONETYPE_TravelStart;
                 v68 = 0;
                 // world_thing_plus_4->required_item_id = document->wg_item_id;
                 zone_1 = document->zones[zone_id];
@@ -404,11 +401,11 @@
                         {
                             int idx_3 = x_7 + 10 * y_7;
                             document->worldZones[idx_3] = document->zones[zone_id_10];
-                            document->world_things[idx_3].zone_id = zone_id_9;
+                            document->world_things[idx_3].zone_id = zone_id_10;;
+                            document->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
                             // v87 = zone_2;
                             // v88 = (char *)document + 0x34 * idx_3;
                             /*
-                             *((_DWORD *)v88 + 0x12E) = 7;
                              *((_WORD *)v88 + 0x260) = document->wg_item_id;
                              LOWORD(idx_3) = (_WORD)zone_id_11;
                              *(_DWORD *)transport_count = v87;
@@ -446,10 +443,10 @@
                             int idx_3 = x_7 + 10 * y_7;
                             document->worldZones[idx_3] = document->zones[zone_id_10];
                             document->world_things[idx_3].zone_id = zone_id_9;
+                            document->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
                             // v87 = zone_2;
                             // v88 = (char *)document + 0x34 * idx_3;
                             /*
-                             *((_DWORD *)v88 + 0x12E) = 7;
                              *((_WORD *)v88 + 0x260) = document->wg_item_id;
                              LOWORD(idx_3) = (_WORD)zone_id_11;
                              *(_DWORD *)transport_count = v87;
@@ -461,6 +458,8 @@
                     else
                     {
                         document->RemoveQuestProvidingItem(document->wg_item_id);
+                        
+                        
                         /*             v89 = (_DWORD *)transport_count;
                          *(_WORD *)y_6 = 1;
                          *v89 = 0;
@@ -558,7 +557,7 @@
                             }
                             document->field_3394 = world_puz_idx - 1;
                         } else {
-                            document->wg_zone_type = zone_id_10;
+                            document->wg_zone_type = type;
                             document->field_3394 = world_puz_idx - 1;
                         }
                     }
@@ -566,9 +565,10 @@
                     if ( zone_id_3 < 0 ) break;
                     world_idx_1 = x + 10 * y;
                     v204 = 1;
+                    
+                    document->world_things[world_idx_1].zone_type = (ZONE_TYPE)document->wg_zone_type;
+                    document->world_things[world_idx_1].zone_id = zone_id_3;
                     /*
-                     document->world_things_1[world_idx_1].zone_type = document->wg_zone_type;
-                     v113 = (char *)document + 0x34 * world_idx_1;
                      *((_WORD *)v113 + 610) = document->wg_last_added_item_id?;
                      *((_WORD *)v113 + 611) = document->wg_item_id_unknown_2;
                      *((_WORD *)v113 + 608) = document->wg_item_id;
@@ -577,7 +577,6 @@
                      *((_WORD *)v113 + 606) = document->field_3394;
                      *((_WORD *)v113 + 607) = document->field_3398;
                      *((_WORD *)v113 + 624) = 1;
-                     *((_WORD *)v113 + 602) = zone_id_3;
                      */
                     document->worldZones[world_idx_1] = document->zones[zone_id_3];
                     
@@ -722,7 +721,7 @@ LABEL_246:;
                                                                 0 /*v141*/);
                         if ( zone_id_5 >= 0 )
                         {
-                            document->wg_zone_type = zone_type;
+                            document->wg_zone_type = type;
                             document->field_3394 = y_4 - 1;
                             goto LABEL_290;
                         }
@@ -732,7 +731,7 @@ LABEL_246:;
                             zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, v197, -1, distance_2, 0);
                             if ( zone_id_5 < 0 )
                                 goto LABEL_303;
-                            document->wg_zone_type = 15;
+                            document->wg_zone_type = ZONETYPE_Trade;
                         }
                         else
                         {
@@ -740,7 +739,7 @@ LABEL_246:;
                             zone_id_5 = document->GetZoneIdWithType(ZONETYPE_Use, v195, -1, v197, -1, distance_4, 0);
                             if ( zone_id_5 < 0 )
                                 goto LABEL_303;
-                            document->wg_zone_type = 16;
+                            document->wg_zone_type = ZONETYPE_Use;
                         }
                         v138 = v194;
                     }
@@ -810,6 +809,8 @@ LABEL_246:;
                     int idx_5 = x + 10 * y;
                     v195 = 1;
                     document->world_things[idx_5].zone_type = (ZONE_TYPE)document->wg_zone_type;
+                    document->world_things[idx_5].zone_id = zone_id_5;
+
                     // v147 = (char *)document + 52 * idx_5;
                     /*
                      *((_WORD *)v147 + 610) = document->wg_last_added_item_id?;
@@ -817,7 +818,6 @@ LABEL_246:;
                      *((_WORD *)v147 + 612) = document->field_3390;
                      *((_WORD *)v147 + 606) = document->field_3394;
                      *((_WORD *)v147 + 624) = 0;
-                     *((_WORD *)v147 + 602) = zone_id_5;
                      */
                     document->worldZones[idx_5] = document->zones[zone_id_5];
 
@@ -838,9 +838,9 @@ LABEL_246:;
             if ( zone_id_6 >= 0 )
             {
                 world_idx_2 = x + 10 * y;
-                //    document->world_things_1[world_idx_2].zone_type = document->wg_zone_type;
+                document->world_things[world_idx_2].zone_type = (ZONE_TYPE)document->wg_zone_type;
                 document->worldZones[world_idx_2] = document->zones[zone_id_6];
-                //     document->world_things_1[world_idx_2].zone_id = zone_id_6;
+                document->world_things[world_idx_2].zone_id = zone_id_6;
                 document->AddZoneWithIdToWorld(zone_id_6);
             }
         }
@@ -908,9 +908,9 @@ LABEL_296:
                             zone_id_1 = document->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance_16, 0);
                             if ( zone_id_1 >= 0 )
                             {
-                               worldThing->zone_type= ZONETYPE_BlockadeSouth;
+                               worldThing->zone_type = ZONETYPE_BlockadeSouth;
                             LABEL_332:;
-                                //     worldThing->zone_type = document->wg_item_id;
+                                // worldThing->zone_type = (ZONE_TYPE)document->wg_item_id;
                             }
                         did_not_find_zone_with_required_type:
                             did_not_place_zone = 1;
@@ -924,12 +924,13 @@ LABEL_296:
                     {
                         if ( did_not_place_zone )
                         {
-                            distance_10 = Map::GetDistanceToCenter(x, y);
-                            zone_id_2 = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_10, 0);
-                            if ( zone_id_2 >= 0 )
+                            int distance = Map::GetDistanceToCenter(x, y);
+                            int zone_id = document->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+                            if ( zone_id >= 0 )
                             {
-                                zone_id_1 = zone_id_2;
+                                zone_id_1 = zone_id;
                                 worldThing->zone_type = ZONETYPE_Empty;
+                                worldThing->zone_id = zone_id;
                                 /*
                                  *(_DWORD *)v192 = document->zones.ptrs[zone_id_2];
                                  worldThing[-1].field_30 = zone_id_2;
@@ -937,16 +938,17 @@ LABEL_296:
                                  LOWORD(worldThing->zone_type) = -1;
                                  worldThing->required_item_id = -1;
                                  */
-                                goto add_zone_to_world;
+                                document->AddZoneWithIdToWorld(zone_id_1);
+                                continue;
                             }
                         }
                     }
                 }
                 else
                 {
+                    worldThing->zone_id = zone_id_1;
                     /*
                      *v193 = document->zones.ptrs[zone_id_1];
-                     worldThing[-1].field_30 = zone_id_1;
                      worldThing->field_C = -1;
                      */
                     if ( worldThing->zone_type != ZONETYPE_Town)
@@ -954,10 +956,6 @@ LABEL_296:
                         document->AddZoneWithIdToWorld(zone_id_1);
                 }
             }
-            ++worldThing;
-            ++x_5;
-            //     LODWORD(v192) = v192 + 4;
-            //     v193 = (_DWORD *)((char *)v193 + 2);
         }
     }
     
@@ -970,25 +968,17 @@ LABEL_296:
         document->item_ids.clear();
         
         planet_4 = document->planet;
-        if ( planet_4 == TATOOINE )
-        {
+        if ( planet_4 == TATOOINE ) {
             puzzle_array_1 = &document->tatooine_puzzle_ids;
-        }
-        else if ( planet_4 == HOTH )
-        {
+        } else if ( planet_4 == HOTH ) {
             puzzle_array_1 = &document->hoth_puzzle_ids;
-        }
-        else
-        {
-            if ( planet_4 != ENDOR )
-            {
+        } else {
+            if ( planet_4 != ENDOR ) {
             clean_up_and_return:
                 v180 = (int)document->providedItems.size();
-                if ( v180 > 0 )
-                {
+                if ( v180 > 0 ) {
                     v181 = 0;
-                    do
-                    {
+                    do {
                         v182 = document->providedItems[v181];
                         if ( v182 )
                             ; // deallocate v182
@@ -1001,14 +991,11 @@ LABEL_296:
                 document->providedItems.clear();
                 
                 count = (int)document->requiredItems.size();
-                if ( count > 0 )
-                {
+                if ( count > 0 ) {
                     idx = 0;
-                    do
-                    {
+                    do {
                         v185 = document->requiredItems[idx];
-                        if ( v185 )
-                            ; // dealloc v185
+                        if ( v185 ) ; // dealloc v185
                         
                         ++idx;
                         --count;
@@ -1027,14 +1014,10 @@ LABEL_296:
         goto clean_up_and_return;
     }
     
-    
     for(int i=0; i < 100; i++) {
-        /*
-         WorldThing *thing = document->world_things[i];
-         if(thing && thing.zone_id >= 0) {
-         document->GetTileProvidedByZonesHotspots(thing.zone_id);
+         if(document->world_things[i].zone_id >= 0) {
+             document->GetTileProvidedByZonesHotspots(document->world_things[i].zone_id);
          }
-         */
     }
     
     document->chosen_zone_ids.erase(document->chosen_zone_ids.begin());
@@ -1054,5 +1037,11 @@ LABEL_296:
      */
 #pragma mark -
     printf("End Generate New World\n");
+    printf("\n---===== =====---\n\n");
+    printf("document->world_things: (calc)\n");
+    for(int i=0; i < 100; i++) {
+        WorldThing &thing = document->world_things[i];
+        printf("%d: %2d %3d\n", i, thing.zone_type, thing.zone_id);
+    }
 }
 @end

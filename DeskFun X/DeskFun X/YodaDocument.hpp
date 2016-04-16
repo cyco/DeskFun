@@ -99,6 +99,7 @@ public:
     void RemoveEmptyZoneIdsFromWorld();
     int Unknown_5(int16* unknown);
     int place_puzzles__(int maxDistance, int16* world, int* xref, int* yref);
+    void GetTileProvidedByZonesHotspots(int16 zone_id);
 };
 
 #endif /* YodaDocument_hpp */

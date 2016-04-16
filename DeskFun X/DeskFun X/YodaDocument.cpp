@@ -15,13 +15,14 @@ YodaDocument::YodaDocument(){
     puzzles_can_be_reused = -1;
     world_things.resize(100);
     for(int i=0; i < 100; i++) {
-        world_things[i].zone_type = (ZONE_TYPE)-1;
+        world_things[i].zone_type = (ZONE_TYPE)0;
         world_things[i].zone_id = -1;
     }
 }
 
 #define THE_FORCE 0x1ff
 #define LOCATOR 0x1a5
+#define ADEGAN_CRYSTAL 0x0
 
 int TILE_SPEC_THE_FORCE  = 0x40;
 int TILE_SPEC_USEFUL  = 0x80;
@@ -1544,7 +1545,6 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
         int puzzle_id = 0; // eax@54
         int v24 = 0; // esi@58
         int v25 = 0; // eax@65
-        int16 v26 = 0; // si@65
         int zone_type = 0; // eax@80
         unsigned int v33 = 0; // [sp+20h] [bp-2Ch]@58
         __int16 item_id[2]; // [sp+28h] [bp-24h]@50
@@ -1935,11 +1935,10 @@ int YodaDocument::Unknown_5(int16* world){
                         if ( zone_id < 0 )
                             return 0;
                     }
-                    //                    v22 = (int)v33 + 10 * (_DWORD)v34;
-                    //                  *((_DWORD *)v23 + 302) = 1;
+                    int v22 = x + 10 * y;
                     this->worldZones[v22] = zone;
                     this->world_things[v22].zone_id = zone_id;
-                    this->world_things[v22].unknown602 = zone_id;
+                    this->world_things[v22].zone_type = ZONETYPE_Empty;
                     this->world_things[v22].unknown606 = -1;
                     this->world_things[v22].unknown608 = -1;
                     this->world_things[v22].unknown610 = -1;
@@ -1973,7 +1972,6 @@ int YodaDocument::Unknown_5(int16* world){
                 this->world_things[idx].zone_type = (ZONE_TYPE)1;
                 this->worldZones[idx] = zone_1;
                 this->world_things[idx].zone_id = zone_id_3;
-                this->world_things[idx].unknown602 = zone_id_3;
                 this->world_things[idx].unknown606 = -1;
                 this->world_things[idx].unknown608 = -1;
                 this->world_things[idx].unknown610 = -1;
@@ -2000,9 +1998,8 @@ int YodaDocument::Unknown_5(int16* world){
             int word_idy = x + 10 * y;
             
             this->world_things[word_idy].unknown610 = this->wg_last_added_item_id;
-            this->world_things[word_idy].unknown602 = zone_id_2;
             this->world_things[word_idy].zone_type = ZONETYPE_Find;
-            // ((_DWORD *)v9 + 302) = 17;
+            this->world_things[word_idy].zone_id = zone_id_2;
             this->worldZones[word_idy] = this->zones[(int16)zone_id_2];
             world[word_idy] = 306;
             
@@ -2155,4 +2152,80 @@ LABEL_45:
     }
     v27.clear();
     return v41;
+}
+
+void YodaDocument::GetTileProvidedByZonesHotspots(int16 zone_id)
+{
+    /*
+     vector<Zone*> *tile_id; // eax@1
+     Zone *zone; // edi@2
+     int v4; // ebp@3
+     int index; // esi@4
+     Hotspot *hotspot; // ebx@5
+     int x; // [sp-10h] [bp-20h]@9
+     int y; // [sp-Ch] [bp-1Ch]@9
+     __int16 tile_id_1; // [sp-4h] [bp-14h]@9
+     
+     if ( zone_id >= 0 )
+     {
+     tile_id = &this->zones;
+     zone = (*tile_id)[zone_id];
+     if ( zone )
+     {
+     v4 = (int)zone->_hotspots.size();
+     if ( v4 > 0 )
+     {
+     index = 0;
+     do
+     {
+     hotspot = zone->_hotspots[index];
+     tile_id = 0;
+     switch ( hotspot->type )
+     {
+     case TriggerLocation:
+     case SpawnLocation:
+     case ForceLocation:
+     case LocatorThingy:
+     case CrateItem:
+     case PuzzleNPC:
+     case CrateWeapon:
+     if ( hotspot->enabled == 1 && hotspot->arg1 >= 0 )
+     {
+     int id = zone->GetTileIdAt(zone, hotspot->x, hotspot->y, OBJECTS);
+     if ( id < 0 )
+     {
+     tile_id_1 = hotspot->arg1;
+     y = hotspot->y;
+     x = hotspot->x;
+     goto get_tile;
+     }
+     }
+     break;
+     case Unused:
+     if ( hotspot->enabled == 1 )
+     {
+     hotspot->arg1 = ADEGAN_CRYSTAL;
+     int tile_id = zone->GetTileIdAt(hotspot->x, hotspot->y, OBJECTS);
+     if ( tile_id < 0 )
+     {
+     tile_id_1 = ADEGAN_CRYSTAL;
+     y = hotspot->y;
+     x = hotspot->x;
+     get_tile:
+     tile_id = zone->SetTileAt(zone, x, y, 1, tile_id_1);
+     }
+     }
+     break;
+     default:
+     break;
+     }
+     ++index;
+     --v4;
+     }
+     while ( v4 );
+     }
+     }
+     }
+     //        return (unsigned int)tile_id;
+     */
 }
