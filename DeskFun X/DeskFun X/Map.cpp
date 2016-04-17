@@ -9,10 +9,14 @@
 #include "Map.hpp"
 #include "win_rand.h"
 
+#define Message(fmt, ...) if(logging) printf(fmt, ##__VA_ARGS__);
+
 #pragma mark - C Methods
 Map::Map(){
     clear();
 }
+
+int Map::logging;
 
 #pragma mark - Accessors
 void Map::set(int x, int y, uint16 v) {
@@ -43,7 +47,7 @@ void Map::clear(){
 }
 
 int Map::GetDistanceToCenter(int x, int y) {
-    printf("Map::GetDistanceToCenter %dx%d\n", x, y);
+    Message("Map::GetDistanceToCenter %dx%d\n", x, y);
     static int distances[] = {
         5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
         5, 4, 4, 4, 4, 4, 4, 4, 4, 5,
@@ -1147,9 +1151,9 @@ int Map::placeTransportRight()
 void Map::print() {
     for(int y = 0; y < 10; y++) {
         for(int x = 0; x < 10; x++) {
-            printf("%03d ", get(x,y));
+            Message("%03d ", get(x,y));
         }
-        printf("\n");
+        Message("\n");
     }
-    printf("\n");
+    Message("\n");
 }

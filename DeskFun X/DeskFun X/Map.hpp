@@ -31,6 +31,8 @@ typedef enum {
 
 class Map {
 public:
+    static int logging;
+    
     uint16 tiles[100];
     int16 puzzles[100];
     

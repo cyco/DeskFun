@@ -16,6 +16,7 @@
 #include "Zone.hpp"
 #include "WorldThing.hpp"
 #include "Quest.hpp"
+#include "GameDataParser.hpp"
 
 typedef enum {
     WorldSize_SMALL = 1,
@@ -50,6 +51,7 @@ public:
     
     vector<Zone*> worldZones;
     
+    int logging;
     
     vector<uint16> tatooine_puzzle_ids;
     vector<uint16> hoth_puzzle_ids;
@@ -57,7 +59,8 @@ public:
     
     int puzzles_can_be_reused;
     
-    YodaDocument();
+    YodaDocument(const char* path);
+    GameDataParser *parser;
     
     int16 GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
     void GetPuzzleCandidates(vector<int16> &result, uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
@@ -100,6 +103,7 @@ public:
     int Unknown_5(int16* unknown);
     int place_puzzles__(int maxDistance, int16* world, int* xref, int* yref);
     void GetTileProvidedByZonesHotspots(int16 zone_id);
+    int Unknown_14(int16 a2, int16 a3, int a4, int a5);
 };
 
 #endif /* YodaDocument_hpp */

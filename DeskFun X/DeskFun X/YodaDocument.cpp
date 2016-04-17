@@ -8,10 +8,37 @@
 
 #include "YodaDocument.hpp"
 #include "Map.hpp"
+#include "GameDataParser.hpp"
+
+#define Message(fmt, ...) if(this->logging) printf(fmt, ##__VA_ARGS__);
 
 #define PRINT_ARRAY_SHUFFLE_RANDS 0
-
-YodaDocument::YodaDocument(){
+YodaDocument::YodaDocument(const char* path) {
+    parser = new GameDataParser(path);
+    
+    zones.clear();
+    for(int i=0; i < parser->getZoneCount(); i++) {
+        zones.push_back(parser->getZone(i));
+    }
+    
+    puzzles.clear();
+    for(Puzzle *p : parser->_puzzles) {
+        puzzles.push_back(p);
+    }
+    
+    puzzles.clear();
+    for(int i=0; i < parser->_puzzles.size(); i++) {
+        Puzzle *puzzle = parser->_puzzles[i];
+        if(i == 0xBD || i==0xC5)
+            puzzle->type = PUZZLE_TYPE_DISABLED;
+        puzzles.push_back(puzzle);
+    }
+    
+    tiles.clear();
+    for(Tile *t : parser->_tiles) {
+        tiles.push_back(t);
+    }
+    
     puzzles_can_be_reused = -1;
     world_things.resize(100);
     for(int i=0; i < 100; i++) {
@@ -36,9 +63,9 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
     vector<int16> temp_array;
     
     /*
-     printf("Array::Shuffle (%lu items): ", array.size());
-     for(int16 item : array) printf("%d, ", item);
-     printf("\n");
+     Message("Array::Shuffle (%lu items): ", array.size());
+     for(int16 item : array) Message("%d, ", item);
+     Message("\n");
      //*/
     int16 count = array.size();
     temp_array.resize(count, -1);
@@ -46,7 +73,7 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
     
     for(int i=0; i < count; i++) {
         int random = win_rand();
-        if(PRINT_ARRAY_SHUFFLE_RANDS) printf("Array::Shuffle rand 1: %x\n", random);
+        if(PRINT_ARRAY_SHUFFLE_RANDS) Message("Array::Shuffle rand 1: %x\n", random);
         int idx = random % count;
         if ( temp_array[idx] == -1 ) {
             temp_array[idx] = array[i];
@@ -69,7 +96,7 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
                 if ( !did_find_free_spot ) break;
                 
                 int random = win_rand();
-                if(PRINT_ARRAY_SHUFFLE_RANDS) printf("Array::Shuffle rand 2: %x\n", random);
+                if(PRINT_ARRAY_SHUFFLE_RANDS) Message("Array::Shuffle rand 2: %x\n", random);
                 int idx = random % count;
                 
                 if ( temp_array[idx] == -1 ) {
@@ -90,15 +117,15 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
     }
     
     /*
-     printf("=> (%lu items): ", array.size());
-     for(int16 item : array) printf("%d, ", item);
-     printf("\n");
+     Message("=> (%lu items): ", array.size());
+     for(int16 item : array) Message("%d, ", item);
+     Message("\n");
      //*/
 }
 
 int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5)
 {
-    printf("YodaDocument::GetNewPuzzleId(%d, %d, %d, %d)\n", item_id, a3, zone_type, a5);
+    Message("YodaDocument::GetNewPuzzleId(%d, %d, %d, %d)\n", item_id, (uint16)a3, zone_type, a5);
     int16 puzzle_id; // dx@57
     Puzzle *puzzle_1; // ebx@57
     int break_from_loop = 0;
@@ -125,13 +152,13 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
             {
                 if ( puzzle_1->type == PuzzleTypeTrade && puzzle_1->questItemIDs[0] == item_id )
                 {
-                    printf("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+                    Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
                     return puzzle_ids[puzzle_idx];
                 }
             }
             else if ( zone_type == ZONETYPE_Goal && puzzle_1->type == PuzzleTypeU3 && puzzle_1->questItemIDs[0] == item_id )
             {
-                printf("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+                Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
                 return puzzle_ids[puzzle_idx];
             }
             goto LABEL_75;
@@ -140,7 +167,7 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
             break;
         if ( puzzle_1->type == PuzzleTypeU1 && puzzle_1->questItemIDs[0] == item_id )
         {
-            printf("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+            Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
             return puzzle_ids[puzzle_idx];
         }
     LABEL_75:
@@ -153,14 +180,14 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
                 continue;
         }
         
-        printf("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", -1, -1);
+        Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", -1, -1);
         return -1;
     }
     
     if ( zone_type != 9999 || puzzle_1->type != PuzzleTypeEnd )
         goto LABEL_75;
     
-    printf("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+    Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
     return puzzle_ids[puzzle_idx];
 }
 
@@ -273,14 +300,19 @@ Zone* YodaDocument::getZoneByID(uint16 zoneID) {
 }
 
 int YodaDocument::worldContainsZoneId(uint16 zoneID) {
-    printf("YodaDocument::WorldContainsZoneId(%d)\n", zoneID);
+    Message("YodaDocument::WorldContainsZoneId(%d)\n", zoneID);
     for(uint16 chosenZoneID : chosen_zone_ids)
-        if(chosenZoneID == zoneID) return 1;
-    
+        if(chosenZoneID == zoneID)
+        {
+            Message("YodaDocument::WorldContainsZoneId => 1\n");
+
+            return 1;
+        }
+    Message("YodaDocument::WorldContainsZoneId => 0\n");
     return 0;
 }
 void YodaDocument::AddZoneWithIdToWorld(uint16 zoneID){
-    printf("YodaDocument::AddZoneWithIdToWorld(%d)\n", zoneID);
+    Message("YodaDocument::AddZoneWithIdToWorld(%d)\n", zoneID);
     chosen_zone_ids.insert(chosen_zone_ids.begin(), zoneID);
 }
 
@@ -295,7 +327,7 @@ uint16 YodaDocument::getZoneIDAt(int x, int y){
 }
 
 Quest* YodaDocument::AddProvidedQuestWithItemID(uint16 itemID, uint16 maximumDistance){
-    printf("YodaDocument::AddProvidedQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
+    Message("YodaDocument::AddProvidedQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
     for(Quest *quest : providedItems)
         if(quest->itemID == itemID) return quest;
     
@@ -304,7 +336,7 @@ Quest* YodaDocument::AddProvidedQuestWithItemID(uint16 itemID, uint16 maximumDis
 }
 
 Quest* YodaDocument::AddRequiredQuestWithItemID(uint16 itemID, uint16 maximumDistance){
-    printf("YodaDocument::AddRequiredQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
+    Message("YodaDocument::AddRequiredQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
     //    for(Quest *quest : requiredItems)
     //        if(quest->itemID == itemID) return quest;
     
@@ -314,7 +346,7 @@ Quest* YodaDocument::AddRequiredQuestWithItemID(uint16 itemID, uint16 maximumDis
 }
 
 void YodaDocument::RemoveQuestProvidingItem(uint16 itemID) {
-    printf("YodaDocument::RemoveQuestProvidingItem(%d)\n", itemID);
+    Message("YodaDocument::RemoveQuestProvidingItem(%d)\n", itemID);
     for(int i=0; i < providedItems.size(); i++)
         if(providedItems[i]->itemID == itemID) {
             providedItems.erase(providedItems.begin()+i);
@@ -323,7 +355,7 @@ void YodaDocument::RemoveQuestProvidingItem(uint16 itemID) {
 }
 
 void YodaDocument::RemoveQuestRequiringItem(uint16 itemID) {
-    printf("YodaDocument::RemoveQuestRequiringItem(%d)\n", itemID);
+    Message("YodaDocument::RemoveQuestRequiringItem(%d)\n", itemID);
     for(int i=0; i < requiredItems.size(); i++)
         if(requiredItems[i]->itemID == itemID) {
             requiredItems.erase(requiredItems.begin()+i);
@@ -332,7 +364,7 @@ void YodaDocument::RemoveQuestRequiringItem(uint16 itemID) {
 }
 
 int YodaDocument::HasQuestRequiringItem(uint16 itemID) {
-    printf("YodaDocument::HasQuestRequiringItem(%d)\n", itemID);
+    Message("YodaDocument::HasQuestRequiringItem(%d)\n", itemID);
     for(Quest *quest : requiredItems)
         if(quest->itemID == itemID) return 1;
     
@@ -352,7 +384,7 @@ int YodaDocument::GetLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut) {
 }
 
 int YodaDocument::AddRequiredItemsFromHotspots(uint16 zoneID) {
-    printf("YodaDocument::AddRequiredItemsFromHotspots(%d)\n", zoneID);
+    Message("YodaDocument::AddRequiredItemsFromHotspots(%d)\n", zoneID);
     Zone* zone = zones[zoneID];
     for (Hotspot* hotspot : zone->_hotspots) {
         switch (hotspot->type) {
@@ -374,7 +406,7 @@ int YodaDocument::AddRequiredItemsFromHotspots(uint16 zoneID) {
 }
 
 int YodaDocument::ZoneLeadsToItem(uint16 zoneID, uint16 itemID) {
-    printf("YodaDocument::ZoneLeadsToItem(%d, %d)\n", zoneID, itemID);
+    Message("YodaDocument::ZoneLeadsToItem(%d, %d)\n", zoneID, itemID);
     Zone *zone = getZoneByID(zoneID);
     for(uint16 itemIDInZone : zone->providedItemIDs)
         if(itemIDInZone == itemID) return 1;
@@ -388,7 +420,7 @@ int YodaDocument::ZoneLeadsToItem(uint16 zoneID, uint16 itemID) {
 
 int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int use_array_2_ids)
 {
-    printf("YodaDocument::GetItemIDThatsNotRequiredYet(%d, %d, %d)\n", zone_id, unused, use_array_2_ids);
+    Message("YodaDocument::GetItemIDThatsNotRequiredYet(%d, %d, %d)\n", zone_id, unused, use_array_2_ids);
     vector<uint16> itemIDs;
     Zone *zone = zones[zone_id];
     
@@ -405,7 +437,7 @@ int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int 
     
     for(Hotspot *hotspot : zone->_hotspots){
         if(hotspot->type == DoorIn) {
-            uint16 itemID = GetItemIDThatsNotRequiredYet(hotspot->arg1, unused, use_array_2_ids);
+            int16 itemID = GetItemIDThatsNotRequiredYet(hotspot->arg1, unused, use_array_2_ids);
             if(itemID >= 0) return itemID;
         }
     }
@@ -419,7 +451,7 @@ signed int YodaDocument::GenerateWorld(int seed, int puzzle_count, int16* map, i
 
 signed int YodaDocument::ChooseItemIDFromZone(__int16 zone_id, int item_id, int a4)
 {
-    printf("YodaDocument::ChooseItemIDFromZone(%d, %d, %d)\n", zone_id, item_id, a4);
+    Message("YodaDocument::ChooseItemIDFromZone(%d, %d, %d)\n", zone_id, item_id, a4);
     signed int v4; // esi@1
     Zone *zone; // eax@1
     Zone *zone_1; // edi@1
@@ -482,8 +514,7 @@ LABEL_15:
         if ( v19 > 0 )
         {
             v16 = 0;
-            do
-            {
+            do {
                 v17 = zone_1->_hotspots[v16];
                 if ( v17 && v17->type == 9 )
                 {
@@ -504,7 +535,7 @@ LABEL_15:
 
 signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
 {
-    printf("YodaDocument::ChooseItemIDFromZone_0(%d, %d)\n", zone_id, item_id);
+    Message("YodaDocument::ChooseItemIDFromZone_0(%d, %d)\n", zone_id, item_id);
     
     Zone *zone_1; // eax@1
     Zone *zone; // esi@1
@@ -531,7 +562,7 @@ signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
     zone = zone_1;
     if ( zone_1 )
     {
-        printf("v16 = %d\n", v16);
+        Message("v16 = %d\n", v16);
         v18 = 0;
         v19 = (int)zone_1->providedItemIDs.size();
         if ( v19 > 0 )
@@ -614,28 +645,30 @@ signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
 
 signed int YodaDocument::ChooseItemIDFromZone_1(__int16 a2, int a3, int a4, __int16 a5, int a6)
 {
-    printf("YodaDocument::ChooseItemIDFromZone_1(%d, %d, %d, %d, %d)\n", a2, a3, a4, a6, a6);
+    Message("YodaDocument::ChooseItemIDFromZone_1(%d, %d, %d, %d, %d)\n", a2, a3, a4, a5, a6);
     
-    signed int result; // eax@1
-    signed int v7; // ebx@1
-    Zone *zone; // esi@2
-    int itemID; // ecx@3
-    int v10; // ebp@3
-    __int16 item_id; // di@4
-    int v13; // ecx@9
-    int v14; // ebp@9
-    int v16; // ebp@17
-    int v17; // ecx@17
-    Hotspot *v19; // ebx@19
-    int v20; // ebx@26
-    int v21; // ebp@27
-    Hotspot *v22; // ecx@28
-    int v24; // [sp+14h] [bp-4h]@27
+    signed int result = 0; // eax@1
+    signed int v7 = 0; // ebx@1
+    Zone *zone = NULL; // esi@2
+    int itemID = 0; // ecx@3
+    int v10 = 0; // ebp@3
+    __int16 item_id = 0; // di@4
+    int v13 = 0; // ecx@9
+    int v14 = 0; // ebp@9
+    int v16 = 0; // ebp@17
+    int v17 = 0; // ecx@17
+    Hotspot *v19 = NULL; // ebx@19
+    int v20 = 0; // ebx@26
+    int v21 = 0; // ebp@27
+    Hotspot *v22 = NULL; // ecx@28
+    int v24 = 0; // [sp+14h] [bp-4h]@27
     
     result = 0;
     v7 = 0;
-    if ( a2 < 0 )
+    if ( a2 < 0 ) {
+        Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", result);
         return result;
+    }
     zone = this->zones[a2];
     if ( a6 )
     {
@@ -725,26 +758,27 @@ LABEL_26:
             while ( v21 < v24 );
         }
     }
+    Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", result);
     return result;
 }
 
 signed int YodaDocument::ChooseItemIDFromZone_2(__int16 zone_id, __int16 a3, int a4)
 {
-    printf("YodaDocument::ChooseItemIDFromZone_2(%d, %d, %d)\n", zone_id, a3, a4);
+    Message("YodaDocument::ChooseItemIDFromZone_2(%d, %d, %d)\n", zone_id, a3, a4);
     
-    Zone *zone; // eax@1
-    Zone *zone_1; // edi@1
-    int v7; // eax@4
-    int v8; // ecx@4
-    __int16 v9; // si@5
-    int v11; // eax@10
-    int v12; // ecx@10
-    int i; // ebx@17
-    int offset; // ebp@19
-    Hotspot *hotspot; // eax@20
-    __int16 v17; // cx@22
-    signed int v18; // [sp+10h] [bp-Ch]@1
-    int hotspot_count; // [sp+14h] [bp-8h]@18
+    Zone *zone = NULL; // eax@1
+    Zone *zone_1 = NULL; // edi@1
+    int v7 = 0; // eax@4
+    int v8 = 0; // ecx@4
+    __int16 v9 = 0; // si@5
+    int v11 = 0; // eax@10
+    int v12 = 0; // ecx@10
+    int i = 0; // ebx@17
+    int offset = 0; // ebp@19
+    Hotspot *hotspot = NULL; // eax@20
+    __int16 v17 = 0; // cx@22
+    signed int v18 = 0; // [sp+10h] [bp-Ch]@1
+    int hotspot_count = 0; // [sp+14h] [bp-8h]@18
     
     v18 = 0;
     zone = getZoneByID(zone_id);
@@ -818,7 +852,7 @@ LABEL_17:
 
 signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
 {
-    printf("YodaDocument::ChoosePuzzleNPCForZone(%d)\n", zone_id);
+    Message("YodaDocument::ChoosePuzzleNPCForZone(%d)\n", zone_id);
     Zone *zone = getZoneByID(zone_id);
     if (!zone) return -1;
     
@@ -845,7 +879,7 @@ signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
 
 signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
 {
-    printf("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", a2, a3);
+    Message("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", a2, a3);
     Zone *zone_1; // eax@1
     Zone *zone; // esi@1
     signed int result; // eax@2
@@ -952,7 +986,7 @@ signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
 
 signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int16 item_id_1, __int16 a5)
 {
-    printf("YodaDocument::use_ids_from_array_1(%d, %d, %d, %d)\n", zone_id, a3, item_id_1, a5);
+    Message("YodaDocument::use_ids_from_array_1(%d, %d, %d, %d)\n", zone_id, a3, item_id_1, a5);
     Zone *zone = NULL; // eax@3
     __int16 v8 = 0; // cx@10
     vector<uint16> *v9 = NULL; // eax@14
@@ -1038,7 +1072,7 @@ LABEL_19:
 
 signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unknown)
 {
-    printf("YodaDocument::ChoosePuzzleNPCForZone_0(%d, %d)\n", zone_id, unknown);
+    Message("YodaDocument::ChoosePuzzleNPCForZone_0(%d, %d)\n", zone_id, unknown);
     signed int v3; // edi@1
     Zone *v4; // eax@1
     Zone *v5; // ebx@1
@@ -1118,7 +1152,7 @@ signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unkno
 
 int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int unknown, int a6)
 {
-    printf("YodaDocument::Unknown_7(%d, %d, %d, %d, %d)\n", zone_id, puzzle_idx, a4, unknown, a6);
+    Message("YodaDocument::Unknown_7(%d, %d, %d, %d, %d)\n", zone_id, puzzle_idx, a4, unknown, a6);
     Zone *zone = NULL; // eax@1
     signed int result = 0; // eax@2
     uint16 item = 0; // ebx@5
@@ -1209,7 +1243,7 @@ int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int
 
 signed int YodaDocument::ZoneDoesNOTProvideRequiredItemID(__int16 zone_id)
 {
-    printf("YodaDocument::ZoneDoesNOTProvideRequiredItemID(%d)\n", zone_id);
+    Message("YodaDocument::ZoneDoesNOTProvideRequiredItemID(%d)\n", zone_id);
     signed int result_1; // esi@1
     Zone *v3; // ebx@1
     int count_1; // ebp@3
@@ -1261,7 +1295,7 @@ signed int YodaDocument::ZoneDoesNOTProvideRequiredItemID(__int16 zone_id)
 
 signed int YodaDocument::SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2, int use_required_items_array)
 {
-    printf("YodaDocument::SetupRequiredItemForZone_(%d, %d, %d)\n", zone_id, arg2, use_required_items_array);
+    Message("YodaDocument::SetupRequiredItemForZone_(%d, %d, %d)\n", zone_id, arg2, use_required_items_array);
     int count; // esi@6
     int idx; // edi@12
     uint16 item_id; // bx@13
@@ -1376,7 +1410,7 @@ LABEL_31:
 
 int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int a4)
 {
-    printf("YodaDocument::AssociateItemWithZoneHotspot(%d, %d, %d)\n", zone_id, item_id, a4);
+    Message("YodaDocument::AssociateItemWithZoneHotspot(%d, %d, %d)\n", zone_id, item_id, a4);
     signed int found_item_id_in_zone_items; // esi@1
     Zone *zone; // edi@3
     int item_ids; // eax@6
@@ -1496,7 +1530,7 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
 }
 
 int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, __int16 item_id_3, int a8) {
-    printf("YodaDocument::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, a3, a4, item_id_1, item_id_2, item_id_3, a8);
+    Message("YodaDocument::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, (uint16)a3, (uint16)a4, (uint16)item_id_1, (uint16)item_id_2, item_id_3, a8);
     
     // item_id_1 = first required quest->itemID, last required quest->itemID
     vector<int16> usable_zone_ids;
@@ -1657,9 +1691,11 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
                 if(a8) this->puzzle_ids_1[a3] = v25;
                 else   this->puzzle_ids_2[a3] = v25;
                 
-                if ( Unknown_1(zone_id, a3, item_id_3, a8) != 1 ) continue;
+                if (Unknown_1(zone_id, a3, item_id_3, a8) != 1) continue;
+                
                 this->puzzle_ids.push_back(v25);
                 AddRequiredQuestWithItemID(v38, item_id_3);
+                
                 return zone_id;
             case ZONETYPE_Use:
             {
@@ -1699,34 +1735,49 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
 }
 
 
-signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8) {
-    printf("YodaDocument::Unknown_1(%d, %d, %d, %d)\n", zone_id, a3, zone_index, a8);
+signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 distance, int16 a8) {
+    Message("YodaDocument::Unknown_1(%d, %d, %d, %d)\n", zone_id, a3, distance, a8);
     if(false) return 0x10;
     if(false) return 0x10;
     
     if(false == 0xF) return 0x10;
     if(false > 0) return 0x10;
     
-    AddRequiredQuestWithItemID(0, 0);
-    AddRequiredQuestWithItemID(0, 0);
+    int puzzleID1, puzzleID2;
+    if(a8) { // assumes a8 is 1
+        puzzleID1 = this->puzzle_ids_1[a3];
+        puzzleID2 = this->puzzle_ids_1[a3+1];
+    } else {
+        puzzleID1 = this->puzzle_ids_2[a3];
+        puzzleID2 = this->puzzle_ids_2[a3+1];
+    }
     
-    if(!ZoneDoesNOTProvideRequiredItemID(0)) {
+    Puzzle *p1, *p2;
+    p1 = this->puzzles[puzzleID1];
+    p2 = this->puzzles[puzzleID2];
+    
+    AddRequiredQuestWithItemID(p1->item_1, distance);
+    AddRequiredQuestWithItemID(p2->item_1, distance);
+    
+    if(!ZoneDoesNOTProvideRequiredItemID(zone_id)) {
         RemoveQuestRequiringItem(0);
         RemoveQuestRequiringItem(0);
         
         return 0x10;
     }
     
-    if(!ChooseItemIDFromZone_1(0, 0, 0, 0, 0)) {
-        // Unknown_14()
+    if(ChooseItemIDFromZone_1(zone_id, puzzleID1, distance, p1->item_1, 0) >= 0) {
+        Unknown_14(zone_id, puzzleID1, distance, p2->item_1);
     }
     
-    AddRequiredItemsFromHotspots(0);
+    AddRequiredItemsFromHotspots(zone_id);
     
+    Message("YodaDocument::Unknown_1 => %d\n", 1);
     return 1;
 }
+
 void YodaDocument::RemoveEmptyZoneIdsFromWorld(){
-    printf("YodaDocument::RemoveEmptyZoneIdsFromWorld()\n");
+    Message("YodaDocument::RemoveEmptyZoneIdsFromWorld()\n");
     int count; // ebx@1
     int idx; // edi@1
     int idx_1; // ebx@6
@@ -1765,7 +1816,7 @@ void YodaDocument::RemoveEmptyZoneIdsFromWorld(){
 }
 
 int YodaDocument::Unknown_5(int16* world){
-    printf("YodaDocument::Unknown_5(...)\n");
+    Message("YodaDocument::Unknown_5(...)\n");
     
     int v3 = 0; // edi@1
     int v4 = 0; // eax@1
@@ -1774,28 +1825,20 @@ int YodaDocument::Unknown_5(int16* world){
     int v10 = 0; // ebx@6
     int v11 = 0; // edi@6
     Quest *v12 = NULL; // ecx@7
-    int intermediate_puzzle_item = 0; // edi@12
-    int distance = 0; // eax@15
-    __int16 v15 = 0; // bx@15
     signed int result = 0; // eax@18
     int zone_id = 0; // edi@22
     Zone *zone = NULL; // ecx@27
-    int hotspot_count = 0; // eax@28
-    WorldSize world_size = WorldSize_LARGE; // eax@35
+    WorldSize world_size = this->size; // eax@35
     int v24 = 0; // ST1C_4@62
     int v25 = 0; // ST18_4@62
     int v27 = 0; // ST18_4@62
-    int zone_id_3 = 0; // eax@62
+    int16 zone_id_3 = 0; // eax@62
     Zone *zone_1 = NULL; // ecx@63
-    int idx = 0; // ebp@63
     int v33 = 0; // [sp+8h] [bp-28h]@0
     int v34 = 0; // [sp+Ch] [bp-24h]@0
-    int x = 0; // [sp+10h] [bp-20h]@2
-    int y = 0; // [sp+14h] [bp-1Ch]@2
     int zone_id_1 = 0; // [sp+18h] [bp-18h]@10
     int v38 = 0; // [sp+1Ch] [bp-14h]@1
     int v39 = 0; // [sp+20h] [bp-10h]@39
-    int has_hotspot_that_can_provide_item = 0; // [sp+24h] [bp-Ch]@28
     int v41 = 0; // [sp+2Ch] [bp-4h]@1
     
     this->AddProvidedQuestWithItemID(THE_FORCE, 2);
@@ -1806,15 +1849,14 @@ int YodaDocument::Unknown_5(int16* world){
     v41 = 0;
     v38 = v4;
     
-    
+    int x_1 = 0, y_1 = 0;
     if ( this->providedItems.size() <= 0 ) {
     LABEL_5:
-        printf("YodaDocument::Unknown_5 -> cleanup\n");
+        Message("YodaDocument::Unknown_5 -> cleanup\n");
         if ( v38 > 0 ) {
             v10 = 0;
             v11 = v38;
-            do
-            {
+            do {
                 v12 = this->providedItems[v10];
                 if ( v12 )
                     ; // dealloc v12
@@ -1828,61 +1870,51 @@ int YodaDocument::Unknown_5(int16* world){
         this->item_ids.clear();
         
         v38 = 0;
-        zone_id_1 = 0;
-        y = 0;
+        zone_id_1 = -1;
         
-        int y_1 = 0, x_1 = 0;
-        do
-        {
-            x = 0;
-            do
-            {
-                y_1 = 0, x_1 = 0;
-                intermediate_puzzle_item = world[x + 10 * y];
-                if ( intermediate_puzzle_item == 1 || intermediate_puzzle_item == 300 || intermediate_puzzle_item == 104 )
-                {
-                    distance = Map::GetDistanceToCenter(x, y);
+        int x = 0, y = 0;
+        for(y=0; y < 10; y++) {
+            for(x=0; x < 10; x++) {
+                int intermediate_puzzle_item = world[x + 10 * y];
+                if ( intermediate_puzzle_item == 1 || intermediate_puzzle_item == 300 || intermediate_puzzle_item == 104 ) {
+                    int distance = Map::GetDistanceToCenter(x, y);
                     this->field_2E64 = intermediate_puzzle_item == 104 || distance < 2;
-                    if ( this->field_2E64 )
-                    {
+                    
+                    if ( this->field_2E64 ) {
                         zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
-                    }
-                    else if ( false ) // used to be x
-                    {
+                    } else if (x_1) { // used to be x
                         zone_id = zone_id_1;
-                    }
-                    else
-                    {
+                    } else {
                         zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
                     }
-                    if ( zone_id < 0 )
+                    
+                    if ( zone_id < 0 ) {
+                        Message("YodaDocument::Unknown_5 => %d\n", 0);
                         return 0;
-                    while ( 1 )
-                    {
+                    }
+                    
+                    while(1) {
                         zone = this->zones[zone_id];
-                        if ( this->field_2E64 )
-                            break;
-                        has_hotspot_that_can_provide_item = 0;
-                        hotspot_count = (int)zone->_hotspots.size();
-                        if ( hotspot_count > 0 )
-                        {
-                            int idx = 0;
-                            do
-                            {
-                                if ( (zone->_hotspots[idx])->type == 13 )
-                                    has_hotspot_that_can_provide_item = 1;
-                                ++idx;
-                                --hotspot_count;
+                        if ( this->field_2E64 ) break;
+                    
+                        int has_teleporter = 0;
+                        for(Hotspot *hotspot : zone->_hotspots) {
+                            if(hotspot->type == Teleporter) {
+                                has_teleporter = 1;
+                                break;
                             }
-                            while ( hotspot_count );
                         }
-                        if ( !has_hotspot_that_can_provide_item )
+                        
+                        if ( !has_teleporter )
                             break;
+                        
+                        Message("y = %d\n", y_1);
                         if ( !y_1 )
                         {
-                            y_1 = 1;
-                            v39 = v33;
-                            v38 = v34;
+                            y_1=1;
+                            v39 = x;
+                            v38 = y;
+                            Message("x = %d\n", x_1);
                             if ( !x_1 )
                                 break;
                         LABEL_56:
@@ -1890,43 +1922,35 @@ int YodaDocument::Unknown_5(int16* world){
                             zone_id_1 = -1;
                             break;
                         }
+                        
                         world_size = this->size;
-                        if ( world_size == WORLD_SIZE_SMALL )
-                        {
-                            // if ( abs((char *)v39 - (char *)v33) > 1 || abs((char *)v38 - (char *)v34) > 1 )
-                            if ( abs(v39 - v33) > 1 || abs(v38 - v34) > 1 )
-                            {
-                                ++y_1;
-                                v39 = v33;
-                                v38 = v34;
+                        if ( world_size == WORLD_SIZE_SMALL ) {
+                            if ( abs(v39 - x) > 1 || abs(v38 - y) > 1 ) {
+                                y_1++;
+                                v39 = x;
+                                v38 = y;
+                                Message("x = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
                                 goto LABEL_56;
                             }
-                        }
-                        else if ( world_size == WORLD_SIZE_MEDIUM )
-                        {
-                            //                            if ( abs((char *)v39 - (char *)v33) > 1 || abs((char *)v38 - (char *)v34) > 1 )
-                            if ( abs(v39 - v33) > 1 || abs(v38 - v34) > 1 )
-                            {
-                                ++y_1;
-                                v39 = v33;
-                                v38 = v34;
+                        } else if ( world_size == WORLD_SIZE_MEDIUM ) {
+                            if ( abs(v39 - x) > 1 || abs(v38 - y) > 1 ) {
+                                y_1++;
+                                v39 = x;
+                                v38 = y;
+                                Message("x_1 = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
                                 goto LABEL_56;
                             }
-                        }
-                        else
-                        {
-                            if ( world_size != WORLD_SIZE_LARGE )
-                                break;
-                            //                            if ( abs((char *)v39 - (char *)v33) > 2 || abs((char *)v38 - (char *)v34) > 2 )
-                            if ( abs(v39 - v33) > 2 || abs(v38 - v34) > 2 )
-                            {
-                                ++y_1;
-                                v39 = v33;
-                                v38 = v34;
+                        } else {
+                            if ( world_size != WORLD_SIZE_LARGE ) break;
+                            if ( abs(v39 - x) > 2 || abs(v38 - y) > 2 ) {
+                                y_1++;
+                                v39 = x;
+                                v38 = y;
+                                Message("x = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
                                 goto LABEL_56;
@@ -1934,10 +1958,13 @@ int YodaDocument::Unknown_5(int16* world){
                         }
                         zone_id_1 = zone_id;
                         x_1 = 1;
-                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance-1, 0);
-                        if ( zone_id < 0 )
+                        zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+                        if ( zone_id < 0 )  {
+                            Message("YodaDocument::Unknown_5 => %d\n", 0);
                             return 0;
+                        };
                     }
+                    
                     int v22 = x + 10 * y;
                     this->worldZones[v22] = zone;
                     this->world_things[v22].zone_id = zone_id;
@@ -1948,30 +1975,25 @@ int YodaDocument::Unknown_5(int16* world){
                     this->world_things[v22].findItemID = -1;
                     
                     this->AddZoneWithIdToWorld(zone_id);
-                    if ( zone_id == zone_id_1 )
-                    {
+                    if ( zone_id == zone_id_1 ) {
                         zone_id_1 = -1;
-                        x = 0;
+                        x_1 = 0;
                     }
                 }
-                x++;
             }
-            while ( x < 10 );
-            y++;
         }
-        while ( y < 10 );
         
-        if ( y_1 == 1 )
-        {
+        Message("y = %d\n", y_1);
+        if ( y_1 == 1 ) {
             v24 = v38;
             v25 = v39;
             this->field_2E64 = 1;
             int v26 = Map::GetDistanceToCenter(v25, v24);
             zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, v26, v27);
-            if ( (int16)zone_id_3 >= 0 )
-            {
+            if (zone_id_3 >= 0) {
                 zone_1 = this->zones[zone_id_3];
-                idx = zone_id_1 + 10 * y;
+                int idx = v25 + 10 * v24;
+                
                 this->world_things[idx].zone_type = (ZONE_TYPE)1;
                 this->worldZones[idx] = zone_1;
                 this->world_things[idx].zone_id = zone_id_3;
@@ -1982,31 +2004,31 @@ int YodaDocument::Unknown_5(int16* world){
             }
         }
         result = 1;
-    }
-    else
-    {
-        while ( 1 )
-        {
+    } else {
+        while (1) {
             int x = 0, y = 0;
-            printf("v3 = %d\n", v3);
-            printf("v3 = %d\n", v3);
+            Message("v3 = %d\n", v3*4);
+            Message("v3 = %d\n", v3*4);
             quest = this->providedItems[v3];
             if ( place_puzzles__(quest->unknown, world, &x, &y) != 1 )
                 break;
             zone_id_2 = this->GetZoneIdWithType(ZONETYPE_Find, -1, -1, quest->itemID, -1, quest->unknown, 0);
-            if ( zone_id_2 < 0 )
+            if ( zone_id_2 < 0 ) {
+                Message("YodaDocument::Unknown_5 => %d\n", 0);
                 return 0;
+            }
             
             ++v3;
-            int word_idy = x + 10 * y;
             
-            this->world_things[word_idy].zone_type = ZONETYPE_Find;
-            this->world_things[word_idy].zone_id = zone_id_2;
-            this->world_things[word_idy].findItemID = this->wg_last_added_item_id;
-            this->worldZones[word_idy] = this->zones[(int16)zone_id_2];
-            world[word_idy] = 306;
+            int idx = x + 10 * y;
+            this->world_things[idx].zone_type = ZONETYPE_Find;
+            this->world_things[idx].zone_id = zone_id_2;
+            this->world_things[idx].findItemID = this->wg_last_added_item_id;
+            this->worldZones[idx] = this->zones[zone_id_2];
+            world[idx] = 306;
             
             this->AddZoneWithIdToWorld(zone_id_2);
+            
             if ( ++v41 >= v38 ) {
                 goto LABEL_5;
             }
@@ -2014,11 +2036,12 @@ int YodaDocument::Unknown_5(int16* world){
         result = 0;
     }
     
+    Message("YodaDocument::Unknown_5 => %d\n", result);
     return result;
 }
 
 int YodaDocument::place_puzzles__(int a1 /*maxDistance*/, int16 *a2, int* a3, int* a4) {
-    printf("YodaDocument::place_puzzles__(%d, .., .., ..)\n", a1);
+    Message("YodaDocument::place_puzzles__(%d, .., .., ..)\n", a1);
     // a3 = xref
     // a4 = yref
     // a2 = world
@@ -2085,7 +2108,7 @@ int YodaDocument::place_puzzles__(int a1 /*maxDistance*/, int16 *a2, int* a3, in
                 v15 = &v27;
                 goto LABEL_44;
             }
-            printf("No Place to put puzzle!\n");
+            Message("No Place to put puzzle!\n");
             v41 = 0;
         }
         v11 = v10 == 0;
@@ -2110,7 +2133,7 @@ LABEL_44:
     v41 = 1;
     *a3 = v18->x;
     *a4 = v18->y;
-    printf("YodaDocument::place_puzzles__: %dx%d\n", v18->x, v18->y);
+    Message("YodaDocument::place_puzzles__: %dx%d\n", v18->x, v18->y);
 LABEL_45:
     if ( v30.size() > 0 )
     {
@@ -2231,4 +2254,112 @@ void YodaDocument::GetTileProvidedByZonesHotspots(int16 zone_id)
      }
      //        return (unsigned int)tile_id;
      */
+}
+
+int YodaDocument::Unknown_14(int16 a2, int16 a3, int a4, int a5)
+{
+    Message("YodaDocument::Unknown_14(%d, %d, %d, %d)\n", a2, a3, a4, a5);
+    signed int v6 = 0; // ecx@1
+    signed int v7 = 0; // ebx@1
+    int result = 0; // eax@2
+    int v9 = 0; // edx@3
+    Zone *v10 = NULL; // eax@3
+    int v11 = 0; // esi@3
+    __int16 *v12; // edi@4
+    int v13 = 0; // edi@10
+    int v14 = 0; // esi@10
+    int v15 = 0; // esi@15
+    Hotspot *v16 = NULL; // esi@15
+    int v17 = 0; // esi@17
+    int v18 = 0; // ebx@18
+    Hotspot *v19 = NULL; // ecx@19
+    vector<uint16> v20; // [sp+Ch] [bp-2Ch]@10
+    YodaDocument *v21 = NULL; // [sp+20h] [bp-18h]@1
+    int v22 = 0; // [sp+24h] [bp-14h]@1
+    Zone *v23 = NULL; // [sp+28h] [bp-10h]@3
+    int v24 = 0; // [sp+34h] [bp-4h]@10
+    
+    v21 = this;
+    v6 = 0;
+    v7 = 0;
+    v22 = 0;
+    if ( a2 >= 0 )
+    {
+        v9 = 0;
+        v10 = v21->zones[a2];
+        v23 = v10;
+        v11 = (int)v10->providedItemIDs.size();
+        if ( v11 > 0 )
+        {
+            int idx = 0;
+            while ( v10->providedItemIDs[idx] != a5 )
+            {
+                ++v12;
+                idx ++;
+                if ( v11 <= ++v9 )
+                    goto LABEL_9;
+            }
+            v6 = 1;
+        }
+    LABEL_9:
+        if ( v6 )
+        {
+            v13 = (int)v23->_hotspots.size();
+            v14 = 0;
+            v24 = 0;
+            v20.clear();
+            if ( v13 > 0 )
+            {
+                do
+                {
+                    if ( v23->_hotspots[v14]->type == TriggerLocation )
+                    {
+                        v7 = 1;
+                        v20.push_back(v14);
+                    }
+                    ++v14;
+                }
+                while ( v13 > v14 );
+            }
+            if ( v7 ) {
+                v15 = (int)v20.size();
+                v16 = v23->_hotspots[v20[win_rand() % v15]];
+                this->AddRequiredQuestWithItemID(a5, a4);
+                v21->wg_last_added_item_id = a5;
+                v16->arg1 = a5;
+                v16->enabled = 1;
+                v22 = 1;
+            }
+            v24 = -1;
+        }
+        v17 = 0;
+        if ( !v22 )
+        {
+            v18 = 0;
+            int v20_unknown2 = (int)v23->_hotspots.size();
+            if ( v20_unknown2 > 0 )
+            {
+                do
+                {
+                    v19 = v23->_hotspots[v17];
+                    if ( v19->type == 9 )
+                    {
+                        v22 = this->Unknown_14(v19->arg1, a3, a4, a5);
+                        if ( v22 == 1 )
+                            break;
+                    }
+                    ++v17;
+                    ++v18;
+                }
+                while ( v20_unknown2 > v18 );
+            }
+        }
+        result = v22;
+    }
+    else
+    {
+        result = 0;
+    }
+    Message("YodaDocument::Unknown_14 => %d\n", result);
+    return result;
 }
