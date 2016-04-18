@@ -144,15 +144,19 @@ static int logging;
     [self testSample:world_things_e43f_3 seed:0xE43F size:WorldSize_LARGE];
     [self testSample:world_things_1e77_3 seed:0x1E77 size:WorldSize_LARGE];
     [self testSample:world_things_70A3_3 seed:0x70A3 size:WorldSize_LARGE];
+    [self testSample:world_things_dead_1 seed:0xDEAD size:WorldSize_SMALL];
+    [self testSample:world_things_08FF_3 seed:0x08FF size:WorldSize_LARGE];
+    [self testSample:world_things_BB41_3 seed:0xBB41 size:WorldSize_LARGE];
+    [self testSample:world_things_FCA5_3 seed:0xFCA5 size:WorldSize_LARGE];
+    [self testSample:world_things_60B2_3 seed:0x60B2 size:WorldSize_LARGE];
+    [self testSample:world_things_23C6_3 seed:0x23C6 size:WorldSize_LARGE];
+    
     //*/
-    logging = 1;
-    /*
+    /* VALID INVALIDS
+     [self testSample:world_things_dead_3 seed:0xDEAD size:WorldSize_LARGE];
+     //*/
+    /* Failing in map generation
      [self testSample:world_things_568C_3 seed:0x568C size:WorldSize_LARGE];
-     [self testSample:world_things_08FF_3 seed:0x08FF size:WorldSize_LARGE];
-     [self testSample:world_things_BB41_3 seed:0xBB41 size:WorldSize_LARGE];
-     [self testSample:world_things_FCA5_3 seed:0xFCA5 size:WorldSize_LARGE];
-     [self testSample:world_things_60B2_3 seed:0x60B2 size:WorldSize_LARGE];
-     [self testSample:world_things_23C6_3 seed:0x23C6 size:WorldSize_LARGE];
      //*/
 }
 
@@ -170,6 +174,11 @@ static int logging;
            || !(doc->world_things[i].zone_id == sample[i*4+1])
            || !(doc->world_things[i].findItemID == sample[i*4+2])
            || !(doc->world_things[i].requiredItemID == sample[i*4+3])) {
+            printf("%dx%d\n", i%10, i/10);
+            printf("zone_type %d should be %d\n", doc->world_things[i].zone_type, sample[i*4+0]);
+            printf("zone_id %d should be %d\n", doc->world_things[i].zone_id, sample[i*4+1]);
+            printf("findItemID %d should be %d\n", doc->world_things[i].findItemID, sample[i*4+2]);
+            printf("requiredItemID %d should be %d\n", doc->world_things[i].requiredItemID, sample[i*4+3]);
             success = false;
             break;
         }
@@ -248,13 +257,7 @@ static int logging;
     // nmap->print();
     // // // // // // // // // // // // // // // // // // // // // // //
 #pragma mark -
-    int zone_id = 0; // eax@175
-    int v68 = 0; // edi@175
     Zone *zone_1; // ecx@175
-    signed int did_find_travel_zone = 0; // ecx@181
-    int v76 = 0; // edx@189
-    int v79 = 0; // edx@196
-    int v82 = 0; // edx@202
     __int16 zone_id_9 = 0; // di@210
     int y_1 = 0; // edi@216
     signed int zone_id_3 = 0; // ebp@225
@@ -290,12 +293,6 @@ static int logging;
     __int16 distance_16 = 0; // ax@330
     Planet planet_4; // eax@347
     vector<uint16> *puzzle_array_1; // ecx@351
-    int v180 = 0; // edi@355
-    int v181 = 0; // esi@356
-    Quest *v182; // ecx@357
-    int count = 0; // edi@360
-    int idx = 0; // esi@361
-    Quest *v185; // ecx@362
     int v192 = 0; // [sp-30h] [bp-21Ch]@0
     int v194 = 0; // [sp-24h] [bp-210h]@0
     int v195 = 0; // [sp-20h] [bp-20Ch]@51
@@ -308,14 +305,9 @@ static int logging;
     int v204 = 0; // [sp+0h] [bp-1ECh]@0
     int v206 = 0; // [sp+8h] [bp-1E4h]@0
     int zone_id_11; // [sp+Ch] [bp-1E0h]@174
-    int x_2 = 0; // [sp+10h] [bp-1DCh]@3
     int zone_id_10 = 0; // [sp+14h] [bp-1D8h]@46
     int x_8 = 0; // [sp+18h] [bp-1D4h]@46
-    int y_6 = 0; // [sp+20h] [bp-1CCh]@46
-    int x_7 = 0; // [sp+24h] [bp-1C8h]@3
-    int transport_count = 0; // [sp+2Ch] [bp-1C0h]@3
     int x = 0; // [sp+30h] [bp-1BCh]@53
-    int y_7 = 0; // [sp+3Ch] [bp-1B0h]@3
     
     // view->field_4C = 1;
     doc->field_68 = 0;
@@ -368,17 +360,12 @@ static int logging;
             int16 zone_id_8 = doc->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance, 1);
             
             zone_id_10 = -1;
-            zone_id_11 = zone_id_8;
             if ( zone_id_8 < 0 ) continue;
             
             doc->world_things[idx].zone_id = zone_id_8;
             doc->world_things[idx].zone_type = ZONETYPE_TravelStart;
             doc->world_things[idx].requiredItemID = doc->wg_item_id;
             zone_1 = doc->zones[zone_id_8];
-            
-            zone_id = zone_id_11;
-            v68 = 0;
-            //int zone_2 = zone_1;
             
             for(Hotspot *hotspot : zone_1->_hotspots) {
                 if(hotspot->type == VehicleTo) {
@@ -389,59 +376,51 @@ static int logging;
             
             if ( zone_id_10 < 0) continue;
             
-            int targetIndex = 0, foundTravelTarget = 0;
-            for(targetIndex=0; targetIndex < 100; targetIndex++)
-                if(map[targetIndex] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[targetIndex]) {
+            int foundTravelTarget = false;
+            
+            int target_x = 0;
+            int target_y = 0;
+            for(int y=0; y < 10; y++) {
+                if(map[target_x + y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[target_x + y * 10]) {
+                    target_y = y;
                     foundTravelTarget = true;
                     break;
                 }
-         
-            if (foundTravelTarget) {
-                Message("transport loop 1\n");
-                v76 = 0;
-                int worldZoneIdx = 10 * y_7;
-                int worldItemIdx = 5 * y_7;
-                while ( map[worldItemIdx] != 102 || doc->worldZones[worldZoneIdx] )
-                {
-                    worldZoneIdx++;
-                    worldItemIdx++;
-                    if ( ++v76 >= 10 )
-                        goto LABEL_195;
+            }
+            
+            if (!foundTravelTarget) {
+                target_x = 0;
+                target_y = 0;
+                for(int x=0; x < 10; x++) {
+                    if(map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                        target_x = x;
+                        foundTravelTarget = true;
+                        break;
+                    }
                 }
-                foundTravelTarget = 1;
-                x_7 = v76;
 
             LABEL_195:
-                if ( !foundTravelTarget )
-                {
-                    Message("transport loop 2\n");
-                    v79 = 0;
-                    int worldZoneIdx = 9;
-                    x_7 = 9;
-                    // v81 = &world[5];
-                    int mapIdx = 5;
-                    
-                    while ( map[mapIdx] != 102 || doc->worldZones[worldZoneIdx])
-                    {
-                        worldZoneIdx += 10;
-                        mapIdx += 10;
-                        // ++t;
-                        if ( mapIdx >= 100)
-                            goto LABEL_202;
+                if ( !foundTravelTarget ) {
+                    target_x = 9;
+                    for(int y=0; y < 10; y++) {
+                        if(map[target_x+y*10] == 102 && !doc->worldZones[target_x+y*10]){
+                            foundTravelTarget = 1;
+                            target_y = y;
+                            break;
+                        }
                     }
-                    foundTravelTarget = 1;
-                    y_7 = v79;
                 }
             }
         LABEL_202:
-            v82 = 0;
             if ( foundTravelTarget ){
                 zone_id_9 = zone_id_10;
                 if ( !doc->worldContainsZoneId(zone_id_10) )
                 {
-                    int idx_3 = x + 10 * y;
-                    doc->worldZones[idx_3] = doc->zones[zone_id_10];
-                    doc->world_things[idx_3].zone_id = zone_id_10;;
+                    int idx_3 = target_x + 10 * target_y;
+                    Message("transport loop: %dx%d\n", target_x, target_y);
+                    Message("transport loop: %dx%d\n", target_x, target_y);
+                    doc->worldZones[idx_3] = doc->zones[zone_id_9];
+                    doc->world_things[idx_3].zone_id = zone_id_9;;
                     doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
                     doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
                     // v87 = zone_2;
@@ -454,35 +433,27 @@ static int logging;
                     doc->AddZoneWithIdToWorld(zone_id_9);
                 }
                 
-                // ++world_thing_plus_4;
-                idx++;
-                x_2 = x_2 + 1;
-                transport_count += 4;
-                y_6 += 2;
                 continue;
             }
             
-            int worldZoneIdx = 90;
-            int worldIdx = 86;
-            y_7 = 9;
-            x_7 = 0;
-            while ( map[worldIdx] != 102 || doc->worldZones[worldZoneIdx] )
-            {
-                worldZoneIdx++;
-                worldIdx++;
-                if ( worldZoneIdx >= 96)
-                    goto LABEL_209;
+            target_y = 9;
+            target_x = 0;
+            for(int x=0; x < 10; x++) {
+                if(map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                    target_x = x;
+                    foundTravelTarget = true;
+                }
             }
-            did_find_travel_zone = 1;
-            x_7 = v82;
+            
         LABEL_209:
-            if ( did_find_travel_zone )
+            if ( foundTravelTarget )
             {
             LABEL_382:
                 zone_id_9 = zone_id_10;
                 if ( !doc->worldContainsZoneId(zone_id_10) )
                 {
-                    int idx_3 = x + 10 * y;
+                    int idx_3 = target_x + 10 * target_y;
+                    Message("transport loop: %dx%d\n", target_x, target_y);
                     doc->worldZones[idx_3] = doc->zones[zone_id_10];
                     doc->world_things[idx_3].zone_id = zone_id_9;
                     doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
@@ -1005,34 +976,14 @@ LABEL_296:
         } else {
             if ( planet_4 != ENDOR ) {
             clean_up_and_return:
-                v180 = (int)doc->providedItems.size();
-                if ( v180 > 0 ) {
-                    v181 = 0;
-                    do {
-                        v182 = doc->providedItems[v181];
-                        if ( v182 )
-                            ; // deallocate v182
-                        
-                        ++v181;
-                        --v180;
-                    }
-                    while ( v180 );
-                }
+                for(Quest *quest : doc->providedItems)
+                    delete quest;
                 doc->providedItems.clear();
                 
-                count = (int)doc->requiredItems.size();
-                if ( count > 0 ) {
-                    idx = 0;
-                    do {
-                        v185 = doc->requiredItems[idx];
-                        if ( v185 ) ; // dealloc v185
-                        
-                        ++idx;
-                        --count;
-                    }
-                    while ( count );
-                }
+                for(Quest *quest : doc->requiredItems)
+                    delete quest;
                 doc->requiredItems.clear();
+                
                 doc->puzzle_ids.clear();
                 doc->chosen_zone_ids.clear();
                 Message("-= FAILURE 3 =-\n");

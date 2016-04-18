@@ -452,195 +452,62 @@ signed int YodaDocument::GenerateWorld(int seed, int puzzle_count, int16* map, i
 signed int YodaDocument::ChooseItemIDFromZone(__int16 zone_id, int item_id, int a4)
 {
     Message("YodaDocument::ChooseItemIDFromZone(%d, %d, %d)\n", zone_id, item_id, a4);
-    signed int v4; // esi@1
-    Zone *zone; // eax@1
-    Zone *zone_1; // edi@1
-    int v8; // eax@4
-    int v9; // ecx@4
-    __int16 v11; // dx@6
-    int v12; // eax@9
-    int v13; // ecx@9
-    int v15; // ebx@15
-    int v16; // ebp@17
-    Hotspot *v17; // eax@18
-    __int16 v18; // cx@20
-    int v19; // [sp+10h] [bp-8h]@16
+    Zone *zone = getZoneByID(zone_id);
+    if (!zone) return -1;
     
-    v4 = -1;
-    zone = getZoneByID(zone_id);
-    zone_1 = zone;
-    if ( !zone )
-        return -1;
-    if ( a4 )
-    {
-        v8 = (int)zone->assignedItemIDs.size();
-        v9 = 0;
-        if ( v8 <= 0 )
-            goto LABEL_15;
-        int idx = 0;
-        while ( 1 )
-        {
-            v11 = zone_1->assignedItemIDs[idx];
-            if ( item_id == zone_1->assignedItemIDs[idx] )
-                break;
-            ++idx;
-            if ( ++v9 >= v8 )
-                goto LABEL_15;
+    vector<uint16> itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 candidate : itemIDs) {
+        if(candidate == item_id) {
+            return candidate;
         }
     }
-    else
-    {
-        v12 = (int)zone->requiredItemIDs.size();
-        v13 = 0;
-        if ( v12 <= 0 )
-            goto LABEL_15;
-        int idx = 0;
-        while ( 1 )
-        {
-            v11 = zone_1->requiredItemIDs[idx];
-            if ( item_id == zone_1->requiredItemIDs[idx] )
-                break;
-            ++idx;
-            if ( ++v13 >= v12 )
-                goto LABEL_15;
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseItemIDFromZone(hotspot->arg1, item_id, a4);
+            if(result >= 0) return result;
         }
     }
-    v4 = v11;
-LABEL_15:
-    v15 = 0;
-    if ( v4 < 0 )
-    {
-        v19 = (int)zone_1->_hotspots.size();
-        if ( v19 > 0 )
-        {
-            v16 = 0;
-            do {
-                v17 = zone_1->_hotspots[v16];
-                if ( v17 && v17->type == 9 )
-                {
-                    v18 = v17->arg1;
-                    if ( v18 >= 0 )
-                        v4 = ChooseItemIDFromZone(v18, item_id, a4);
-                    if ( v4 >= 0 )
-                        break;
-                }
-                ++v16;
-                ++v15;
-            }
-            while ( v19 > v15 );
-        }
-    }
-    return v4;
+    
+    return -1;
 }
 
 signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
 {
     Message("YodaDocument::ChooseItemIDFromZone_0(%d, %d)\n", zone_id, item_id);
+    vector<Hotspot*> hotspotCandidates;
+    Zone *zone = getZoneByID(zone_id);
+    if(!zone) return -1;
     
-    Zone *zone_1; // eax@1
-    Zone *zone; // esi@1
-    signed int result; // eax@2
-    int v7; // ebx@7
-    int idx; // edi@7
-    Hotspot *v9; // ecx@12
-    int v10; // ebx@18
-    int v11; // edi@19
-    Hotspot *v12; // eax@20
-    __int16 zone_id_1; // cx@22
-    vector<uint16> v14; // [sp+Ch] [bp-38h]@1
-    int v16 = 0; // [sp+14h] [bp-30h]@9
-    unsigned int v17; // [sp+20h] [bp-24h]@5
-    int v18; // [sp+24h] [bp-20h]@4
-    int v19; // [sp+28h] [bp-1Ch]@4
-    int v21; // [sp+30h] [bp-14h]@1
-    int v22; // [sp+34h] [bp-10h]@18
-    __int16 v23; // [sp+36h] [bp-Eh]@6
-    
-    v21 = -1;
-    v14.clear();
-    zone_1 = getZoneByID(zone_id);
-    zone = zone_1;
-    if ( zone_1 )
-    {
-        Message("v16 = %d\n", v16);
-        v18 = 0;
-        v19 = (int)zone_1->providedItemIDs.size();
-        if ( v19 > 0 )
-        {
-            v17 = 0;
-            do
-            {
-                v23 = zone->providedItemIDs[v17 / 2];
-                if ( item_id == v23 )
-                {
-                    v7 = (int)zone->_hotspots.size();
-                    idx = 0;
-                    v14.clear();
-                    if ( v7 > 0 )
-                    {
-                        do
-                        {
-                            if ( zone->_hotspots[idx]->type == TriggerLocation ) {
-                                v14.insert(v14.begin() + v16, idx);
-                                v16++;
-                            }
-                            ++idx;
-                        }
-                        while ( v7 > idx );
-                    }
-                    if ( v16 > 0 )
-                    {
-                        v9 = zone->_hotspots[v14[(win_rand() % v16)]];
-                        if ( v9 )
-                        {
-                            if ( v9->type == TriggerLocation )
-                            {
-                                v21 = v23;
-                                v9->arg1 = v23;
-                                v9->enabled = 1;
-                            }
-                        }
-                    }
-                    if ( v21 >= 0 )
-                        break;
+    Message("v16 = %d\n", 0);
+    for(int providedItemID : zone->providedItemIDs) {
+        if ( item_id == providedItemID ) {
+            hotspotCandidates.clear();
+            
+            for(Hotspot *hotspot : zone->_hotspots)
+                if(hotspot->type == TriggerLocation)
+                    hotspotCandidates.insert(hotspotCandidates.begin(), hotspot);
+            
+            if ( hotspotCandidates.size() > 0 ) {
+                int idx = win_rand() % hotspotCandidates.size();
+                Hotspot *hotspot = hotspotCandidates[idx];
+                if (hotspot->type == TriggerLocation ) {
+                    hotspot->arg1 = providedItemID;
+                    hotspot->enabled = 1;
+                    return providedItemID;
                 }
-                v17 += 2;
-                ++v18;
-            }
-            while ( v18 < v19 );
-        }
-        if ( v21 == -1 )
-        {
-            v10 = 0;
-            v22 = (int)zone->_hotspots.size();
-            if ( v22 > 0 )
-            {
-                v11 = 0;
-                do
-                {
-                    v12 = zone->_hotspots[v11];
-                    if ( v12 && v12->type == DoorIn )
-                    {
-                        zone_id_1 = v12->arg1;
-                        if ( zone_id_1 >= 0 )
-                            v21 = ChooseItemIDFromZone_0(zone_id_1, item_id);
-                        if ( v21 >= 0 ) {
-                            break;
-                        }
-                    }
-                    ++v11;
-                    ++v10;
-                }
-                while ( v22 > v10 );
             }
         }
-        result = v21;
     }
-    else
-    {
-        result = -1;
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseItemIDFromZone_0(zone_id, item_id);
+            if(result >= 0) return result;
+        }
     }
-    return result;
+    
+    return -1;
 }
 
 signed int YodaDocument::ChooseItemIDFromZone_1(__int16 a2, int a3, int a4, __int16 a5, int a6)
@@ -1828,8 +1695,6 @@ int YodaDocument::Unknown_5(int16* world){
     int v27 = 0; // ST18_4@62
     int16 zone_id_3 = 0; // eax@62
     Zone *zone_1 = NULL; // ecx@63
-    int v33 = 0; // [sp+8h] [bp-28h]@0
-    int v34 = 0; // [sp+Ch] [bp-24h]@0
     int zone_id_1 = 0; // [sp+18h] [bp-18h]@10
     int v38 = 0; // [sp+1Ch] [bp-14h]@1
     int v39 = 0; // [sp+20h] [bp-10h]@39
@@ -1917,7 +1782,6 @@ int YodaDocument::Unknown_5(int16* world){
                             break;
                         }
                         
-                        world_size = this->size;
                         if ( world_size == WORLD_SIZE_SMALL ) {
                             if ( abs(v39 - x) > 1 || abs(v38 - y) > 1 ) {
                                 y_1++;
@@ -2226,7 +2090,6 @@ int YodaDocument::Unknown_14(int16 a2, int16 a3, int a4, int a5)
     YodaDocument *v21 = NULL; // [sp+20h] [bp-18h]@1
     int v22 = 0; // [sp+24h] [bp-14h]@1
     Zone *v23 = NULL; // [sp+28h] [bp-10h]@3
-    int v24 = 0; // [sp+34h] [bp-4h]@10
     
     v21 = this;
     v6 = 0;
@@ -2255,7 +2118,6 @@ int YodaDocument::Unknown_14(int16 a2, int16 a3, int a4, int a5)
         {
             v13 = (int)v23->_hotspots.size();
             v14 = 0;
-            v24 = 0;
             v20.clear();
             if ( v13 > 0 )
             {
@@ -2279,7 +2141,6 @@ int YodaDocument::Unknown_14(int16 a2, int16 a3, int a4, int a5)
                 v16->enabled = 1;
                 v22 = 1;
             }
-            v24 = -1;
         }
         v17 = 0;
         if ( !v22 )
