@@ -694,27 +694,16 @@ LABEL_296:
     Message("After Transport Loop\n");
 }
 
-- (void)loop2:(YodaDocument*)doc map:(uint16*)map {
-    
-    signed int did_not_place_zone = 0; // ecx@298
-    signed int zone_id_1 = 0; // edx@301
-    
-    __int16 distance_6 = 0; // ax@322
-    __int16 distance_7 = 0; // ax@324
-    __int16 distance_8 = 0; // ax@326
-    __int16 distance_9 = 0; // ax@328
-    __int16 distance_16 = 0; // ax@330
-    int v192 = 0; // [sp-30h] [bp-21Ch]@0
+- (void)loop2:(YodaDocument*)doc map:(uint16*)map {    
+    int v192 = 0;
 
 #pragma mark - Third Loop
-    // worldThing = (WorldThing *)((char *)&doc->world_things_1[0] + 8);
-    
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
             int idx = x + 10 * y;
             int zone_2 = map[idx];
-            
-            did_not_place_zone = 0;
+            int distance = 0;
+            int did_not_place_zone = 0;
             doc->field_3394 = -1;
             doc->field_3390 = -1;
             doc->wg_item_id = -1;
@@ -722,127 +711,93 @@ LABEL_296:
             
             WorldThing *worldThing = &doc->world_things[idx];
             
-            if ( zone_2 && zone_2 != 305 && !doc->worldZones[idx])
+            if ( !zone_2 || zone_2 == 305 || doc->worldZones[idx]) continue;
+            
+            int zone_id_1 = -1;
+            if ( (unsigned int)((int16)zone_2 - 201) <= 103 )
             {
-                zone_id_1 = -1;
-                if ( (unsigned int)((__int16)zone_2 - 201) <= 103 )
+                switch (zone_2)
                 {
-                    switch ( (__int16)zone_2 )
-                    {
-                        case WORLD_ITEM_SPACEPORT:
-                            distance_6 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance_6, 0);
-                            if ( zone_id_1 >= 0 )
-                                worldThing->zone_type = ZONETYPE_Town;
+                    case WORLD_ITEM_SPACEPORT:
+                        distance = Map::GetDistanceToCenter(x, y);
+                        zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance, 0);
+                        if ( zone_id_1 >= 0 )
+                            worldThing->zone_type = ZONETYPE_Town;
+                        goto did_not_find_zone_with_required_type;
+                    case WORLD_ITEM_BLOCK_WEST:
+                        distance = Map::GetDistanceToCenter(x, y);
+                        zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance, 0);
+                        if ( zone_id_1 < 0 )
                             goto did_not_find_zone_with_required_type;
-                        case WORLD_ITEM_BLOCK_WEST:
-                            distance_7 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance_7, 0);
-                            if ( zone_id_1 < 0 )
-                                goto did_not_find_zone_with_required_type;
-                            worldThing->zone_type = ZONETYPE_BlockadeWest;
-                            goto LABEL_332;
-                        case WORLD_ITEM_BLOCK_EAST:
-                            distance_8 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance_8, 0);
-                            if ( zone_id_1 < 0 )
-                                goto did_not_find_zone_with_required_type;
-                            worldThing->zone_type = ZONETYPE_BlockadeEast;
-                            goto LABEL_332;
-                        case WORLD_ITEM_BLOCK_NORTH:
-                            distance_9 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance_9, 0);
-                            if ( zone_id_1 < 0 )
-                                goto did_not_find_zone_with_required_type;
-                            worldThing->zone_type = ZONETYPE_BlockadeNorth;
-                            goto LABEL_332;
-                        case WORLD_ITEM_BLOCK_SOUTH:
-                            distance_16 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance_16, 0);
-                            if ( zone_id_1 >= 0 )
-                            {
-                                worldThing->zone_type = ZONETYPE_BlockadeSouth;
-                            LABEL_332:;
-                                worldThing->requiredItemID = doc->wg_item_id;
-                                // worldThing->zone_type = (ZONE_TYPE)doc->wg_item_id;
-                            }
-                        did_not_find_zone_with_required_type:
-                            did_not_place_zone = 1;
-                            break;
-                        default: break;
-                    }
-                }
-                
-                if ( zone_id_1 < 0 ) {
-                    if ( v192 != 1 && v192 != 104 && v192 != 300 )
-                    {
-                        if ( did_not_place_zone )
-                        {
-                            int distance = Map::GetDistanceToCenter(x, y);
-                            int zone_id = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
-                            if ( zone_id >= 0 )
-                            {
-                                zone_id_1 = zone_id;
-                                worldThing->zone_type = ZONETYPE_Empty;
-                                worldThing->zone_id = zone_id;
-                                /*
-                                 *(_DWORD *)v192 = doc->zones.ptrs[zone_id_2];
-                                 worldThing[-1].field_30 = zone_id_2;
-                                 worldThing->field_C = -1;
-                                 LOWORD(worldThing->zone_type) = -1;
-                                 worldThing->required_item_id = -1;
-                                 */
-                                doc->AddZoneWithIdToWorld(zone_id_1);
-                                continue;
-                            }
+                        worldThing->zone_type = ZONETYPE_BlockadeWest;
+                        worldThing->requiredItemID = doc->wg_item_id;
+                        break;
+                    case WORLD_ITEM_BLOCK_EAST:
+                        distance = Map::GetDistanceToCenter(x, y);
+                        zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance, 0);
+                        if ( zone_id_1 < 0 )
+                            goto did_not_find_zone_with_required_type;
+                        worldThing->zone_type = ZONETYPE_BlockadeEast;
+                        worldThing->requiredItemID = doc->wg_item_id;
+                        break;
+                    case WORLD_ITEM_BLOCK_NORTH:
+                        distance = Map::GetDistanceToCenter(x, y);
+                        zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance, 0);
+                        if ( zone_id_1 < 0 )
+                            goto did_not_find_zone_with_required_type;
+                        worldThing->zone_type = ZONETYPE_BlockadeNorth;
+                        worldThing->requiredItemID = doc->wg_item_id;
+                        break;
+                    case WORLD_ITEM_BLOCK_SOUTH:
+                        distance = Map::GetDistanceToCenter(x, y);
+                        zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance, 0);
+                        if ( zone_id_1 >= 0 ) {
+                            worldThing->zone_type = ZONETYPE_BlockadeSouth;
+                        LABEL_332:;
+                            worldThing->requiredItemID = doc->wg_item_id;
+                            // worldThing->zone_type = (ZONE_TYPE)doc->wg_item_id;
                         }
-                    }
+                    did_not_find_zone_with_required_type:
+                        did_not_place_zone = 1;
+                        break;
+                    default: break;
                 }
-                else
-                {
-                    worldThing->zone_id = zone_id_1;
-                    /*
-                     *v193 = doc->zones.ptrs[zone_id_1];
-                     worldThing->field_C = -1;
-                     */
-                    if ( worldThing->zone_type != ZONETYPE_Town)
-                        add_zone_to_world:
-                        doc->AddZoneWithIdToWorld(zone_id_1);
-                }
+            }
+            
+            if ( zone_id_1 < 0 ) {
+                if (v192 == 1 || v192 == 104 || v192 == 300) continue;
+                if (!did_not_place_zone ) continue;
+                
+                int distance = Map::GetDistanceToCenter(x, y);
+                zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+                if ( zone_id_1 > 0 ) continue;
+                worldThing->zone_type = ZONETYPE_Empty;
+                worldThing->zone_id = zone_id_1;
+                /*
+                 *(_DWORD *)v192 = doc->zones.ptrs[zone_id_2];
+                 worldThing[-1].field_30 = zone_id_2;
+                 worldThing->field_C = -1;
+                 LOWORD(worldThing->zone_type) = -1;
+                 worldThing->required_item_id = -1;
+                 */
+                doc->AddZoneWithIdToWorld(zone_id_1);
+            } else {
+                worldThing->zone_id = zone_id_1;
+                /*
+                 *v193 = doc->zones.ptrs[zone_id_1];
+                 worldThing->field_C = -1;
+                 */
+                if ( worldThing->zone_type != ZONETYPE_Town)
+                    doc->AddZoneWithIdToWorld(zone_id_1);
             }
         }
     }
 }
 
-- (void)loop1:(YodaDocument*)doc zoneType:(int)zone_type puzzles:(uint16*)puzzles v199:(int)v199 x_8:(int)x_8 {
-    
-    int v122 = 0; // ecx@248
-    signed int zone_id_5 = 0; // ebp@276
-    __int16 distance_15 = 0; // ST34_2@279
-    int v136 = 0; // eax@279
-    int v138 = 0; // eax@280
-    __int16 distance_3 = 0; // ax@281
-    __int16 distance_2 = 0; // ax@284
-    __int16 distance_4 = 0; // ax@286
-    __int16 distance_5 = 0; // ax@293
-    __int16 zone_id_6 = 0; // ax@293
-    int world_idx_2 = 0; // edx@294
-    Planet planet_7; // eax@303
-    vector<uint16> *puzzle_ids; // ecx@307
-    int count_1 = 0; // edi@311
-    int idx_1 = 0; // esi@312
-    Quest *quest_3 = 0; // ecx@313
-    int count_2 = 0; // edi@316
-    int idx_2 = 0; // esi@317
-    Quest *quest_2; // ecx@318
-    int v194 = 0; // [sp-24h] [bp-210h]@0
-    int v195 = 0; // [sp-20h] [bp-20Ch]@51
-    int y_4 = 0; // [sp-1Ch] [bp-208h]@51
-    int v197 = 0; // [sp-18h] [bp-204h]@51
-    int idx_6 = 0; // [sp-10h] [bp-1FCh]@248
+- (void)loop1:(YodaDocument*)doc zoneType:(int)puzzleMapIdx puzzles:(uint16*)puzzles v199:(int)v199 x_8:(int)x_8 {
+    int idx_6 = 0, v195 = 0;
 
-    while ( 2 )
-    {
+    for(int zone_type=puzzleMapIdx; zone_type > 0; zone_type--) {
         doc->wg_zone_type = -1;
         doc->wg_last_added_item_id = -1;
         doc->wg_item_id_unknown_2 = -1;
@@ -852,14 +807,11 @@ LABEL_296:
         doc->field_3394 = -1;
         doc->field_3398 = -1;
         idx_6 = 0;
-        // v121 = v119[v199];
-        v122 = 0;
-        // row = &puzzles;
+
         int x =0, y=0, row = 0;
         Message("zone_type = %d\n", zone_type);
         
-        while (2)
-        {
+        while (true) {
             // v125 = row; = puzzles[row];
             int foundSomething = 0;
             for(x=0; x < 10; x++) {
@@ -869,30 +821,21 @@ LABEL_296:
                 }
             }
             
-            ++v122;
-        LABEL_273:
             if (foundSomething) {
                 int zone_2 = doc->puzzle_ids_2[zone_type];
                 
                 int16 item_1 = doc->puzzles[zone_2]->item_1;
                 
-                zone_id_5 = -1;
+                int zone_id_5 = -1;
                 while ( 1 )
                 {
                     if ( zone_id_5 >= 0 ) goto LABEL_292;
                     if ( v199 == x_8 ) {
-                        distance_15 = Map::GetDistanceToCenter(x, y);
-                        /* HIWORD(v136) = HIWORD(v199); */
-                        /* LOWORD(v136) = v199 - 1; */
-                        v136 = v199-1;
-                        zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Goal, v136, -1, idx_6, -1, distance_15, 0);
-                        if ( zone_id_5 < 0 )
-                            goto LABEL_303;
+                        int distance = Map::GetDistanceToCenter(x, y);
+                        zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Goal, v199-1, -1, idx_6, -1, distance, 0);
+                        if ( zone_id_5 < 0 ) goto LABEL_303;
                         doc->wg_zone_type = ZONETYPE_Goal;
-                        v138 = v199;
-                    }
-                    else
-                    {
+                    } else {
                         int rand_2 = win_rand();
                         Message("random = %x\n", rand_2);
                         int type = (rand_2 & 1) + 15; // was win_rand() & 1
@@ -900,39 +843,37 @@ LABEL_296:
                         // LOWORD(idx_6) = v199 - 1;
                         // item_id = idx_6 = v199-1;
                         // y_2 = 16 - ((unsigned int)((((unsigned __int64)rand_2 >> 32) ^ abs(rand_2) & 1) - ((unsigned __int64)rand_2 >> 32)) < 1);
-                        distance_3 = Map::GetDistanceToCenter(x, y);
+                        int distance = Map::GetDistanceToCenter(x, y);
                         zone_id_5 = doc->GetZoneIdWithType((ZONE_TYPE)type,
                                                            zone_type-1,
                                                            -1,
                                                            item_1,
                                                            -1,
-                                                           distance_3,
+                                                           distance,
                                                            0 /*v141*/);
-                        if ( zone_id_5 >= 0 )
-                        {
+                        if ( zone_id_5 >= 0 ) {
                             doc->wg_zone_type = type;
-                            doc->field_3394 = y_4 - 1;
+                            doc->field_3394 = 0 - 1;
                             goto LABEL_290;
                         }
-                        if ( zone_type == ZONETYPE_Use )
-                        {
-                            distance_2 = Map::GetDistanceToCenter(x, y);
-                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, v197, -1, distance_2, 0);
+                        
+                        if ( zone_type == ZONETYPE_Use ) {
+                            int distance = Map::GetDistanceToCenter(x, y);
+                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, 0, -1, distance, 0);
                             if ( zone_id_5 < 0 )
                                 goto LABEL_303;
                             doc->wg_zone_type = ZONETYPE_Trade;
                         }
                         else
                         {
-                            distance_4 = Map::GetDistanceToCenter(x, y);
-                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Use, v195, -1, v197, -1, distance_4, 0);
+                            int distance = Map::GetDistanceToCenter(x, y);
+                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Use, v195, -1, 0, -1, distance, 0);
                             if ( zone_id_5 < 0 )
                                 goto LABEL_303;
                             doc->wg_zone_type = ZONETYPE_Use;
                         }
-                        v138 = v194;
                     }
-                    doc->field_3394 = v138 - 1;
+                    doc->field_3394 = -1;
                 LABEL_290:
                     doc->AddZoneWithIdToWorld(zone_id_5);
                     if ( zone_id_5 < 0 )
@@ -942,58 +883,29 @@ LABEL_296:
                         doc->puzzle_ids_2.clear();
                         doc->item_ids.clear();
                         
-                        planet_7 = doc->planet;
-                        if ( planet_7 == TATOOINE )
-                        {
-                            puzzle_ids = &doc->tatooine_puzzle_ids;
+                        switch (doc->planet) {
+                            case TATOOINE: doc->tatooine_puzzle_ids.clear(); break;
+                            case HOTH:; doc->hoth_puzzle_ids.clear(); break;
+                            case ENDOR:; doc->endor_puzzle_ids.clear(); break;
                         }
-                        else if ( planet_7 == HOTH )
-                        {
-                            puzzle_ids = &doc->hoth_puzzle_ids;
-                        }
-                        else
-                        {
-                            if ( planet_7 != ENDOR )
-                                goto LABEL_311;
-                            puzzle_ids = &doc->endor_puzzle_ids;
-                        }
-                        puzzle_ids->clear();
                         
-                    LABEL_311:
-                        count_1 = (int)doc->providedItems.size();
-                        if ( count_1 > 0 ) {
-                            idx_1 = 0;
-                            do {
-                                quest_3 = doc->providedItems[idx_1];
-                                if ( quest_3 )
-                                    ; // dealloc quest 3
-                                ++idx_1;
-                                --count_1;
-                            }
-                            while ( count_1 );
+                        for(Quest *quest : doc->providedItems) {
+                            delete quest;
                         }
                         doc->providedItems.clear();
                         
-                        count_2 = (int)doc->requiredItems.size();
-                        if ( count_2 > 0 ) {
-                            idx_2 = 0;
-                            do
-                            {
-                                quest_2 = doc->requiredItems[idx_2];
-                                if ( quest_2 )
-                                    ; // deallocate quest_2
-                                ++idx_2;
-                                --count_2;
-                            }
-                            while ( count_2 );
+                        for(Quest *quest : doc->requiredItems) {
+                            delete quest;
                         }
                         doc->requiredItems.clear();
+                        
                         doc->puzzle_ids.clear();
                         doc->chosen_zone_ids.clear();
                         
                         Message("-= FAILURE 1 =-\n");
                         return;
                     }
+                    
                     ++idx_6;
                     int idx_5 = x + 10 * y;
                     v195 = 1;
@@ -1022,20 +934,17 @@ LABEL_296:
     LABEL_292:
         if ( !v195 )
         {
-            distance_5 = Map::GetDistanceToCenter(x, y);
-            zone_id_6 = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_5, 0);
-            if ( zone_id_6 >= 0 )
+            int distance = Map::GetDistanceToCenter(x, y);
+            int zone_id = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+            if ( zone_id >= 0 )
             {
-                world_idx_2 = x + 10 * y;
+                int world_idx_2 = x + 10 * y;
                 doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)doc->wg_zone_type;
-                doc->worldZones[world_idx_2] = doc->zones[zone_id_6];
-                doc->world_things[world_idx_2].zone_id = zone_id_6;
-                doc->AddZoneWithIdToWorld(zone_id_6);
+                doc->worldZones[world_idx_2] = doc->zones[zone_id];
+                doc->world_things[world_idx_2].zone_id = zone_id;
+                doc->AddZoneWithIdToWorld(zone_id);
             }
         }
-        if ( --zone_type > 0 ) // HIDWORD(v192)
-            continue;
-        break;
     }
 }
 @end
