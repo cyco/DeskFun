@@ -129,29 +129,30 @@ static int logging;
 }
 
 - (void)_testSamples {
+
+    //* Valid Maps
     logging = 0;
     [self testSample:world_things_aea6_1 seed:0xaea6 size:WorldSize_SMALL];
-    logging = 0;
     [self testSample:world_things_aea6_2 seed:0xaea6 size:WorldSize_MEDIUM];
-    logging = 0;
     [self testSample:world_things_aea6_3 seed:0xaea6 size:WorldSize_LARGE];
-    logging = 0;
     [self testSample:world_things_42b7_1 seed:0x42B7 size:WorldSize_SMALL];
-    logging = 0;
     [self testSample:world_things_42b7_2 seed:0x42B7 size:WorldSize_MEDIUM];
-    logging = 0;
     [self testSample:world_things_42b7_3 seed:0x42B7 size:WorldSize_LARGE];
-    logging = 0;
     [self testSample:world_things_c698_1 seed:0xc698 size:WorldSize_SMALL];
-    logging = 0;
     [self testSample:world_things_1421_1 seed:0x1421 size:WorldSize_SMALL];
-    logging = 0;
     [self testSample:world_things_ebe9_3 seed:0xEBE9 size:WorldSize_LARGE];
-    logging = 0;
     [self testSample:world_things_e43f_3 seed:0xE43F size:WorldSize_LARGE];
-    logging = 0;
     [self testSample:world_things_1e77_3 seed:0x1E77 size:WorldSize_LARGE];
-    logging = 0;
+    [self testSample:world_things_70A3_3 seed:0x70A3 size:WorldSize_LARGE];
+    //*/
+    logging = 1;
+    /*
+     [self testSample:world_things_568C_3 seed:0x568C size:WorldSize_LARGE];
+     [self testSample:world_things_08FF_3 seed:0x08FF size:WorldSize_LARGE];
+     [self testSample:world_things_BB41_3 seed:0xBB41 size:WorldSize_LARGE];
+     [self testSample:world_things_FCA5_3 seed:0xFCA5 size:WorldSize_LARGE];
+     [self testSample:world_things_60B2_3 seed:0x60B2 size:WorldSize_LARGE];
+     [self testSample:world_things_23C6_3 seed:0x23C6 size:WorldSize_LARGE];
      //*/
 }
 
@@ -250,9 +251,7 @@ static int logging;
     int zone_id = 0; // eax@175
     int v68 = 0; // edi@175
     Zone *zone_1; // ecx@175
-    int hotspot_count = 0; // edx@175
     signed int did_find_travel_zone = 0; // ecx@181
-    int class1idx = 0; // edi@182
     int v76 = 0; // edx@189
     int v79 = 0; // edx@196
     int v82 = 0; // edx@202
@@ -362,175 +361,153 @@ static int logging;
             doc->wg_item_id = -1;
             doc->wg_last_added_item_id = -1;
             
-            
             if(map[idx] != WORLD_ITEM_TRAVEL_START)
                 continue;
             
-            if(doc->worldZones[idx] == NULL)
-                continue;
-            
-            Message("[WARN] Transports are not implementd yet!\n");
-            int distance_11 = Map::GetDistanceToCenter(x_8, y_6);
+            int distance = Map::GetDistanceToCenter(x, y);
+            int16 zone_id_8 = doc->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance, 1);
             
             zone_id_10 = -1;
-            int16 zone_id_8 = doc->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance_11, 0);
-            
             zone_id_11 = zone_id_8;
-            if ( zone_id_8 >= 0 )
+            if ( zone_id_8 < 0 ) continue;
+            
+            doc->world_things[idx].zone_id = zone_id_8;
+            doc->world_things[idx].zone_type = ZONETYPE_TravelStart;
+            doc->world_things[idx].requiredItemID = doc->wg_item_id;
+            zone_1 = doc->zones[zone_id_8];
+            
+            zone_id = zone_id_11;
+            v68 = 0;
+            //int zone_2 = zone_1;
+            
+            for(Hotspot *hotspot : zone_1->_hotspots) {
+                if(hotspot->type == VehicleTo) {
+                    zone_id_10 = hotspot->arg1;
+                    break;
+                }
+            }
+            
+            if ( zone_id_10 < 0) continue;
+            
+            int targetIndex = 0, foundTravelTarget = 0;
+            for(targetIndex=0; targetIndex < 100; targetIndex++)
+                if(map[targetIndex] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[targetIndex]) {
+                    foundTravelTarget = true;
+                    break;
+                }
+         
+            if (foundTravelTarget) {
+                Message("transport loop 1\n");
+                v76 = 0;
+                int worldZoneIdx = 10 * y_7;
+                int worldItemIdx = 5 * y_7;
+                while ( map[worldItemIdx] != 102 || doc->worldZones[worldZoneIdx] )
+                {
+                    worldZoneIdx++;
+                    worldItemIdx++;
+                    if ( ++v76 >= 10 )
+                        goto LABEL_195;
+                }
+                foundTravelTarget = 1;
+                x_7 = v76;
+
+            LABEL_195:
+                if ( !foundTravelTarget )
+                {
+                    Message("transport loop 2\n");
+                    v79 = 0;
+                    int worldZoneIdx = 9;
+                    x_7 = 9;
+                    // v81 = &world[5];
+                    int mapIdx = 5;
+                    
+                    while ( map[mapIdx] != 102 || doc->worldZones[worldZoneIdx])
+                    {
+                        worldZoneIdx += 10;
+                        mapIdx += 10;
+                        // ++t;
+                        if ( mapIdx >= 100)
+                            goto LABEL_202;
+                    }
+                    foundTravelTarget = 1;
+                    y_7 = v79;
+                }
+            }
+        LABEL_202:
+            v82 = 0;
+            if ( foundTravelTarget ){
+                zone_id_9 = zone_id_10;
+                if ( !doc->worldContainsZoneId(zone_id_10) )
+                {
+                    int idx_3 = x + 10 * y;
+                    doc->worldZones[idx_3] = doc->zones[zone_id_10];
+                    doc->world_things[idx_3].zone_id = zone_id_10;;
+                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
+                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
+                    // v87 = zone_2;
+                    // v88 = (char *)doc + 0x34 * idx_3;
+                    /*
+                     LOWORD(idx_3) = (_WORD)zone_id_8;
+                     *(_DWORD *)transport_count = v87;
+                     */
+                    doc->AddZoneWithIdToWorld(zone_id_8);
+                    doc->AddZoneWithIdToWorld(zone_id_9);
+                }
+                
+                // ++world_thing_plus_4;
+                idx++;
+                x_2 = x_2 + 1;
+                transport_count += 4;
+                y_6 += 2;
+                continue;
+            }
+            
+            int worldZoneIdx = 90;
+            int worldIdx = 86;
+            y_7 = 9;
+            x_7 = 0;
+            while ( map[worldIdx] != 102 || doc->worldZones[worldZoneIdx] )
             {
-                doc->world_things[x_8 + 10 * y_6].zone_id = zone_id_8;
-                doc->world_things[x_8 + 10 * y_6].zone_type = ZONETYPE_TravelStart;
-                zone_id = zone_id_11;
-                v68 = 0;
-                doc->world_things[x_8+10*y_6].requiredItemID = doc->wg_item_id;
-                // world_thing_plus_4->required_item_id = doc->wg_item_id;
-                zone_1 = doc->zones[zone_id];
-                //int zone_2 = zone_1;
-                hotspot_count = (int)zone_1->_hotspots.size();
-                if ( hotspot_count > 0 )
+                worldZoneIdx++;
+                worldIdx++;
+                if ( worldZoneIdx >= 96)
+                    goto LABEL_209;
+            }
+            did_find_travel_zone = 1;
+            x_7 = v82;
+        LABEL_209:
+            if ( did_find_travel_zone )
+            {
+            LABEL_382:
+                zone_id_9 = zone_id_10;
+                if ( !doc->worldContainsZoneId(zone_id_10) )
                 {
-                    int idx = 0;
-                    while ( zone_1->_hotspots[idx]->type != VehicleTo )
-                    {
-                        idx ++;
-                        if ( ++v68 >= hotspot_count )
-                            goto LABEL_181;
-                    }
-                    zone_id_10 = zone_1->_hotspots[idx]->arg1;
+                    int idx_3 = x + 10 * y;
+                    doc->worldZones[idx_3] = doc->zones[zone_id_10];
+                    doc->world_things[idx_3].zone_id = zone_id_9;
+                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
+                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
+                    // v87 = zone_2;
+                    // v88 = (char *)doc + 0x34 * idx_3;
+                    /*
+                     LOWORD(idx_3) = (_WORD)zone_id_8;
+                     *(_DWORD *)transport_count = v87;
+                     */
+                    doc->AddZoneWithIdToWorld(zone_id_8);
+                    doc->AddZoneWithIdToWorld(zone_id_9);
                 }
-            LABEL_181:
-                did_find_travel_zone = 0;
-                if ( zone_id_10 >= 0 )
-                {
-                    class1idx = 0;
-                    int idx = 0;
-                    int mapIdx = 0;
-                    x_7 = 0;
-                    y_7 = 0;
-                    while ( map[mapIdx] != 102 || doc->worldZones[idx] )
-                    {
-                        idx += 10;
-                        mapIdx += 5;
-                        ++class1idx;
-                        if ( mapIdx >= 96 )
-                            goto LABEL_188;
-                    }
-                    did_find_travel_zone = 1;
-                    y_7 = class1idx;
-                LABEL_188:
-                    if ( !did_find_travel_zone )
-                    {
-                        v76 = 0;
-                        int worldZoneIdx = 10 * y_7;
-                        int worldItemIdx = 5 * y_7;
-                        while ( map[worldItemIdx] != 102 || doc->worldZones[worldZoneIdx] )
-                        {
-                            worldZoneIdx++;
-                            worldItemIdx++;
-                            if ( ++v76 >= 10 )
-                                goto LABEL_195;
-                        }
-                        did_find_travel_zone = 1;
-                        x_7 = v76;
-                    LABEL_195:
-                        if ( !did_find_travel_zone )
-                        {
-                            v79 = 0;
-                            int worldZoneIdx = 9;
-                            x_7 = 9;
-                            // v81 = &world[5];
-                            int mapIdx = 5;
-                            
-                            while ( map[mapIdx] != 102 || doc->worldZones[worldZoneIdx])
-                            {
-                                worldZoneIdx += 10;
-                                mapIdx += 10;
-                                // ++t;
-                                if ( mapIdx >= 100)
-                                    goto LABEL_202;
-                            }
-                            did_find_travel_zone = 1;
-                            y_7 = v79;
-                        }
-                    }
-                LABEL_202:
-                    v82 = 0;
-                    if ( did_find_travel_zone ){
-                        
-                        zone_id_9 = zone_id_10;
-                        if ( !doc->worldContainsZoneId(zone_id_10) )
-                        {
-                            int idx_3 = x_7 + 10 * y_7;
-                            doc->worldZones[idx_3] = doc->zones[zone_id_10];
-                            doc->world_things[idx_3].zone_id = zone_id_10;;
-                            doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                            doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
-                            // v87 = zone_2;
-                            // v88 = (char *)doc + 0x34 * idx_3;
-                            /*
-                             LOWORD(idx_3) = (_WORD)zone_id_11;
-                             *(_DWORD *)transport_count = v87;
-                             */
-                            doc->AddZoneWithIdToWorld(idx_3);
-                            doc->AddZoneWithIdToWorld(zone_id_9);
-                        }
-                        
-                        
-                        //            ++world_thing_plus_4;
-                        x_2 = x_2 + 1;
-                        transport_count += 4;
-                        y_6 += 2;
-                    }
-                    int worldZoneIdx = 90;
-                    int worldIdx = 86;
-                    y_7 = 9;
-                    x_7 = 0;
-                    while ( map[worldIdx] != 102 || doc->worldZones[worldZoneIdx] )
-                    {
-                        worldZoneIdx++;
-                        worldIdx++;
-                        if ( worldZoneIdx >= 96)
-                            goto LABEL_209;
-                    }
-                    did_find_travel_zone = 1;
-                    x_7 = v82;
-                LABEL_209:
-                    if ( did_find_travel_zone )
-                    {
-                    LABEL_382:
-                        zone_id_9 = zone_id_10;
-                        if ( !doc->worldContainsZoneId(zone_id_10) )
-                        {
-                            int idx_3 = x_7 + 10 * y_7;
-                            doc->worldZones[idx_3] = doc->zones[zone_id_10];
-                            doc->world_things[idx_3].zone_id = zone_id_9;
-                            doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                            doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
-                            // v87 = zone_2;
-                            // v88 = (char *)doc + 0x34 * idx_3;
-                            /*
-                             LOWORD(idx_3) = (_WORD)zone_id_11;
-                             *(_DWORD *)transport_count = v87;
-                             */
-                            doc->AddZoneWithIdToWorld(idx_3);
-                            doc->AddZoneWithIdToWorld(zone_id_9);
-                        }
-                    }
-                    else
-                    {
-                        doc->RemoveQuestProvidingItem(doc->wg_item_id);
-                        
-                        
-                        /*             v89 = (_DWORD *)transport_count;
-                         *(_WORD *)y_6 = 1;
-                         *v89 = 0;
-                         world_thing_plus_4->zone_id = -1;
-                         world_thing_plus_4->zone_type = -1;
-                         world_thing_plus_4->required_item_id = -1;
-                         */
-                        
-                    }
-                }
+            }
+            else
+            {
+                doc->RemoveQuestProvidingItem(doc->wg_item_id);
+                /*
+                 v89 = (_DWORD *)transport_count;
+                 *(_WORD *)y_6 = 1;
+                 *v89 = 0;
+                 world_thing_plus_4->zone_id = -1;
+                 world_thing_plus_4->zone_type = -1;
+                 world_thing_plus_4->required_item_id = -1;
+                 */
             }
         }
     }
@@ -866,7 +843,6 @@ LABEL_246:;
                     doc->world_things[idx_5].findItemID = doc->wg_last_added_item_id;
                     doc->world_things[idx_5].unknown606 = doc->field_3394;
                     doc->world_things[idx_5].requiredItemID = doc->wg_item_id;
-                    
                     
                     // v147 = (char *)doc + 52 * idx_5;
                     /*

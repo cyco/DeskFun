@@ -1074,8 +1074,6 @@ signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unkno
 {
     Message("YodaDocument::ChoosePuzzleNPCForZone_0(%d, %d)\n", zone_id, unknown);
     signed int v3; // edi@1
-    Zone *v4; // eax@1
-    Zone *v5; // ebx@1
     signed int result; // eax@2
     int v7; // eax@3
     bool v8; // zf@4
@@ -1088,65 +1086,60 @@ signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unkno
     int v16; // [sp+14h] [bp-8h]@13
     
     v3 = 0;
-    v4 = getZoneByID(zone_id);
-    v5 = v4;
-    if ( v4 )
+    Zone *zone = getZoneByID(zone_id);
+    if (!zone ) return 0;
+    
+    v7 = (int)zone->puzzleNPCTileIDs.size();
+    if ( unknown == -1 )
     {
-        v7 = (int)v4->puzzleNPCTileIDs.size();
-        if ( unknown == -1 )
-        {
-            v8 = v7 == 0;
-            v9 = v7 < 0;
-            result = 1;
-            if ( v9 || v8 )
-                result = 0;
-        }
-        else
-        {
-            v10 = 0;
-            if ( v7 > 0 )
-            {
-                int idx = 0;
-                while ( v5->puzzleNPCTileIDs[idx] != unknown )
-                {
-                    ++idx;
-                    if ( v7 <= ++v10 )
-                        goto LABEL_12;
-                }
-                v3 = 1;
-            }
-        LABEL_12:
-            v12 = 0;
-            if ( !v3 )
-            {
-                v15 = 0;
-                v16 = (int)v5->_hotspots.size();
-                if ( v16 > 0 )
-                {
-                    do
-                    {
-                        hotspot = v5->_hotspots[v12];
-                        if ( hotspot && hotspot->type == DoorIn )
-                        {
-                            zone_id_2 = hotspot->arg1;
-                            if ( zone_id_2 >= 0 )
-                                v3 = ChoosePuzzleNPCForZone_0(zone_id_2, unknown);
-                            if ( v3 == 1 )
-                                break;
-                        }
-                        ++v12;
-                        ++v15;
-                    }
-                    while ( v16 > v15 );
-                }
-            }
-            result = v3;
-        }
+        v8 = v7 == 0;
+        v9 = v7 < 0;
+        result = 1;
+        if ( v9 || v8 )
+            result = 0;
     }
     else
     {
-        result = 0;
+        v10 = 0;
+        if ( v7 > 0 )
+        {
+            int idx = 0;
+            while ( zone->puzzleNPCTileIDs[idx] != unknown )
+            {
+                ++idx;
+                if ( v7 <= ++v10 )
+                    goto LABEL_12;
+            }
+            v3 = 1;
+        }
+    LABEL_12:
+        v12 = 0;
+        if ( !v3 )
+        {
+            v15 = 0;
+            v16 = (int)zone->_hotspots.size();
+            if ( v16 > 0 )
+            {
+                do
+                {
+                    hotspot = zone->_hotspots[v12];
+                    if ( hotspot && hotspot->type == DoorIn )
+                    {
+                        zone_id_2 = hotspot->arg1;
+                        if ( zone_id_2 >= 0 )
+                            v3 = ChoosePuzzleNPCForZone_0(zone_id_2, unknown);
+                        if ( v3 == 1 )
+                            break;
+                    }
+                    ++v12;
+                    ++v15;
+                }
+                while ( v16 > v15 );
+            }
+        }
+        result = v3;
     }
+    
     return result;
 }
 
@@ -2051,43 +2044,33 @@ int YodaDocument::place_puzzles__(int a1 /*maxDistance*/, int16 *a2, int* a3, in
     signed int v10; // esi@34
     bool v11; // zf@34
     bool v12; // sf@34
-    signed int v13; // esi@37
     int v14; // edx@37
     vector<MapPoint*>*v15; // eax@37
-    signed int v17; // esi@42
     MapPoint* v18; // eax@44
-    int v19; // edi@46
-    int v20; // esi@46
-    int v21; // edi@49
-    int v22; // esi@49
-    int v23; // edi@52
-    int v24; // esi@52
     vector<MapPoint*> v27; // [sp+14h] [bp-64h]@1
     vector<MapPoint*> v30; // [sp+28h] [bp-50h]@1
     vector<MapPoint*> v33; // [sp+3Ch] [bp-3Ch]@1
     
-    int v41; // [sp+64h] [bp-14h]@1
+    int v41 = 0;
     
-    v41 = 0;
-    
-    for(int v5=0; v5 < 10; v5++) {
-        for(int v6=0; v6 < 10; v6++) {
-            int idx = v6 + 10 * v5;
+    for(int y=0; y < 10; y++) {
+        for(int x=0; x < 10; x++) {
+            int idx = x + 10 * y;
             int item = a2[idx];
-            if ( Map::GetDistanceToCenter(v6, v5) > a1 )  {
+            if ( Map::GetDistanceToCenter(x, y) > a1 )  {
                 if ( item == 1 ) {
-                    v9 = new MapPoint(v6, v5);
+                    v9 = new MapPoint(x, y);
+                    Message("1) %dx%d\n", x, y);
                     v27.push_back(v9);
                 }
-            }
-            else if ( item == 1 || item == 300 )
-            {
-                v8 = new MapPoint(v6, v5);
-                
-                if (( v6 < 1 || a2[idx-1] != 306 )
-                    && ( v6 > 8 || a2[idx+1] != 306 )
-                    && ( v5 < 1 || a2[idx-10] != 306 )
-                    && ( v5 > 8 || a2[idx+10] != 306 ))
+            } else if ( item == 1 || item == 300 ) {
+                v8 = new MapPoint(x, y);
+                Message("2) %dx%d\n", x, y);
+
+                if (( x < 1 || a2[idx-1] != 306 )
+                    && ( x > 8 || a2[idx+1] != 306 )
+                    && ( y < 1 || a2[idx-10] != 306 )
+                    && ( y > 8 || a2[idx+10] != 306 ))
                     v30.push_back(v8);
                 else
                     v33.push_back(v8);
@@ -2098,14 +2081,11 @@ int YodaDocument::place_puzzles__(int a1 /*maxDistance*/, int16 *a2, int* a3, in
     v10 = (int)v30.size();
     v11 = v30.size() == 0;
     v12 = 0;
-    if ( !v30.size() )
-    {
-        if ( !v33.size() )
-        {
-            if ( v27.size() )
-            {
-                v13 = (int)v27.size();
-                v14 = win_rand() % v13;
+    
+    if ( !v30.size() ) {
+        if ( !v33.size() ) {
+            if ( v27.size() ) {
+                v14 = win_rand() % v27.size();
                 v15 = &v27;
                 goto LABEL_44;
             }
@@ -2116,19 +2096,16 @@ int YodaDocument::place_puzzles__(int a1 /*maxDistance*/, int16 *a2, int* a3, in
         v12 = v10 < 0;
     }
     
-    if ( v12 || v11 )
-    {
-        v17 = (int)v33.size();
+    if ( v12 || v11 ) {
         if ( v33.size() <= 0 )
             goto LABEL_45;
-        v14 = win_rand() % v17;
+        v14 = win_rand() % v33.size();
         v15 = &v33;
-    }
-    else
-    {
-        v14 = win_rand() % v10;
+    } else {
+        v14 = win_rand() % v30.size();
         v15 = &v30;
     }
+    
 LABEL_44:
     v18 = (*v15)[v14];
     v41 = 1;
@@ -2136,48 +2113,19 @@ LABEL_44:
     *a4 = v18->y;
     Message("YodaDocument::place_puzzles__: %dx%d\n", v18->x, v18->y);
 LABEL_45:
-    if ( v30.size() > 0 )
-    {
-        v19 = 0;
-        v20 = (int)v30.size();
-        do
-        {
-            v19 += 4;
-            // TODO: clear point
-            ; // operator delete(*(void **)(v31 + v19 - 4));
-            --v20;
-        }
-        while ( v20 );
-    }
-    v30.clear();
-    if ( v33.size() > 0 )
-    {
-        v21 = 0;
-        v22 = (int)v33.size();
-        do
-        {
-            // TODO: clear point
-            v21 += 4;
-            // operator delete(*(void **)(&v33[0] + v21 - 4));
-            --v22;
-        }
-        while ( v22 );
-    }
-    v33.clear();
-    if ( v27.size() > 0 )
-    {
-        v23 = 0;
-        v24 = (int)v27.size();
-        do
-        {
-            v23 += 4;
-            // TODO: clear point
-            // operator delete(*(void **)(&v27[0] + v23 - 4));
-            --v24;
-        }
-        while ( v24 );
+    for(MapPoint *point : v27) {
+        delete point;
     }
     v27.clear();
+    for(MapPoint *point : v30) {
+        delete point;
+    }
+    v30.clear();
+    for(MapPoint *point : v33) {
+        delete point;
+    }
+    v33.clear();
+    
     return v41;
 }
 
