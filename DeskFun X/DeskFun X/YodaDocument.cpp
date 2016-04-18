@@ -455,7 +455,7 @@ signed int YodaDocument::ChooseItemIDFromZone(__int16 zone_id, int item_id, int 
     Zone *zone = getZoneByID(zone_id);
     if (!zone) return -1;
     
-    vector<uint16> itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    vector<uint16> &itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
     for(uint16 candidate : itemIDs) {
         if(candidate == item_id) {
             return candidate;
@@ -510,211 +510,65 @@ signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int item_id)
     return -1;
 }
 
-signed int YodaDocument::ChooseItemIDFromZone_1(__int16 a2, int a3, int a4, __int16 a5, int a6)
+signed int YodaDocument::ChooseItemIDFromZone_1(__int16 zoneID, int a3, int a4, __int16 item_id, int a6)
 {
-    Message("YodaDocument::ChooseItemIDFromZone_1(%d, %d, %d, %d, %d)\n", a2, a3, a4, a5, a6);
+    Message("YodaDocument::ChooseItemIDFromZone_1(%d, %d, %d, %d, %d)\n", zoneID, a3, a4, item_id, a6);
     
-    signed int result = 0; // eax@1
-    signed int v7 = 0; // ebx@1
-    Zone *zone = NULL; // esi@2
-    int itemID = 0; // ecx@3
-    int v10 = 0; // ebp@3
-    __int16 item_id = 0; // di@4
-    int v13 = 0; // ecx@9
-    int v14 = 0; // ebp@9
-    int v16 = 0; // ebp@17
-    int v17 = 0; // ecx@17
-    Hotspot *v19 = NULL; // ebx@19
-    int v20 = 0; // ebx@26
-    int v21 = 0; // ebp@27
-    Hotspot *v22 = NULL; // ecx@28
-    int v24 = 0; // [sp+14h] [bp-4h]@27
+    if ( zoneID < 0 ) {
+        Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", 0);
+        return 0;
+    }
     
-    result = 0;
-    v7 = 0;
-    if ( a2 < 0 ) {
-        Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", result);
-        return result;
-    }
-    zone = this->zones[a2];
-    if ( a6 )
-    {
-        itemID = (int)zone->assignedItemIDs.size();
-        v10 = 0;
-        if ( itemID > 0 )
-        {
-            item_id = a5;
-            int idx = 0;
-            while ( zone->assignedItemIDs[idx] != a5 )
-            {
-                ++idx;
-                if ( ++v10 >= itemID )
-                    goto LABEL_16;
+    Zone *zone = this->zones[zoneID];
+    vector<uint16> &itemIDs = a6 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : itemIDs) {
+        if(itemID != item_id) continue;
+        
+        for(Hotspot *hotspot : zone->_hotspots) {
+            if(hotspot->type == Lock) {
+                AddRequiredQuestWithItemID(item_id, a4);
+                
+                if ( a6 ) this->wg_item_id_unknown_3 = item_id;
+                else this->wg_item_id = item_id;
+                
+                hotspot->arg1 = item_id;
+                hotspot->enabled = 1;
+                
+                Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", 1);
+                return 1;
             }
-            v7 = 1;
-            goto LABEL_16;
         }
     }
-    else
-    {
-        v13 = (int)zone->requiredItemIDs.size();
-        v14 = 0;
-        if ( v13 > 0 )
-        {
-            item_id = a5;
-            int idx = 0;
-            while ( zone->requiredItemIDs[idx] != a5 )
-            {
-                ++idx;
-                if ( ++v14 >= v13 )
-                    goto LABEL_16;
-            }
-            v7 = 1;
-            goto LABEL_16;
+    
+    for(Hotspot* hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn) {
+            int result = ChooseItemIDFromZone_1(hotspot->arg1, a3, a4, item_id, a6);
+            if(result) return result;
         }
     }
-    item_id = a5;
-LABEL_16:
-    if ( v7 )
-    {
-        v16 = (int)zone->_hotspots.size();
-        v17 = 0;
-        if ( v16 > 0 )
-        {
-            int idx = 0;
-            while ( 1 )
-            {
-                v19 = zone->_hotspots[idx];
-                if ( zone->_hotspots[idx]->type == Lock )
-                    break;
-                ++idx;
-                if ( ++v17 >= v16 )
-                    goto LABEL_26;
-            }
-            AddRequiredQuestWithItemID(item_id, a4);
-            if ( a6 )
-                this->wg_item_id_unknown_3 = item_id;
-            else
-                this->wg_item_id = item_id;
-            
-            v19->arg1 = item_id;
-            result = 1;
-            v19->enabled = 1;
-        }
-    }
-LABEL_26:
-    v20 = 0;
-    if ( !result )
-    {
-        v21 = 0;
-        v24 = (int)zone->_hotspots.size();
-        if ( v24 > 0 )
-        {
-            do
-            {
-                v22 = zone->_hotspots[v20];
-                if ( v22->type == 9 )
-                {
-                    result = ChooseItemIDFromZone_1(v22->arg1, a3, a4, item_id, a6);
-                    if ( result == 1 )
-                        break;
-                }
-                ++v20;
-                ++v21;
-            }
-            while ( v21 < v24 );
-        }
-    }
-    Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", result);
-    return result;
+    
+    Message("YodaDocument::ChooseItemIDFromZone_1() => %d\n", 0);
+    return 0;
 }
 
 signed int YodaDocument::ChooseItemIDFromZone_2(__int16 zone_id, __int16 a3, int a4)
 {
     Message("YodaDocument::ChooseItemIDFromZone_2(%d, %d, %d)\n", zone_id, a3, a4);
+    Zone *zone = getZoneByID(zone_id);
+    if ( !zone ) return 0;
     
-    Zone *zone = NULL; // eax@1
-    Zone *zone_1 = NULL; // edi@1
-    int v7 = 0; // eax@4
-    int v8 = 0; // ecx@4
-    __int16 v9 = 0; // si@5
-    int v11 = 0; // eax@10
-    int v12 = 0; // ecx@10
-    int i = 0; // ebx@17
-    int offset = 0; // ebp@19
-    Hotspot *hotspot = NULL; // eax@20
-    __int16 v17 = 0; // cx@22
-    signed int v18 = 0; // [sp+10h] [bp-Ch]@1
-    int hotspot_count = 0; // [sp+14h] [bp-8h]@18
+    vector<uint16> &itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : itemIDs)
+        if(itemID == a3) return 1;
     
-    v18 = 0;
-    zone = getZoneByID(zone_id);
-    zone_1 = zone;
-    if ( !zone )
-        return 0;
-    if ( a4 )
-    {
-        v7 = (int)zone->assignedItemIDs.size();
-        v8 = 0;
-        if ( v7 > 0 )
-        {
-            v9 = a3;
-            int idx = 0;
-            while ( zone_1->assignedItemIDs[idx] != a3 )
-            {
-                ++idx;
-                if ( ++v8 >= v7 )
-                    goto LABEL_17;
-            }
-            v18 = 1;
-            goto LABEL_17;
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseItemIDFromZone_2(hotspot->arg1, a3, a4);
+            if(result) return result;
         }
     }
-    else
-    {
-        v11 = (int)zone->requiredItemIDs.size();
-        v12 = 0;
-        if ( v11 > 0 )
-        {
-            v9 = a3;
-            int idx = 0;
-            while ( zone_1->requiredItemIDs[idx] != a3 )
-            {
-                ++idx;
-                if ( ++v12 >= v11 )
-                    goto LABEL_17;
-            }
-            v18 = 1;
-            goto LABEL_17;
-        }
-    }
-    v9 = a3;
-LABEL_17:
-    i = 0;
-    if ( !v18 )
-    {
-        hotspot_count = (int)zone_1->_hotspots.size();
-        if ( hotspot_count > 0 )
-        {
-            offset = 0;
-            do
-            {
-                hotspot = zone_1->_hotspots[offset];
-                if ( hotspot && hotspot->type == DoorIn )
-                {
-                    v17 = hotspot->arg1;
-                    if ( v17 >= 0 )
-                        v18 = ChooseItemIDFromZone_2(v17, v9, a4);
-                    if ( v18 == 1 )
-                        break;
-                }
-                ++offset;
-                ++i;
-            }
-            while ( hotspot_count > i );
-        }
-    }
-    return v18;
+    
+    return 0;
 }
 
 signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
@@ -744,111 +598,43 @@ signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
     return -1;
 }
 
-signed int YodaDocument::ChooseSpawnForPuzzleNPC(__int16 a2, int a3)
+signed int YodaDocument::ChooseSpawnForPuzzleNPC(int16 zoneID, int itemID)
 {
-    Message("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", a2, a3);
-    Zone *zone_1; // eax@1
-    Zone *zone; // esi@1
-    signed int result; // eax@2
-    int v7; // ebx@7
-    int v8; // edi@7
-    Hotspot *hotspot; // ecx@12
-    int v10; // edx@14
-    int v11; // ebx@18
-    int v12; // edi@19
-    Hotspot *v13; // eax@20
-    __int16 v14; // ax@22
-    vector<uint16> v15; // [sp+Ch] [bp-38h]@1
-    int v17 = 0; // [sp+14h] [bp-30h]@9
-    unsigned int v18; // [sp+20h] [bp-24h]@5
-    int v19; // [sp+24h] [bp-20h]@4
-    int v20; // [sp+28h] [bp-1Ch]@4
-    int v22; // [sp+30h] [bp-14h]@1
-    int v23; // [sp+34h] [bp-10h]@18
-    __int16 v24; // [sp+36h] [bp-Eh]@6
+    Message("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", zoneID, itemID);
+    Zone *zone = getZoneByID(zoneID);
+    if ( !zone ) return -1;
     
-    v22 = -1;
-    zone_1 = getZoneByID(a2);
-    zone = zone_1;
-    if ( zone_1 )
-    {
-        v19 = 0;
-        v20 = (int)zone_1->puzzleNPCTileIDs.size();
-        if ( v20 > 0 )
-        {
-            v18 = 0;
-            do
-            {
-                v24 = zone->puzzleNPCTileIDs[v18 / 2];
-                if ( a3 == v24 )
-                {
-                    v7 = (int)zone->_hotspots.size();
-                    v8 = 0;
-                    v15.clear();
-                    if ( v7 > 0 )
-                    {
-                        do
-                        {
-                            if ( zone->_hotspots[v8]->type == SpawnLocation ) {
-                                v15.insert(v15.begin()+v17, v8);
-                                v17++;
-                            }
-                            ++v8;
-                        }
-                        while ( v7 > v8 );
-                    }
-                    
-                    if ( v17 > 0 )
-                    {
-                        hotspot = zone->_hotspots[v15[win_rand() % v17]];
-                        if ( hotspot )
-                        {
-                            if ( hotspot->type == SpawnLocation )
-                            {
-                                v10 = v24;
-                                v22 = v24;
-                                hotspot->arg1 = v24;
-                                hotspot->enabled = 1;
-                                this->field_3390 = v10;
-                            }
-                        }
-                    }
-                    if ( v22 >= 0 ) return v22;
-                }
-                v18 += 2;
-                ++v19;
-            }
-            while ( v19 < v20 );
-        }
-        if ( v22 == -1 )
-        {
-            v11 = 0;
-            v23 = (int)zone->_hotspots.size();
-            if ( v23 > 0 )
-            {
-                v12 = 0;
-                do
-                {
-                    v13 = zone->_hotspots[v12];
-                    if ( v13 && v13->type == 9 )
-                    {
-                        v14 = v13->arg1;
-                        if ( v14 >= 0 ) v22 = ChooseSpawnForPuzzleNPC(v14, a3);
-                        if ( v22 >= 0 ) return v22;
-                    }
-                    ++v12;
-                    ++v11;
-                }
-                while ( v23 > v11 );
+    vector<Hotspot*> hotspotCandidates;
+    for(uint16 npcTileID : zone->puzzleNPCTileIDs) {
+        if(npcTileID != itemID) continue;
+        
+        hotspotCandidates.clear();
+        for(Hotspot *hotspot : zone->_hotspots) {
+            if(hotspot->type == SpawnLocation ) {
+                hotspotCandidates.push_back(hotspot);
             }
         }
-        result = v22;
+        
+        if(hotspotCandidates.size()) {
+            int idx = win_rand() % hotspotCandidates.size();
+            Hotspot *hotspot = hotspotCandidates[idx];
+            
+            hotspot->arg1 = itemID;
+            hotspot->enabled = 1;
+            this->field_3390 = itemID;
+            
+            return itemID;
+        }
     }
-    else
-    {
-        result = -1;
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseSpawnForPuzzleNPC(hotspot->arg1, itemID);
+            if(result >= 0) return result;
+        }
     }
-    return result;
+    
+    return -1;
 }
 
 signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int16 item_id_1, __int16 a5)
