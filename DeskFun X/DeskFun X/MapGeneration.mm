@@ -274,8 +274,6 @@ static int logging;
     __int16 distance_5 = 0; // ax@293
     __int16 zone_id_6 = 0; // ax@293
     int world_idx_2 = 0; // edx@294
-    signed int did_not_place_zone = 0; // ecx@298
-    signed int zone_id_1 = 0; // edx@301
     Planet planet_7; // eax@303
     vector<uint16> *puzzle_ids; // ecx@307
     int count_1 = 0; // edi@311
@@ -284,14 +282,8 @@ static int logging;
     int count_2 = 0; // edi@316
     int idx_2 = 0; // esi@317
     Quest *quest_2; // ecx@318
-    __int16 distance_6 = 0; // ax@322
-    __int16 distance_7 = 0; // ax@324
-    __int16 distance_8 = 0; // ax@326
-    __int16 distance_9 = 0; // ax@328
-    __int16 distance_16 = 0; // ax@330
     Planet planet_4; // eax@347
     vector<uint16> *puzzle_array_1; // ecx@351
-    int v192 = 0; // [sp-30h] [bp-21Ch]@0
     int v194 = 0; // [sp-24h] [bp-210h]@0
     int v195 = 0; // [sp-20h] [bp-20Ch]@51
     int y_4 = 0; // [sp-1Ch] [bp-208h]@51
@@ -714,113 +706,7 @@ LABEL_246:;
     
 LABEL_296:
     Message("After Loop 2\n");
-#pragma mark - Third Loop
-    // worldThing = (WorldThing *)((char *)&doc->world_things_1[0] + 8);
-    
-    for(int y=0; y < 10; y++) {
-        for(int x=0; x < 10; x++) {
-            int idx = x + 10 * y;
-            int zone_2 = map[idx];
-            
-            did_not_place_zone = 0;
-            doc->field_3394 = -1;
-            doc->field_3390 = -1;
-            doc->wg_item_id = -1;
-            doc->wg_last_added_item_id = -1;
-            
-            WorldThing *worldThing = &doc->world_things[idx];
-            
-            if ( zone_2 && zone_2 != 305 && !doc->worldZones[idx])
-            {
-                zone_id_1 = -1;
-                if ( (unsigned int)((__int16)zone_2 - 201) <= 103 )
-                {
-                    switch ( (__int16)zone_2 )
-                    {
-                        case WORLD_ITEM_SPACEPORT:
-                            distance_6 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance_6, 0);
-                            if ( zone_id_1 >= 0 )
-                                worldThing->zone_type = ZONETYPE_Town;
-                                goto did_not_find_zone_with_required_type;
-                        case WORLD_ITEM_BLOCK_WEST:
-                            distance_7 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance_7, 0);
-                            if ( zone_id_1 < 0 )
-                                goto did_not_find_zone_with_required_type;
-                            worldThing->zone_type = ZONETYPE_BlockadeWest;
-                            goto LABEL_332;
-                        case WORLD_ITEM_BLOCK_EAST:
-                            distance_8 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance_8, 0);
-                            if ( zone_id_1 < 0 )
-                                goto did_not_find_zone_with_required_type;
-                            worldThing->zone_type = ZONETYPE_BlockadeEast;
-                            goto LABEL_332;
-                        case WORLD_ITEM_BLOCK_NORTH:
-                            distance_9 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance_9, 0);
-                            if ( zone_id_1 < 0 )
-                                goto did_not_find_zone_with_required_type;
-                            worldThing->zone_type = ZONETYPE_BlockadeNorth;
-                            goto LABEL_332;
-                        case WORLD_ITEM_BLOCK_SOUTH:
-                            distance_16 = Map::GetDistanceToCenter(x, y);
-                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance_16, 0);
-                            if ( zone_id_1 >= 0 )
-                            {
-                               worldThing->zone_type = ZONETYPE_BlockadeSouth;
-                            LABEL_332:;
-                                worldThing->requiredItemID = doc->wg_item_id;
-                                // worldThing->zone_type = (ZONE_TYPE)doc->wg_item_id;
-                            }
-                        did_not_find_zone_with_required_type:
-                            did_not_place_zone = 1;
-                            break;
-                        default: break;
-                    }
-                }
-                
-                if ( zone_id_1 < 0 ) {
-                    if ( v192 != 1 && v192 != 104 && v192 != 300 )
-                    {
-                        if ( did_not_place_zone )
-                        {
-                            int distance = Map::GetDistanceToCenter(x, y);
-                            int zone_id = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
-                            if ( zone_id >= 0 )
-                            {
-                                zone_id_1 = zone_id;
-                                worldThing->zone_type = ZONETYPE_Empty;
-                                worldThing->zone_id = zone_id;
-                                /*
-                                 *(_DWORD *)v192 = doc->zones.ptrs[zone_id_2];
-                                 worldThing[-1].field_30 = zone_id_2;
-                                 worldThing->field_C = -1;
-                                 LOWORD(worldThing->zone_type) = -1;
-                                 worldThing->required_item_id = -1;
-                                 */
-                                doc->AddZoneWithIdToWorld(zone_id_1);
-                                continue;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    worldThing->zone_id = zone_id_1;
-                    /*
-                     *v193 = doc->zones.ptrs[zone_id_1];
-                     worldThing->field_C = -1;
-                     */
-                    if ( worldThing->zone_type != ZONETYPE_Town)
-                        add_zone_to_world:
-                        doc->AddZoneWithIdToWorld(zone_id_1);
-                }
-            }
-        }
-    }
-    
+    [self loop2:doc map:map];
     
     Message("After Loop 3\n");
     if ( !doc->Unknown_5((int16*)map) ) // &zone_id_11
@@ -879,14 +765,6 @@ LABEL_296:
      */
 #pragma mark -
     Message("End Generate New World\n");
-    /*
-    Message("\n---===== =====---\n\n");
-    Message("doc->world_things: (calc)\n");
-    for(int i=0; i < 100; i++) {
-        WorldThing &thing = doc->world_things[i];
-        Message("%02d: %2d %3d %3d %3d\n", i, thing.zone_type, thing.zone_id, thing.findItemID, thing.requiredItemID);
-    }
-    //*/
 }
 
 - (void)placeTransports:(YodaDocument*)doc map:(uint16*)map {
@@ -1033,6 +911,126 @@ LABEL_296:
         }
     }
     Message("After Transport Loop\n");
+}
+
+- (void)loop2:(YodaDocument*)doc map:(uint16*)map {
+    
+    signed int did_not_place_zone = 0; // ecx@298
+    signed int zone_id_1 = 0; // edx@301
+    
+    __int16 distance_6 = 0; // ax@322
+    __int16 distance_7 = 0; // ax@324
+    __int16 distance_8 = 0; // ax@326
+    __int16 distance_9 = 0; // ax@328
+    __int16 distance_16 = 0; // ax@330
+    int v192 = 0; // [sp-30h] [bp-21Ch]@0
+
+#pragma mark - Third Loop
+    // worldThing = (WorldThing *)((char *)&doc->world_things_1[0] + 8);
+    
+    for(int y=0; y < 10; y++) {
+        for(int x=0; x < 10; x++) {
+            int idx = x + 10 * y;
+            int zone_2 = map[idx];
+            
+            did_not_place_zone = 0;
+            doc->field_3394 = -1;
+            doc->field_3390 = -1;
+            doc->wg_item_id = -1;
+            doc->wg_last_added_item_id = -1;
+            
+            WorldThing *worldThing = &doc->world_things[idx];
+            
+            if ( zone_2 && zone_2 != 305 && !doc->worldZones[idx])
+            {
+                zone_id_1 = -1;
+                if ( (unsigned int)((__int16)zone_2 - 201) <= 103 )
+                {
+                    switch ( (__int16)zone_2 )
+                    {
+                        case WORLD_ITEM_SPACEPORT:
+                            distance_6 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance_6, 0);
+                            if ( zone_id_1 >= 0 )
+                                worldThing->zone_type = ZONETYPE_Town;
+                            goto did_not_find_zone_with_required_type;
+                        case WORLD_ITEM_BLOCK_WEST:
+                            distance_7 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance_7, 0);
+                            if ( zone_id_1 < 0 )
+                                goto did_not_find_zone_with_required_type;
+                            worldThing->zone_type = ZONETYPE_BlockadeWest;
+                            goto LABEL_332;
+                        case WORLD_ITEM_BLOCK_EAST:
+                            distance_8 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance_8, 0);
+                            if ( zone_id_1 < 0 )
+                                goto did_not_find_zone_with_required_type;
+                            worldThing->zone_type = ZONETYPE_BlockadeEast;
+                            goto LABEL_332;
+                        case WORLD_ITEM_BLOCK_NORTH:
+                            distance_9 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance_9, 0);
+                            if ( zone_id_1 < 0 )
+                                goto did_not_find_zone_with_required_type;
+                            worldThing->zone_type = ZONETYPE_BlockadeNorth;
+                            goto LABEL_332;
+                        case WORLD_ITEM_BLOCK_SOUTH:
+                            distance_16 = Map::GetDistanceToCenter(x, y);
+                            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance_16, 0);
+                            if ( zone_id_1 >= 0 )
+                            {
+                                worldThing->zone_type = ZONETYPE_BlockadeSouth;
+                            LABEL_332:;
+                                worldThing->requiredItemID = doc->wg_item_id;
+                                // worldThing->zone_type = (ZONE_TYPE)doc->wg_item_id;
+                            }
+                        did_not_find_zone_with_required_type:
+                            did_not_place_zone = 1;
+                            break;
+                        default: break;
+                    }
+                }
+                
+                if ( zone_id_1 < 0 ) {
+                    if ( v192 != 1 && v192 != 104 && v192 != 300 )
+                    {
+                        if ( did_not_place_zone )
+                        {
+                            int distance = Map::GetDistanceToCenter(x, y);
+                            int zone_id = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
+                            if ( zone_id >= 0 )
+                            {
+                                zone_id_1 = zone_id;
+                                worldThing->zone_type = ZONETYPE_Empty;
+                                worldThing->zone_id = zone_id;
+                                /*
+                                 *(_DWORD *)v192 = doc->zones.ptrs[zone_id_2];
+                                 worldThing[-1].field_30 = zone_id_2;
+                                 worldThing->field_C = -1;
+                                 LOWORD(worldThing->zone_type) = -1;
+                                 worldThing->required_item_id = -1;
+                                 */
+                                doc->AddZoneWithIdToWorld(zone_id_1);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    worldThing->zone_id = zone_id_1;
+                    /*
+                     *v193 = doc->zones.ptrs[zone_id_1];
+                     worldThing->field_C = -1;
+                     */
+                    if ( worldThing->zone_type != ZONETYPE_Town)
+                        add_zone_to_world:
+                        doc->AddZoneWithIdToWorld(zone_id_1);
+                }
+            }
+        }
+    }
 }
 
 @end
