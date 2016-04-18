@@ -21,6 +21,7 @@ static int logging;
 
 @interface MapGeneration ()
 {
+    NSLock *generationLock;
     uint16_t _map[100];
     YodaDocument *document;
 }
@@ -36,7 +37,10 @@ static int logging;
     
     self.mapView.map = _map;
     
+    generationLock = [[NSLock alloc] init];
+    [generationLock lock];
     [self _testSamples];
+    [generationLock unlock];
     
     document = new YodaDocument("/Users/chris/Desktop/Debugging/ mixed/Yoda Stories/yodesk.dta");
     
@@ -137,11 +141,18 @@ static int logging;
     [self testSample:world_things_42b7_2 seed:0x42B7 size:WorldSize_MEDIUM];
     logging = 0;
     [self testSample:world_things_42b7_3 seed:0x42B7 size:WorldSize_LARGE];
-    
     logging = 0;
     [self testSample:world_things_c698_1 seed:0xc698 size:WorldSize_SMALL];
     logging = 0;
     [self testSample:world_things_1421_1 seed:0x1421 size:WorldSize_SMALL];
+    logging = 0;
+    [self testSample:world_things_ebe9_3 seed:0xEBE9 size:WorldSize_LARGE];
+    logging = 0;
+    [self testSample:world_things_e43f_3 seed:0xE43F size:WorldSize_LARGE];
+    logging = 0;
+    [self testSample:world_things_1e77_3 seed:0x1E77 size:WorldSize_LARGE];
+    logging = 0;
+     //*/
 }
 
 - (void)testSample:(uint32_t*)sample seed:(uint16)seed size:(WorldSize)size {
@@ -160,7 +171,6 @@ static int logging;
            || !(doc->world_things[i].requiredItemID == sample[i*4+3])) {
             success = false;
             break;
-            return;
         }
     }
     
@@ -189,6 +199,7 @@ static int logging;
 - (void)_generateWorld:(uint16_t)seed withSize:(int)size  {
     if(!document) return;
     
+    [generationLock lock];
     logging = 0;
     
     [self _generateWorld:seed withSize:size document:document map:_map];
@@ -197,11 +208,16 @@ static int logging;
     self.sizeSlider.doubleValue = size;
     
     [_mapView setNeedsDisplay:true];
+    [generationLock unlock];
+
 }
 
 - (void)_generateWorld:(uint16_t)seed withSize:(int)size document:(YodaDocument*)doc map:(uint16*)map {
+    doc->logging = logging;
+    Map::logging = logging;
+    
     Message("Generate New World (calc)\n");
-
+    
     uint16 puzzles[100];
     for(int i=0; i < 100; i++) {
         map[i] = 0;
@@ -627,11 +643,11 @@ static int logging;
                         int distance = Map::GetDistanceToCenter(x, y);
                         doc->AddProvidedQuestWithItemID(doc->wg_item_id, distance);
 
-                        Message("v206 = %d\n", v206);
+                        Message("v206 = %d\n", x_4);
                         goto LABEL_242;
                     }
                     
-                    Message("v206 = %d\n", v206);
+                    Message("v206 = %d\n", x_4);
                     if(v206 > 200) goto LABEL_242;
                 }
                 

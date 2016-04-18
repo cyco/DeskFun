@@ -1760,10 +1760,11 @@ signed int YodaDocument::Unknown_1(int16 zone_id, int16 a3, int16 distance, int1
     AddRequiredQuestWithItemID(p2->item_1, distance);
     
     if(!ZoneDoesNOTProvideRequiredItemID(zone_id)) {
-        RemoveQuestRequiringItem(0);
-        RemoveQuestRequiringItem(0);
+        RemoveQuestRequiringItem(p1->item_1);
+        // RemoveQuestRequiringItem(0);
         
-        return 0x10;
+        Message("YodaDocument::Unknown_1 => 0\n");
+        return 0;
     }
     
     if(ChooseItemIDFromZone_1(zone_id, puzzleID1, distance, p1->item_1, 0) >= 0) {

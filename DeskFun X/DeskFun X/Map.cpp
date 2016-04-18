@@ -153,6 +153,7 @@ int Map::generate(uint16_t seed, WORLD_SIZE size) {
 #pragma mark -
 int Map::determinePuzzleLocations(signed int iteration, int puzzle_count_to_place, int transport_count, int *placed_transport_count_ref, int blockade_count, int *placed_blockade_count_ref, int *placed_puzzle_count_ref)
 {
+    Message("YodaDocument::PlacePuzzleLocations(%d, %d, %d, %d)\n", iteration, puzzle_count_to_place, transport_count, blockade_count);
     int base_x, alternate_x;
     int base_y, alternate_y;
     int variance, probablility;
