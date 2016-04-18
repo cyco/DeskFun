@@ -257,8 +257,6 @@ static int logging;
     // nmap->print();
     // // // // // // // // // // // // // // // // // // // // // // //
 #pragma mark -
-    Zone *zone_1; // ecx@175
-    __int16 zone_id_9 = 0; // di@210
     int y_1 = 0; // edi@216
     signed int zone_id_3 = 0; // ebp@225
     __int16 distance_12 = 0; // ax@230
@@ -332,6 +330,8 @@ static int logging;
     doc->puzzle_ids_2.clear();
     doc->puzzle_ids_2.resize(puzzles2_count+1, -1);
     
+    doc->worldZones.clear();
+    doc->worldZones.resize(100, 0);
     doc->puzzle_ids.push_back(goalID);
     doc->puzzle_ids_1[puzzles1_count] = goalID;
     doc->puzzle_ids_2[puzzles2_count] = goalID;
@@ -341,148 +341,9 @@ static int logging;
     doc->goal_tile_id_1 = goalPuzzle->item_1;
     doc->goal_tile_id_2 = goalPuzzle->item_2;
     
-    doc->worldZones.clear();
-    doc->worldZones.resize(100, 0);
     
     // TODO: add goal puzzle to planet puzzle ids
-    for(int y=0; y < 10; y++) {
-        for(int x=0; x < 10; x++) {
-            int idx = x + y * 10;
-            
-            doc->field_3390 = -1;
-            doc->wg_item_id = -1;
-            doc->wg_last_added_item_id = -1;
-            
-            if(map[idx] != WORLD_ITEM_TRAVEL_START)
-                continue;
-            
-            int distance = Map::GetDistanceToCenter(x, y);
-            int16 zone_id_8 = doc->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance, 1);
-            
-            zone_id_10 = -1;
-            if ( zone_id_8 < 0 ) continue;
-            
-            doc->world_things[idx].zone_id = zone_id_8;
-            doc->world_things[idx].zone_type = ZONETYPE_TravelStart;
-            doc->world_things[idx].requiredItemID = doc->wg_item_id;
-            zone_1 = doc->zones[zone_id_8];
-            
-            for(Hotspot *hotspot : zone_1->_hotspots) {
-                if(hotspot->type == VehicleTo) {
-                    zone_id_10 = hotspot->arg1;
-                    break;
-                }
-            }
-            
-            if ( zone_id_10 < 0) continue;
-            
-            int foundTravelTarget = false;
-            
-            int target_x = 0;
-            int target_y = 0;
-            for(int y=0; y < 10; y++) {
-                if(map[target_x + y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[target_x + y * 10]) {
-                    target_y = y;
-                    foundTravelTarget = true;
-                    break;
-                }
-            }
-            
-            if (!foundTravelTarget) {
-                target_x = 0;
-                target_y = 0;
-                for(int x=0; x < 10; x++) {
-                    if(map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
-                        target_x = x;
-                        foundTravelTarget = true;
-                        break;
-                    }
-                }
-
-            LABEL_195:
-                if ( !foundTravelTarget ) {
-                    target_x = 9;
-                    for(int y=0; y < 10; y++) {
-                        if(map[target_x+y*10] == 102 && !doc->worldZones[target_x+y*10]){
-                            foundTravelTarget = 1;
-                            target_y = y;
-                            break;
-                        }
-                    }
-                }
-            }
-        LABEL_202:
-            if ( foundTravelTarget ){
-                zone_id_9 = zone_id_10;
-                if ( !doc->worldContainsZoneId(zone_id_10) )
-                {
-                    int idx_3 = target_x + 10 * target_y;
-                    Message("transport loop: %dx%d\n", target_x, target_y);
-                    Message("transport loop: %dx%d\n", target_x, target_y);
-                    doc->worldZones[idx_3] = doc->zones[zone_id_9];
-                    doc->world_things[idx_3].zone_id = zone_id_9;;
-                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
-                    // v87 = zone_2;
-                    // v88 = (char *)doc + 0x34 * idx_3;
-                    /*
-                     LOWORD(idx_3) = (_WORD)zone_id_8;
-                     *(_DWORD *)transport_count = v87;
-                     */
-                    doc->AddZoneWithIdToWorld(zone_id_8);
-                    doc->AddZoneWithIdToWorld(zone_id_9);
-                }
-                
-                continue;
-            }
-            
-            target_y = 9;
-            target_x = 0;
-            for(int x=0; x < 10; x++) {
-                if(map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
-                    target_x = x;
-                    foundTravelTarget = true;
-                }
-            }
-            
-        LABEL_209:
-            if ( foundTravelTarget )
-            {
-            LABEL_382:
-                zone_id_9 = zone_id_10;
-                if ( !doc->worldContainsZoneId(zone_id_10) )
-                {
-                    int idx_3 = target_x + 10 * target_y;
-                    Message("transport loop: %dx%d\n", target_x, target_y);
-                    doc->worldZones[idx_3] = doc->zones[zone_id_10];
-                    doc->world_things[idx_3].zone_id = zone_id_9;
-                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
-                    // v87 = zone_2;
-                    // v88 = (char *)doc + 0x34 * idx_3;
-                    /*
-                     LOWORD(idx_3) = (_WORD)zone_id_8;
-                     *(_DWORD *)transport_count = v87;
-                     */
-                    doc->AddZoneWithIdToWorld(zone_id_8);
-                    doc->AddZoneWithIdToWorld(zone_id_9);
-                }
-            }
-            else
-            {
-                doc->RemoveQuestProvidingItem(doc->wg_item_id);
-                /*
-                 v89 = (_DWORD *)transport_count;
-                 *(_WORD *)y_6 = 1;
-                 *v89 = 0;
-                 world_thing_plus_4->zone_id = -1;
-                 world_thing_plus_4->zone_type = -1;
-                 world_thing_plus_4->required_item_id = -1;
-                 */
-            }
-        }
-    }
-    Message("After Transport Loop\n");
+    [self placeTransports:doc map:map];
     
     x = puzzle_count; //TODO: check where the 3 comes from
     x_8 = puzzles1_count;
@@ -1026,6 +887,152 @@ LABEL_296:
         Message("%02d: %2d %3d %3d %3d\n", i, thing.zone_type, thing.zone_id, thing.findItemID, thing.requiredItemID);
     }
     //*/
+}
+
+- (void)placeTransports:(YodaDocument*)doc map:(uint16*)map {
+    Zone *zone_1; // ecx@175
+    
+    __int16 zone_id_9 = 0; // di@210
+    int zone_id_10 = 0;
+    
+    for(int y=0; y < 10; y++) {
+        for(int x=0; x < 10; x++) {
+            int idx = x + y * 10;
+            
+            doc->field_3390 = -1;
+            doc->wg_item_id = -1;
+            doc->wg_last_added_item_id = -1;
+            
+            if(map[idx] != WORLD_ITEM_TRAVEL_START)
+                continue;
+            
+            int distance = Map::GetDistanceToCenter(x, y);
+            int16 zone_id_8 = doc->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance, 1);
+            
+            zone_id_10 = -1;
+            if ( zone_id_8 < 0 ) continue;
+            
+            doc->world_things[idx].zone_id = zone_id_8;
+            doc->world_things[idx].zone_type = ZONETYPE_TravelStart;
+            doc->world_things[idx].requiredItemID = doc->wg_item_id;
+            zone_1 = doc->zones[zone_id_8];
+            
+            for(Hotspot *hotspot : zone_1->_hotspots) {
+                if(hotspot->type == VehicleTo) {
+                    zone_id_10 = hotspot->arg1;
+                    break;
+                }
+            }
+            
+            if ( zone_id_10 < 0) continue;
+            
+            int foundTravelTarget = false;
+            
+            int target_x = 0;
+            int target_y = 0;
+            for(int y=0; y < 10; y++) {
+                if(map[target_x + y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[target_x + y * 10]) {
+                    target_y = y;
+                    foundTravelTarget = true;
+                    break;
+                }
+            }
+            
+            if (!foundTravelTarget) {
+                target_x = 0;
+                target_y = 0;
+                for(int x=0; x < 10; x++) {
+                    if(map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                        target_x = x;
+                        foundTravelTarget = true;
+                        break;
+                    }
+                }
+                
+            LABEL_195:
+                if ( !foundTravelTarget ) {
+                    target_x = 9;
+                    for(int y=0; y < 10; y++) {
+                        if(map[target_x+y*10] == 102 && !doc->worldZones[target_x+y*10]){
+                            foundTravelTarget = 1;
+                            target_y = y;
+                            break;
+                        }
+                    }
+                }
+            }
+        LABEL_202:
+            if ( foundTravelTarget ){
+                zone_id_9 = zone_id_10;
+                if ( !doc->worldContainsZoneId(zone_id_10) )
+                {
+                    int idx_3 = target_x + 10 * target_y;
+                    Message("transport loop: %dx%d\n", target_x, target_y);
+                    Message("transport loop: %dx%d\n", target_x, target_y);
+                    doc->worldZones[idx_3] = doc->zones[zone_id_9];
+                    doc->world_things[idx_3].zone_id = zone_id_9;;
+                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
+                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
+                    // v87 = zone_2;
+                    // v88 = (char *)doc + 0x34 * idx_3;
+                    /*
+                     LOWORD(idx_3) = (_WORD)zone_id_8;
+                     *(_DWORD *)transport_count = v87;
+                     */
+                    doc->AddZoneWithIdToWorld(zone_id_8);
+                    doc->AddZoneWithIdToWorld(zone_id_9);
+                }
+                
+                continue;
+            }
+            
+            target_y = 9;
+            target_x = 0;
+            for(int x=0; x < 10; x++) {
+                if(map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                    target_x = x;
+                    foundTravelTarget = true;
+                }
+            }
+            
+        LABEL_209:
+            if ( foundTravelTarget )
+            {
+            LABEL_382:
+                zone_id_9 = zone_id_10;
+                if ( !doc->worldContainsZoneId(zone_id_10) )
+                {
+                    int idx_3 = target_x + 10 * target_y;
+                    Message("transport loop: %dx%d\n", target_x, target_y);
+                    doc->worldZones[idx_3] = doc->zones[zone_id_10];
+                    doc->world_things[idx_3].zone_id = zone_id_9;
+                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
+                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
+                    // v87 = zone_2;
+                    // v88 = (char *)doc + 0x34 * idx_3;
+                    /*
+                     LOWORD(idx_3) = (_WORD)zone_id_8;
+                     *(_DWORD *)transport_count = v87;
+                     */
+                    doc->AddZoneWithIdToWorld(zone_id_8);
+                    doc->AddZoneWithIdToWorld(zone_id_9);
+                }
+            }
+            else
+            {
+                doc->RemoveQuestProvidingItem(doc->wg_item_id);
+                /*
+                 v89 = (_DWORD *)transport_count;
+                 *(_WORD *)y_6 = 1;
+                 *v89 = 0;
+                 world_thing_plus_4->zone_id = -1;
+                 world_thing_plus_4->zone_type = -1;
+                 world_thing_plus_4->required_item_id = -1;
+                 */
+            }
+        }
+    }
+    Message("After Transport Loop\n");
 }
 
 @end
