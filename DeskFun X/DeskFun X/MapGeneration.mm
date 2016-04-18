@@ -263,33 +263,9 @@ static int logging;
     __int16 distance_13 = 0; // ax@233
     __int16 distance_14 = 0; // ax@235
     int world_idx_1 = 0; // ecx@239
-    int v122 = 0; // ecx@248
-    signed int zone_id_5 = 0; // ebp@276
-    __int16 distance_15 = 0; // ST34_2@279
-    int v136 = 0; // eax@279
-    int v138 = 0; // eax@280
-    __int16 distance_3 = 0; // ax@281
-    __int16 distance_2 = 0; // ax@284
-    __int16 distance_4 = 0; // ax@286
-    __int16 distance_5 = 0; // ax@293
-    __int16 zone_id_6 = 0; // ax@293
-    int world_idx_2 = 0; // edx@294
-    Planet planet_7; // eax@303
-    vector<uint16> *puzzle_ids; // ecx@307
-    int count_1 = 0; // edi@311
-    int idx_1 = 0; // esi@312
-    Quest *quest_3 = 0; // ecx@313
-    int count_2 = 0; // edi@316
-    int idx_2 = 0; // esi@317
-    Quest *quest_2; // ecx@318
     Planet planet_4; // eax@347
     vector<uint16> *puzzle_array_1; // ecx@351
-    int v194 = 0; // [sp-24h] [bp-210h]@0
-    int v195 = 0; // [sp-20h] [bp-20Ch]@51
-    int y_4 = 0; // [sp-1Ch] [bp-208h]@51
-    int v197 = 0; // [sp-18h] [bp-204h]@51
     int v199 = 0; // [sp-14h] [bp-200h]@246
-    int idx_6 = 0; // [sp-10h] [bp-1FCh]@248
     int zone_type = 0; // [sp-Ch] [bp-1F8h]@51
     int x_4 = 1; // [sp-8h] [bp-1F4h]@161
     int v204 = 0; // [sp+0h] [bp-1ECh]@0
@@ -506,202 +482,7 @@ LABEL_246:;
     
     zone_type = puzzles2_count-1;
     
-    while ( 2 )
-    {
-        doc->wg_zone_type = -1;
-        doc->wg_last_added_item_id = -1;
-        doc->wg_item_id_unknown_2 = -1;
-        doc->wg_item_id = -1;
-        doc->wg_item_id_unknown_3 = -1;
-        doc->field_3390 = -1;
-        doc->field_3394 = -1;
-        doc->field_3398 = -1;
-        idx_6 = 0;
-        // v121 = v119[v199];
-        v122 = 0;
-        // row = &puzzles;
-        int x =0, y=0, row = 0;
-        Message("zone_type = %d\n", zone_type);
-
-        while (2)
-        {
-            // v125 = row; = puzzles[row];
-            int foundSomething = 0;
-            for(x=0; x < 10; x++) {
-                if(puzzles[x + 10 * y] == zone_type-1) {
-                    foundSomething = 1;
-                    break;
-                }
-            }
-        
-            ++v122;
-        LABEL_273:
-            if (foundSomething) {
-                int zone_2 = doc->puzzle_ids_2[zone_type];
-
-                int16 item_1 = doc->puzzles[zone_2]->item_1;
-                
-                zone_id_5 = -1;
-                while ( 1 )
-                {
-                    if ( zone_id_5 >= 0 ) goto LABEL_292;
-                    if ( v199 == x_8 ) {
-                        distance_15 = Map::GetDistanceToCenter(x, y);
-                        /* HIWORD(v136) = HIWORD(v199); */
-                        /* LOWORD(v136) = v199 - 1; */
-                        v136 = v199-1;
-                        zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Goal, v136, -1, idx_6, -1, distance_15, 0);
-                        if ( zone_id_5 < 0 )
-                            goto LABEL_303;
-                        doc->wg_zone_type = ZONETYPE_Goal;
-                        v138 = v199;
-                    }
-                    else
-                    {
-                        int rand_2 = win_rand();
-                        Message("random = %x\n", rand_2);
-                        int type = (rand_2 & 1) + 15; // was win_rand() & 1
-                        
-                        // LOWORD(idx_6) = v199 - 1;
-                        // item_id = idx_6 = v199-1;
-                        // y_2 = 16 - ((unsigned int)((((unsigned __int64)rand_2 >> 32) ^ abs(rand_2) & 1) - ((unsigned __int64)rand_2 >> 32)) < 1);
-                        distance_3 = Map::GetDistanceToCenter(x, y);
-                        zone_id_5 = doc->GetZoneIdWithType((ZONE_TYPE)type,
-                                                                zone_type-1,
-                                                                -1,
-                                                                item_1,
-                                                                -1,
-                                                                distance_3,
-                                                                0 /*v141*/);
-                        if ( zone_id_5 >= 0 )
-                        {
-                            doc->wg_zone_type = type;
-                            doc->field_3394 = y_4 - 1;
-                            goto LABEL_290;
-                        }
-                        if ( zone_type == ZONETYPE_Use )
-                        {
-                            distance_2 = Map::GetDistanceToCenter(x, y);
-                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, v197, -1, distance_2, 0);
-                            if ( zone_id_5 < 0 )
-                                goto LABEL_303;
-                            doc->wg_zone_type = ZONETYPE_Trade;
-                        }
-                        else
-                        {
-                            distance_4 = Map::GetDistanceToCenter(x, y);
-                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Use, v195, -1, v197, -1, distance_4, 0);
-                            if ( zone_id_5 < 0 )
-                                goto LABEL_303;
-                            doc->wg_zone_type = ZONETYPE_Use;
-                        }
-                        v138 = v194;
-                    }
-                    doc->field_3394 = v138 - 1;
-                LABEL_290:
-                    doc->AddZoneWithIdToWorld(zone_id_5);
-                    if ( zone_id_5 < 0 )
-                    {
-                    LABEL_303:
-                        doc->puzzle_ids_1.clear();
-                        doc->puzzle_ids_2.clear();
-                        doc->item_ids.clear();
-                        
-                        planet_7 = doc->planet;
-                        if ( planet_7 == TATOOINE )
-                        {
-                            puzzle_ids = &doc->tatooine_puzzle_ids;
-                        }
-                        else if ( planet_7 == HOTH )
-                        {
-                            puzzle_ids = &doc->hoth_puzzle_ids;
-                        }
-                        else
-                        {
-                            if ( planet_7 != ENDOR )
-                                goto LABEL_311;
-                            puzzle_ids = &doc->endor_puzzle_ids;
-                        }
-                        puzzle_ids->clear();
-                        
-                    LABEL_311:
-                        count_1 = (int)doc->providedItems.size();
-                        if ( count_1 > 0 ) {
-                            idx_1 = 0;
-                            do {
-                                quest_3 = doc->providedItems[idx_1];
-                                if ( quest_3 )
-                                    ; // dealloc quest 3
-                                ++idx_1;
-                                --count_1;
-                            }
-                            while ( count_1 );
-                        }
-                        doc->providedItems.clear();
-                        
-                        count_2 = (int)doc->requiredItems.size();
-                        if ( count_2 > 0 ) {
-                            idx_2 = 0;
-                            do
-                            {
-                                quest_2 = doc->requiredItems[idx_2];
-                                if ( quest_2 )
-                                    ; // deallocate quest_2
-                                ++idx_2;
-                                --count_2;
-                            }
-                            while ( count_2 );
-                        }
-                        doc->requiredItems.clear();
-                        doc->puzzle_ids.clear();
-                        doc->chosen_zone_ids.clear();
-                        
-                        Message("-= FAILURE 1 =-\n");
-                        return;
-                    }
-                    ++idx_6;
-                    int idx_5 = x + 10 * y;
-                    v195 = 1;
-                    doc->world_things[idx_5].zone_type = (ZONE_TYPE)doc->wg_zone_type;
-                    doc->world_things[idx_5].zone_id = zone_id_5;
-                    doc->world_things[idx_5].findItemID = doc->wg_last_added_item_id;
-                    doc->world_things[idx_5].unknown606 = doc->field_3394;
-                    doc->world_things[idx_5].requiredItemID = doc->wg_item_id;
-                    
-                    // v147 = (char *)doc + 52 * idx_5;
-                    /*
-                     *((_WORD *)v147 + 612) = doc->field_3390;
-                     *((_WORD *)v147 + 624) = 0;
-                     */
-                    doc->worldZones[idx_5] = doc->zones[zone_id_5];
-
-                    if ( idx_6 > 200) goto LABEL_292;
-                }
-            }
-            row += 10;
-            ++y;
-            if (row < 100)
-                continue;
-            break;
-        }
-    LABEL_292:
-        if ( !v195 )
-        {
-            distance_5 = Map::GetDistanceToCenter(x, y);
-            zone_id_6 = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_5, 0);
-            if ( zone_id_6 >= 0 )
-            {
-                world_idx_2 = x + 10 * y;
-                doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)doc->wg_zone_type;
-                doc->worldZones[world_idx_2] = doc->zones[zone_id_6];
-                doc->world_things[world_idx_2].zone_id = zone_id_6;
-                doc->AddZoneWithIdToWorld(zone_id_6);
-            }
-        }
-        if ( --zone_type > 0 ) // HIDWORD(v192)
-            continue;
-        break;
-    }
+    [self loop1:doc zoneType:zone_type puzzles:puzzles v199:v199 x_8:x_8];
     
     
 LABEL_296:
@@ -1033,4 +814,228 @@ LABEL_296:
     }
 }
 
+- (void)loop1:(YodaDocument*)doc zoneType:(int)zone_type puzzles:(uint16*)puzzles v199:(int)v199 x_8:(int)x_8 {
+    
+    int v122 = 0; // ecx@248
+    signed int zone_id_5 = 0; // ebp@276
+    __int16 distance_15 = 0; // ST34_2@279
+    int v136 = 0; // eax@279
+    int v138 = 0; // eax@280
+    __int16 distance_3 = 0; // ax@281
+    __int16 distance_2 = 0; // ax@284
+    __int16 distance_4 = 0; // ax@286
+    __int16 distance_5 = 0; // ax@293
+    __int16 zone_id_6 = 0; // ax@293
+    int world_idx_2 = 0; // edx@294
+    Planet planet_7; // eax@303
+    vector<uint16> *puzzle_ids; // ecx@307
+    int count_1 = 0; // edi@311
+    int idx_1 = 0; // esi@312
+    Quest *quest_3 = 0; // ecx@313
+    int count_2 = 0; // edi@316
+    int idx_2 = 0; // esi@317
+    Quest *quest_2; // ecx@318
+    int v194 = 0; // [sp-24h] [bp-210h]@0
+    int v195 = 0; // [sp-20h] [bp-20Ch]@51
+    int y_4 = 0; // [sp-1Ch] [bp-208h]@51
+    int v197 = 0; // [sp-18h] [bp-204h]@51
+    int idx_6 = 0; // [sp-10h] [bp-1FCh]@248
+
+    while ( 2 )
+    {
+        doc->wg_zone_type = -1;
+        doc->wg_last_added_item_id = -1;
+        doc->wg_item_id_unknown_2 = -1;
+        doc->wg_item_id = -1;
+        doc->wg_item_id_unknown_3 = -1;
+        doc->field_3390 = -1;
+        doc->field_3394 = -1;
+        doc->field_3398 = -1;
+        idx_6 = 0;
+        // v121 = v119[v199];
+        v122 = 0;
+        // row = &puzzles;
+        int x =0, y=0, row = 0;
+        Message("zone_type = %d\n", zone_type);
+        
+        while (2)
+        {
+            // v125 = row; = puzzles[row];
+            int foundSomething = 0;
+            for(x=0; x < 10; x++) {
+                if(puzzles[x + 10 * y] == zone_type-1) {
+                    foundSomething = 1;
+                    break;
+                }
+            }
+            
+            ++v122;
+        LABEL_273:
+            if (foundSomething) {
+                int zone_2 = doc->puzzle_ids_2[zone_type];
+                
+                int16 item_1 = doc->puzzles[zone_2]->item_1;
+                
+                zone_id_5 = -1;
+                while ( 1 )
+                {
+                    if ( zone_id_5 >= 0 ) goto LABEL_292;
+                    if ( v199 == x_8 ) {
+                        distance_15 = Map::GetDistanceToCenter(x, y);
+                        /* HIWORD(v136) = HIWORD(v199); */
+                        /* LOWORD(v136) = v199 - 1; */
+                        v136 = v199-1;
+                        zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Goal, v136, -1, idx_6, -1, distance_15, 0);
+                        if ( zone_id_5 < 0 )
+                            goto LABEL_303;
+                        doc->wg_zone_type = ZONETYPE_Goal;
+                        v138 = v199;
+                    }
+                    else
+                    {
+                        int rand_2 = win_rand();
+                        Message("random = %x\n", rand_2);
+                        int type = (rand_2 & 1) + 15; // was win_rand() & 1
+                        
+                        // LOWORD(idx_6) = v199 - 1;
+                        // item_id = idx_6 = v199-1;
+                        // y_2 = 16 - ((unsigned int)((((unsigned __int64)rand_2 >> 32) ^ abs(rand_2) & 1) - ((unsigned __int64)rand_2 >> 32)) < 1);
+                        distance_3 = Map::GetDistanceToCenter(x, y);
+                        zone_id_5 = doc->GetZoneIdWithType((ZONE_TYPE)type,
+                                                           zone_type-1,
+                                                           -1,
+                                                           item_1,
+                                                           -1,
+                                                           distance_3,
+                                                           0 /*v141*/);
+                        if ( zone_id_5 >= 0 )
+                        {
+                            doc->wg_zone_type = type;
+                            doc->field_3394 = y_4 - 1;
+                            goto LABEL_290;
+                        }
+                        if ( zone_type == ZONETYPE_Use )
+                        {
+                            distance_2 = Map::GetDistanceToCenter(x, y);
+                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, v197, -1, distance_2, 0);
+                            if ( zone_id_5 < 0 )
+                                goto LABEL_303;
+                            doc->wg_zone_type = ZONETYPE_Trade;
+                        }
+                        else
+                        {
+                            distance_4 = Map::GetDistanceToCenter(x, y);
+                            zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Use, v195, -1, v197, -1, distance_4, 0);
+                            if ( zone_id_5 < 0 )
+                                goto LABEL_303;
+                            doc->wg_zone_type = ZONETYPE_Use;
+                        }
+                        v138 = v194;
+                    }
+                    doc->field_3394 = v138 - 1;
+                LABEL_290:
+                    doc->AddZoneWithIdToWorld(zone_id_5);
+                    if ( zone_id_5 < 0 )
+                    {
+                    LABEL_303:
+                        doc->puzzle_ids_1.clear();
+                        doc->puzzle_ids_2.clear();
+                        doc->item_ids.clear();
+                        
+                        planet_7 = doc->planet;
+                        if ( planet_7 == TATOOINE )
+                        {
+                            puzzle_ids = &doc->tatooine_puzzle_ids;
+                        }
+                        else if ( planet_7 == HOTH )
+                        {
+                            puzzle_ids = &doc->hoth_puzzle_ids;
+                        }
+                        else
+                        {
+                            if ( planet_7 != ENDOR )
+                                goto LABEL_311;
+                            puzzle_ids = &doc->endor_puzzle_ids;
+                        }
+                        puzzle_ids->clear();
+                        
+                    LABEL_311:
+                        count_1 = (int)doc->providedItems.size();
+                        if ( count_1 > 0 ) {
+                            idx_1 = 0;
+                            do {
+                                quest_3 = doc->providedItems[idx_1];
+                                if ( quest_3 )
+                                    ; // dealloc quest 3
+                                ++idx_1;
+                                --count_1;
+                            }
+                            while ( count_1 );
+                        }
+                        doc->providedItems.clear();
+                        
+                        count_2 = (int)doc->requiredItems.size();
+                        if ( count_2 > 0 ) {
+                            idx_2 = 0;
+                            do
+                            {
+                                quest_2 = doc->requiredItems[idx_2];
+                                if ( quest_2 )
+                                    ; // deallocate quest_2
+                                ++idx_2;
+                                --count_2;
+                            }
+                            while ( count_2 );
+                        }
+                        doc->requiredItems.clear();
+                        doc->puzzle_ids.clear();
+                        doc->chosen_zone_ids.clear();
+                        
+                        Message("-= FAILURE 1 =-\n");
+                        return;
+                    }
+                    ++idx_6;
+                    int idx_5 = x + 10 * y;
+                    v195 = 1;
+                    doc->world_things[idx_5].zone_type = (ZONE_TYPE)doc->wg_zone_type;
+                    doc->world_things[idx_5].zone_id = zone_id_5;
+                    doc->world_things[idx_5].findItemID = doc->wg_last_added_item_id;
+                    doc->world_things[idx_5].unknown606 = doc->field_3394;
+                    doc->world_things[idx_5].requiredItemID = doc->wg_item_id;
+                    
+                    // v147 = (char *)doc + 52 * idx_5;
+                    /*
+                     *((_WORD *)v147 + 612) = doc->field_3390;
+                     *((_WORD *)v147 + 624) = 0;
+                     */
+                    doc->worldZones[idx_5] = doc->zones[zone_id_5];
+                    
+                    if ( idx_6 > 200) goto LABEL_292;
+                }
+            }
+            row += 10;
+            ++y;
+            if (row < 100)
+                continue;
+            break;
+        }
+    LABEL_292:
+        if ( !v195 )
+        {
+            distance_5 = Map::GetDistanceToCenter(x, y);
+            zone_id_6 = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_5, 0);
+            if ( zone_id_6 >= 0 )
+            {
+                world_idx_2 = x + 10 * y;
+                doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)doc->wg_zone_type;
+                doc->worldZones[world_idx_2] = doc->zones[zone_id_6];
+                doc->world_things[world_idx_2].zone_id = zone_id_6;
+                doc->AddZoneWithIdToWorld(zone_id_6);
+            }
+        }
+        if ( --zone_type > 0 ) // HIDWORD(v192)
+            continue;
+        break;
+    }
+}
 @end
