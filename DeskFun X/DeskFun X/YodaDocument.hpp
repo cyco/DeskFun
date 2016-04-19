@@ -103,7 +103,7 @@ public:
     int Unknown_5(int16* unknown);
     int place_puzzles__(int maxDistance, int16* world, int* xref, int* yref);
     void GetTileProvidedByZonesHotspots(int16 zone_id);
-    int Unknown_14(int16 a2, int16 a3, int a4, int a5);
+    int Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID);
     void WritePlanetValues();
 };
 

@@ -129,7 +129,7 @@ static int logging;
 }
 
 - (void)_testSamples {
-
+    
     //* Valid Maps
     logging = 0;
     [self testSample:world_things_aea6_1 seed:0xaea6 size:WorldSize_SMALL];
@@ -456,7 +456,7 @@ static int logging;
         }
         while ( zone_id_11 > 0 );
     }
-
+    
     Message("After Loop 1\n");
     Message("After Loop 1\n");
 #pragma mark - Second Loop
@@ -641,9 +641,9 @@ LABEL_296:
     Message("After Transport Loop\n");
 }
 
-- (void)loop2:(YodaDocument*)doc map:(uint16*)map {    
+- (void)loop2:(YodaDocument*)doc map:(uint16*)map {
     int v192 = 0;
-
+    
 #pragma mark - Third Loop
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
@@ -743,7 +743,7 @@ LABEL_296:
 
 - (void)loop1:(YodaDocument*)doc zoneType:(int)puzzleMapIdx puzzles:(uint16*)puzzles v199:(int)v199 x_8:(int)x_8 {
     int idx_6 = 0, v195 = 0;
-
+    
     for(int zone_type=puzzleMapIdx; zone_type > 0; zone_type--) {
         doc->wg_zone_type = -1;
         doc->wg_last_added_item_id = -1;
@@ -754,7 +754,7 @@ LABEL_296:
         doc->field_3394 = -1;
         doc->field_3398 = -1;
         idx_6 = 0;
-
+        
         int x =0, y=0, row = 0;
         Message("zone_type = %d\n", zone_type);
         
