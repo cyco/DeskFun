@@ -698,53 +698,25 @@ LABEL_19:
 signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unknown)
 {
     Message("YodaDocument::ChoosePuzzleNPCForZone_0(%d, %d)\n", zone_id, unknown);
-    signed int v3; // edi@1
-    signed int result; // eax@2
-    int v7; // eax@3
-    bool v8; // zf@4
-    bool v9; // sf@4
-    int v10; // ecx@6
     
-    v3 = 0;
     Zone *zone = getZoneByID(zone_id);
     if (!zone ) return 0;
     
-    v7 = (int)zone->puzzleNPCTileIDs.size();
     if ( unknown == -1 )
-    {
-        v8 = v7 == 0;
-        v9 = v7 < 0;
-        result = 1;
-        if ( v9 || v8 )
-            result = 0;
-    }
-    else
-    {
-        v10 = 0;
-        if ( v7 > 0 )
-        {
-            int idx = 0;
-            while ( zone->puzzleNPCTileIDs[idx] != unknown )
-            {
-                ++idx;
-                if ( v7 <= ++v10 )
-                    goto LABEL_12;
-            }
-            v3 = 1;
-        }
-    LABEL_12:
-        for(Hotspot *hotspot : zone->_hotspots) {
-            if (hotspot->type == DoorIn && hotspot->arg1 >= 0) {
-                int result = ChoosePuzzleNPCForZone_0(hotspot->arg1, unknown);
-                if(result)
-                    return result;
-            }
-            
-        }
-        result = v3;
+        return zone->puzzleNPCTileIDs.size() != 0;
+    
+    for(uint16 npcID : zone->puzzleNPCTileIDs) {
+        if(npcID == unknown) return 1;
     }
     
-    return result;
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if (hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChoosePuzzleNPCForZone_0(hotspot->arg1, unknown);
+            if(result) return result;
+        }
+    }
+    
+    return 0;
 }
 
 int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int unknown, int a6)
