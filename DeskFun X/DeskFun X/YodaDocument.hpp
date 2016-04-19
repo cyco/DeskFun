@@ -104,6 +104,7 @@ public:
     int place_puzzles__(int maxDistance, int16* world, int* xref, int* yref);
     void GetTileProvidedByZonesHotspots(int16 zone_id);
     int Unknown_14(int16 a2, int16 a3, int a4, int a5);
+    void WritePlanetValues();
 };
 
 #endif /* YodaDocument_hpp */

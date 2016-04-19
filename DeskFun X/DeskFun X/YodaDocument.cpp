@@ -1735,105 +1735,49 @@ void YodaDocument::GetTileProvidedByZonesHotspots(int16 zone_id)
 
 int YodaDocument::Unknown_14(int16 a2, int16 a3, int a4, int a5)
 {
-    Message("YodaDocument::Unknown_14(%d, %d, %d, %d)\n", a2, a3, a4, a5);
-    signed int v6 = 0; // ecx@1
-    signed int v7 = 0; // ebx@1
-    int result = 0; // eax@2
-    int v9 = 0; // edx@3
-    Zone *v10 = NULL; // eax@3
-    int v11 = 0; // esi@3
-    __int16 *v12; // edi@4
-    int v13 = 0; // edi@10
-    int v14 = 0; // esi@10
-    int v15 = 0; // esi@15
-    Hotspot *v16 = NULL; // esi@15
-    int v17 = 0; // esi@17
-    int v18 = 0; // ebx@18
-    Hotspot *v19 = NULL; // ecx@19
-    vector<uint16> v20; // [sp+Ch] [bp-2Ch]@10
-    YodaDocument *v21 = NULL; // [sp+20h] [bp-18h]@1
-    int v22 = 0; // [sp+24h] [bp-14h]@1
-    Zone *v23 = NULL; // [sp+28h] [bp-10h]@3
+    Message("YodaDocument::Unknown_14(%d, %d, %d, %d)\n", a2, a3, a4, a5);    
+    if(a2 < 0) return 0;
     
-    v21 = this;
-    v6 = 0;
-    v7 = 0;
-    v22 = 0;
-    if ( a2 >= 0 )
-    {
-        v9 = 0;
-        v10 = v21->zones[a2];
-        v23 = v10;
-        v11 = (int)v10->providedItemIDs.size();
-        if ( v11 > 0 )
-        {
-            int idx = 0;
-            while ( v10->providedItemIDs[idx] != a5 )
-            {
-                ++v12;
-                idx ++;
-                if ( v11 <= ++v9 )
-                    goto LABEL_9;
-            }
-            v6 = 1;
-        }
-    LABEL_9:
-        if ( v6 )
-        {
-            v13 = (int)v23->_hotspots.size();
-            v14 = 0;
-            v20.clear();
-            if ( v13 > 0 )
-            {
-                do
-                {
-                    if ( v23->_hotspots[v14]->type == TriggerLocation )
-                    {
-                        v7 = 1;
-                        v20.push_back(v14);
-                    }
-                    ++v14;
+    Zone *zone = this->zones[a2];
+
+    for(uint16 itemID : zone->providedItemIDs)
+        if(itemID == a5) {
+            vector<Hotspot*> hotspots;
+            for(Hotspot* hotspot : zone->_hotspots) {
+                if(hotspot->type == TriggerLocation) {
+                    hotspots.push_back(hotspot);
                 }
-                while ( v13 > v14 );
             }
-            if ( v7 ) {
-                v15 = (int)v20.size();
-                v16 = v23->_hotspots[v20[win_rand() % v15]];
+            
+            if ( hotspots.size() ) {
                 this->AddRequiredQuestWithItemID(a5, a4);
-                v21->wg_last_added_item_id = a5;
-                v16->arg1 = a5;
-                v16->enabled = 1;
-                v22 = 1;
+                this->wg_last_added_item_id = a5;
+
+                Hotspot *hotspot = hotspots[win_rand() % hotspots.size()];
+                hotspot->arg1 = a5;
+                hotspot->enabled = 1;
+                
+                return 1;
             }
+            break;
         }
-        v17 = 0;
-        if ( !v22 )
+
+    for(Hotspot *hotspot : zone->_hotspots)
+        if(hotspot->type == DoorIn)
         {
-            v18 = 0;
-            int v20_unknown2 = (int)v23->_hotspots.size();
-            if ( v20_unknown2 > 0 )
-            {
-                do
-                {
-                    v19 = v23->_hotspots[v17];
-                    if ( v19->type == 9 )
-                    {
-                        v22 = this->Unknown_14(v19->arg1, a3, a4, a5);
-                        if ( v22 == 1 )
-                            break;
-                    }
-                    ++v17;
-                    ++v18;
-                }
-                while ( v20_unknown2 > v18 );
-            }
+            int result = this->Unknown_14(hotspot->arg1, a3, a4, a5);
+            if(result) return result;
         }
-        result = v22;
+    Message("YodaDocument::Unknown_14 => %d\n", 0);
+    return 0;
+}
+
+void YodaDocument::WritePlanetValues() {
+    /*
+    switch (this->planet) {
+        case TATOOINE: doc->WriteTatooineValues(); break;
+        case HOTH: doc->WriteHothValues(); break;
+        case ENDOR: doc->WriteEndorValues(); break;
     }
-    else
-    {
-        result = 0;
-    }
-    Message("YodaDocument::Unknown_14 => %d\n", result);
-    return result;
+     */
 }
