@@ -649,17 +649,13 @@ signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int
     if ( a5 ) {
         if ( this->puzzle_ids_1.size() - 1 > a3 ) {
             v9 = &this->puzzle_ids_1;
-            goto LABEL_17;
-        }
+            v10 = (*v9)[a3 + 1];
+        } else { v10 = -1; }
     } else if ( this->puzzle_ids_2.size() - 1 > a3 ) {
         v9 = &this->puzzle_ids_2;
-    LABEL_17:
         v10 = (*v9)[a3 + 1];
-        goto LABEL_19;
-    }
+    } else v10 = -1;
     
-    v10 = -1;
-LABEL_19:
     v11 = &this->puzzles;
     v12 = (*v11)[v8];
     if ( !v12 )  return 0;
@@ -935,12 +931,9 @@ signed int YodaDocument::SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2
         }
         if ( !v14 ) {
             this->item_ids.push_back(zone->providedItemIDs[idx]);
-            goto LABEL_31;
-        }
-    return_0:
-        return 0;
+        } else return 0;
     }
-LABEL_31:
+
     if ( zone->getType() == ZONETYPE_TravelStart ) {
         AddProvidedQuestWithItemID(random_item_id, 5);
         zone_id_1 = arg2;
@@ -961,8 +954,6 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
     Message("YodaDocument::AssociateItemWithZoneHotspot(%d, %d, %d)\n", zone_id, item_id, a4);
     signed int found_item_id_in_zone_items; // esi@1
     Zone *zone; // edi@3
-    int item_ids; // eax@6
-    int v8; // ebx@6
     int hotspot_type; // ebx@12
     int tile_specs; // eax@13
     int idx; // esi@19
@@ -982,18 +973,12 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
             zone = this->zones[zone_id];
             if ( zone ) {
                 if ( zone->requiredItemIDs.size() <= 0 && zone->puzzleNPCTileIDs.size() <= 0 ) {
-                    item_ids = (int)zone->providedItemIDs.size();
-                    v8 = 0;
-                    if ( item_ids > 0 ) {
-                        int idx = 0;
-                        while ( zone->providedItemIDs[idx] != item_id ) {
-                            ++idx;
-                            if ( item_ids <= ++v8 )
-                                goto LABEL_12;
+                    for(uint16 itemID : zone->providedItemIDs) {
+                        if(itemID == item_id) {
+                            found_item_id_in_zone_items = 1;
+                            break;
                         }
-                        found_item_id_in_zone_items = 1;
                     }
-                LABEL_12:
                     hotspot_type = 0;
                     if ( found_item_id_in_zone_items ) {
                         v20.clear();
@@ -1039,8 +1024,10 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
                                     zone_id_1 = hotspot_1->arg1;
                                     if ( zone_id_1 >= 0 )
                                         didFindSuitableHotspot = AssociateItemWithZoneHotspot(zone_id_1, item_id, a4);
-                                    if ( didFindSuitableHotspot == 1 )
-                                        goto LABEL_33;
+                                    if ( didFindSuitableHotspot == 1 ) {
+                                        AddRequiredItemsFromHotspots(zone_id);
+                                        return didFindSuitableHotspot;
+                                    }
                                 }
                                 ++idx_1;
                             }
@@ -1049,7 +1036,7 @@ int YodaDocument::AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int
                     }
                     if ( didFindSuitableHotspot != 1 )
                         return didFindSuitableHotspot;
-                LABEL_33:
+
                     AddRequiredItemsFromHotspots(zone_id);
                     return didFindSuitableHotspot;
                 }
