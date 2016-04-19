@@ -299,6 +299,8 @@ int YodaDocument::worldContainsZoneId(uint16 zoneID) {
 }
 void YodaDocument::AddZoneWithIdToWorld(uint16 zoneID){
     Message("YodaDocument::AddZoneWithIdToWorld(%d)\n", zoneID);
+    if(zoneID >= zones.size())
+        printf("Invalid Zone ID\n");
     chosen_zone_ids.insert(chosen_zone_ids.begin(), zoneID);
 }
 
