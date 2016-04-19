@@ -777,10 +777,14 @@ LABEL_296:
                 while ( 1 )
                 {
                     if ( zone_id_5 >= 0 ) goto LABEL_292;
+                    
                     if ( v199 == x_8 ) {
                         int distance = Map::GetDistanceToCenter(x, y);
                         zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Goal, v199-1, -1, idx_6, -1, distance, 0);
-                        if ( zone_id_5 < 0 ) goto LABEL_303;
+                        if ( zone_id_5 < 0 ) {
+                            [self doCleanup:doc];
+                            return;
+                        }
                         doc->wg_zone_type = ZONETYPE_Goal;
                     } else {
                         int rand_2 = win_rand();
@@ -807,49 +811,30 @@ LABEL_296:
                         if ( zone_type == ZONETYPE_Use ) {
                             int distance = Map::GetDistanceToCenter(x, y);
                             zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, 0, -1, distance, 0);
-                            if ( zone_id_5 < 0 )
-                                goto LABEL_303;
+                            if ( zone_id_5 < 0 ){
+                                [self doCleanup:doc];
+                                return;
+                            }
+                            
                             doc->wg_zone_type = ZONETYPE_Trade;
                         }
                         else
                         {
                             int distance = Map::GetDistanceToCenter(x, y);
                             zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Use, v195, -1, 0, -1, distance, 0);
-                            if ( zone_id_5 < 0 )
-                                goto LABEL_303;
+                            if ( zone_id_5 < 0 ){
+                                [self doCleanup:doc];
+                                return;
+                            }
+                            
                             doc->wg_zone_type = ZONETYPE_Use;
                         }
                     }
                     doc->field_3394 = -1;
                 LABEL_290:
                     doc->AddZoneWithIdToWorld(zone_id_5);
-                    if ( zone_id_5 < 0 )
-                    {
-                    LABEL_303:
-                        doc->puzzle_ids_1.clear();
-                        doc->puzzle_ids_2.clear();
-                        doc->item_ids.clear();
-                        
-                        switch (doc->planet) {
-                            case TATOOINE: doc->tatooine_puzzle_ids.clear(); break;
-                            case HOTH:; doc->hoth_puzzle_ids.clear(); break;
-                            case ENDOR:; doc->endor_puzzle_ids.clear(); break;
-                        }
-                        
-                        for(Quest *quest : doc->providedItems) {
-                            delete quest;
-                        }
-                        doc->providedItems.clear();
-                        
-                        for(Quest *quest : doc->requiredItems) {
-                            delete quest;
-                        }
-                        doc->requiredItems.clear();
-                        
-                        doc->puzzle_ids.clear();
-                        doc->chosen_zone_ids.clear();
-                        
-                        Message("-= FAILURE 1 =-\n");
+                    if ( zone_id_5 < 0 ) {
+                        [self doCleanup:doc];
                         return;
                     }
                     
@@ -898,34 +883,25 @@ LABEL_296:
     doc->puzzle_ids_2.clear();
     doc->item_ids.clear();
     
-    vector<uint16> *puzzle_array_1;
     switch (doc->planet) {
-        case TATOOINE:
-            puzzle_array_1 = &doc->tatooine_puzzle_ids;
-            break;
-        case HOTH:
-            puzzle_array_1 = &doc->hoth_puzzle_ids;
-            break;
-        case ENDOR:
-            puzzle_array_1 = &doc->endor_puzzle_ids;
-            break;
-            
-        default:
-            break;
+        case TATOOINE: doc->tatooine_puzzle_ids.clear(); break;
+        case HOTH:; doc->hoth_puzzle_ids.clear(); break;
+        case ENDOR:; doc->endor_puzzle_ids.clear(); break;
     }
-    puzzle_array_1->clear();
     
-    for(Quest *quest : doc->providedItems)
+    for(Quest *quest : doc->providedItems) {
         delete quest;
+    }
     doc->providedItems.clear();
     
-    for(Quest *quest : doc->requiredItems)
+    for(Quest *quest : doc->requiredItems) {
         delete quest;
+    }
     doc->requiredItems.clear();
     
     doc->puzzle_ids.clear();
     doc->chosen_zone_ids.clear();
-    Message("-= FAILURE 3 =-\n");
+    Message("-= FAILURE =-\n");
 }
 
 @end

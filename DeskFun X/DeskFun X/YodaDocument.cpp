@@ -93,7 +93,7 @@ void YodaDocument::ShuffleVector(vector<int16> &array) {
             int random = win_rand();
             if(PRINT_ARRAY_SHUFFLE_RANDS) Message("Array::Shuffle rand 2: %x\n", random);
             int idx = random % count;
-
+            
             if ( temp_array[idx] == -1 ) {
                 temp_array[idx] = array[v18];
                 array[v18] = -1;
@@ -215,8 +215,8 @@ void YodaDocument::GetPuzzleCandidates(vector<int16> &result, uint16 item_id, in
             if ( puzzle->type != PuzzleTypeTrade || ContainsPuzzleId(puzzle_idx) )
                 goto do_break;
         } else if ( zone_type != ZONETYPE_Goal
-                 || puzzle->type != PuzzleTypeU3
-                 || ContainsPuzzleId(puzzle_idx) ) {
+                   || puzzle->type != PuzzleTypeU3
+                   || ContainsPuzzleId(puzzle_idx) ) {
             goto do_break;
         }
         goto use_puzzle;
@@ -968,7 +968,7 @@ LABEL_31:
         AddProvidedQuestWithItemID(random_item_id, arg2);
     }
     AddRequiredQuestWithItemID(random_item_id, zone_id_1);
-
+    
     this->wg_item_id = random_item_id;
     AddRequiredItemsFromHotspots(zone_id);
     
@@ -1419,7 +1419,7 @@ int YodaDocument::Unknown_5(int16* world){
                     while(1) {
                         zone = this->zones[zone_id];
                         if ( this->field_2E64 ) break;
-                    
+                        
                         int has_teleporter = 0;
                         for(Hotspot *hotspot : zone->_hotspots) {
                             if(hotspot->type == Teleporter) {
@@ -1564,16 +1564,9 @@ int YodaDocument::Unknown_5(int16* world){
 
 int YodaDocument::place_puzzles__(int maxDistance, int16 *world, int* xref, int* yref) {
     Message("YodaDocument::place_puzzles__(%d, .., .., ..)\n", maxDistance);
-    signed int v10; // esi@34
-    bool v11; // zf@34
-    bool v12; // sf@34
-    int v14; // edx@37
-    vector<MapPoint*>*v15;
-    vector<MapPoint*> v27;
-    vector<MapPoint*> v30;
-    vector<MapPoint*> v33;
-    
-    int v41 = 0;
+    vector<MapPoint*> farPoints;
+    vector<MapPoint*> bestPoints;
+    vector<MapPoint*> pointsCloseToPuzzles;
     
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
@@ -1583,7 +1576,7 @@ int YodaDocument::place_puzzles__(int maxDistance, int16 *world, int* xref, int*
             if ( Map::GetDistanceToCenter(x, y) > maxDistance )  {
                 if ( item == 1 ) {
                     Message("1) %dx%d\n", x, y);
-                    v27.push_back(point);
+                    farPoints.push_back(point);
                 } else delete point;
             } else if ( item == 1 || item == 300 ) {
                 Message("2) %dx%d\n", x, y);
@@ -1591,75 +1584,49 @@ int YodaDocument::place_puzzles__(int maxDistance, int16 *world, int* xref, int*
                     && ( x > 8 || world[idx+1] != 306 )
                     && ( y < 1 || world[idx-10] != 306 )
                     && ( y > 8 || world[idx+10] != 306 ))
-                    v30.push_back(point);
+                    bestPoints.push_back(point);
                 else
-                    v33.push_back(point);
+                    pointsCloseToPuzzles.push_back(point);
             } else delete point;
         }
     }
     
-    v10 = (int)v30.size();
-    v11 = v30.size() == 0;
-    v12 = 0;
-    
-    if ( !v30.size() ) {
-        if ( !v33.size() ) {
-            if ( v27.size() ) {
-                v14 = win_rand() % v27.size();
-                v15 = &v27;
-                goto LABEL_44;
-            }
-            Message("No Place to put puzzle!\n");
-        }
-        v11 = v10 == 0;
-        v12 = v10 < 0;
-    }
-    
-    if ( v12 || v11 ) {
-        if ( v33.size() <= 0 ) {
-            for(MapPoint *point : v27) {
-                delete point;
-            }
-            v27.clear();
-            for(MapPoint *point : v30) {
-                delete point;
-            }
-            v30.clear();
-            for(MapPoint *point : v33) {
-                delete point;
-            }
-            v33.clear();
-            
-            return 0;
-        }
-        v14 = win_rand() % v33.size();
-        v15 = &v33;
+    int idx = 0;
+    vector<MapPoint*>*array = NULL;
+    if(bestPoints.size()){
+        idx = win_rand() % bestPoints.size();
+        array = &bestPoints;
+    } else if(pointsCloseToPuzzles.size()) {
+        idx = win_rand() % pointsCloseToPuzzles.size();
+        array = &pointsCloseToPuzzles;
+    } else if(farPoints.size()){
+        idx = win_rand() % farPoints.size();
+        array = &farPoints;
     } else {
-        v14 = win_rand() % v30.size();
-        v15 = &v30;
+        Message("No Place to put puzzle!\n");
     }
     
-LABEL_44:
-    MapPoint *chosenPoint = (*v15)[v14];
-    v41 = 1;
-    *xref = chosenPoint->x;
-    *yref = chosenPoint->y;
-    Message("YodaDocument::place_puzzles__: %dx%d\n", chosenPoint->x, chosenPoint->y);
-LABEL_45:
-    for(MapPoint *point : v27) {
-        delete point;
+    if(array) {
+        MapPoint *chosenPoint = (*array)[idx];
+        *xref = chosenPoint->x;
+        *yref = chosenPoint->y;
+        Message("YodaDocument::place_puzzles__: %dx%d\n", chosenPoint->x, chosenPoint->y);
     }
-    v27.clear();
-    for(MapPoint *point : v30) {
-        delete point;
-    }
-    v30.clear();
-    for(MapPoint *point : v33) {
-        delete point;
-    }
-    v33.clear();
     
-    return v41;
+    for(MapPoint *point : farPoints) {
+        delete point;
+    }
+    farPoints.clear();
+    for(MapPoint *point : bestPoints) {
+        delete point;
+    }
+    bestPoints.clear();
+    for(MapPoint *point : pointsCloseToPuzzles) {
+        delete point;
+    }
+    pointsCloseToPuzzles.clear();
+    
+    return array != NULL;
 }
 
 void YodaDocument::GetTileProvidedByZonesHotspots(int16 zone_id)
@@ -1744,7 +1711,7 @@ int YodaDocument::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 pro
     if(zoneID < 0) return 0;
     
     Zone *zone = this->zones[zoneID];
-
+    
     for(uint16 itemID : zone->providedItemIDs)
         if(itemID == providedItemID) {
             vector<Hotspot*> hotspots;
@@ -1757,7 +1724,7 @@ int YodaDocument::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 pro
             if ( hotspots.size() ) {
                 this->AddRequiredQuestWithItemID(itemID, distance);
                 this->wg_last_added_item_id = providedItemID;
-
+                
                 Hotspot *hotspot = hotspots[win_rand() % hotspots.size()];
                 hotspot->arg1 = providedItemID;
                 hotspot->enabled = 1;
@@ -1767,7 +1734,7 @@ int YodaDocument::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 pro
             }
             break;
         }
-
+    
     for(Hotspot *hotspot : zone->_hotspots)
         if(hotspot->type == DoorIn)
         {
@@ -1783,10 +1750,10 @@ int YodaDocument::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 pro
 
 void YodaDocument::WritePlanetValues() {
     /*
-    switch (this->planet) {
-        case TATOOINE: doc->WriteTatooineValues(); break;
-        case HOTH: doc->WriteHothValues(); break;
-        case ENDOR: doc->WriteEndorValues(); break;
-    }
+     switch (this->planet) {
+     case TATOOINE: doc->WriteTatooineValues(); break;
+     case HOTH: doc->WriteHothValues(); break;
+     case ENDOR: doc->WriteEndorValues(); break;
+     }
      */
 }
