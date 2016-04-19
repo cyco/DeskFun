@@ -664,12 +664,16 @@ LABEL_296:
                         zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance, 0);
                         if ( zone_id_1 >= 0 )
                             worldThing->zone_type = ZONETYPE_Town;
-                        goto did_not_find_zone_with_required_type;
+                        did_not_place_zone = 1;
+                        break;
                     case WORLD_ITEM_BLOCK_WEST:
                         distance = Map::GetDistanceToCenter(x, y);
                         zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance, 0);
                         if ( zone_id_1 < 0 )
-                            goto did_not_find_zone_with_required_type;
+                        {
+                            did_not_place_zone = 1;
+                            break;
+                        }
                         worldThing->zone_type = ZONETYPE_BlockadeWest;
                         worldThing->requiredItemID = doc->wg_item_id;
                         break;
@@ -677,7 +681,11 @@ LABEL_296:
                         distance = Map::GetDistanceToCenter(x, y);
                         zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance, 0);
                         if ( zone_id_1 < 0 )
-                            goto did_not_find_zone_with_required_type;
+                        {
+                            did_not_place_zone = 1;
+                            break;
+                        }
+                     
                         worldThing->zone_type = ZONETYPE_BlockadeEast;
                         worldThing->requiredItemID = doc->wg_item_id;
                         break;
@@ -685,7 +693,10 @@ LABEL_296:
                         distance = Map::GetDistanceToCenter(x, y);
                         zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance, 0);
                         if ( zone_id_1 < 0 )
-                            goto did_not_find_zone_with_required_type;
+                        {
+                            did_not_place_zone = 1;
+                            break;
+                        }
                         worldThing->zone_type = ZONETYPE_BlockadeNorth;
                         worldThing->requiredItemID = doc->wg_item_id;
                         break;
