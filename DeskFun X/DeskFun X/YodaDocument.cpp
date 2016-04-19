@@ -194,54 +194,44 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
     return puzzle_ids[puzzle_idx];
 }
 
-void YodaDocument::GetPuzzleCandidates(vector<int16> &result, uint16 item_id, int a3, ZONE_TYPE zone_type, int a5) {
-    Puzzle *puzzle; // edx@2
-    int16 puzzle_idx; // [sp+2Ch] [bp-14h]@1
-    
-    int16 count_3 = this->puzzles.size();
+void YodaDocument::GetPuzzleCandidates(vector<int16> &result, uint16 item_id, int a3, ZONE_TYPE zone_type, int a5)
+{
     result.clear();
     
-    puzzle_idx = 0;
-    if ( count_3 > 0 ) {
-        while ( 1 )
-        {
-            puzzle = this->puzzles[puzzle_idx];
-            if ( (int16)zone_type <= (signed int)ZONETYPE_Trade )
-                break;
-            if ( zone_type == ZONETYPE_Use )
-            {
-                if ( puzzle->type || ContainsPuzzleId(puzzle_idx) )
-                    goto do_break;
-            use_puzzle:
-                result.insert(result.end(), puzzle_idx);
-                goto do_break;
+    for(int16 puzzle_idx = 0; puzzle_idx < this->puzzles.size(); puzzle_idx++) {
+        Puzzle * puzzle = this->puzzles[puzzle_idx];
+        if ( (int16)zone_type <= (signed int)ZONETYPE_Trade ) {
+            if ( zone_type == ZONETYPE_Trade ) {
+                if ( puzzle->type != PuzzleTypeTrade || ContainsPuzzleId(puzzle_idx) )
+                    continue;
+            } else if ( zone_type != ZONETYPE_Goal
+                       || puzzle->type != PuzzleTypeU3
+                       || ContainsPuzzleId(puzzle_idx) ) {
+                continue;
             }
-            if ( zone_type != 9999 || puzzle->type != PuzzleTypeEnd )
-                goto do_break;
             
-            if ( PuzzleUsedInLastGame(puzzle_idx, this->planet) && this->puzzles_can_be_reused < 0 )
-                goto do_break;
-            
-            if(PuzzleIsGoal(puzzle_idx, this->planet))
-                goto use_puzzle;
-            goto do_break;
-            
-        do_break:
-            if ( count_3 <= (int16)++puzzle_idx )
-                goto out_of_loop;
+            result.insert(result.end(), puzzle_idx);
+            continue;
         }
-        if ( zone_type == ZONETYPE_Trade ) {
-            if ( puzzle->type != PuzzleTypeTrade || ContainsPuzzleId(puzzle_idx) )
-                goto do_break;
-        } else if ( zone_type != ZONETYPE_Goal
-                   || puzzle->type != PuzzleTypeU3
-                   || ContainsPuzzleId(puzzle_idx) ) {
-            goto do_break;
+        
+        if ( zone_type == ZONETYPE_Use )
+        {
+            if (!puzzle->type && !ContainsPuzzleId(puzzle_idx) )
+                result.insert(result.end(), puzzle_idx);
+            
+            continue;
         }
-        goto use_puzzle;
+        
+        if ( zone_type != 9999 || puzzle->type != PuzzleTypeEnd )
+            continue;
+        
+        if ( PuzzleUsedInLastGame(puzzle_idx, this->planet) && this->puzzles_can_be_reused < 0 )
+            continue;
+        
+        if(PuzzleIsGoal(puzzle_idx, this->planet)) {
+            result.insert(result.end(), puzzle_idx);
+        }
     }
-out_of_loop:
-    return;
 }
 
 int YodaDocument::ContainsPuzzleId(uint16 puzzle_id)
