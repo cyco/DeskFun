@@ -1345,11 +1345,7 @@ int YodaDocument::Unknown_5(int16* world){
     
     int v3 = 0; // edi@1
     int v4 = 0; // eax@1
-    Quest *quest = NULL; // ebp@2
     uint16 zone_id_2; // ax@3
-    int v10 = 0; // ebx@6
-    int v11 = 0; // edi@6
-    Quest *v12 = NULL; // ecx@7
     signed int result = 0; // eax@18
     int zone_id = 0; // edi@22
     Zone *zone = NULL; // ecx@27
@@ -1362,7 +1358,7 @@ int YodaDocument::Unknown_5(int16* world){
     int zone_id_1 = 0; // [sp+18h] [bp-18h]@10
     int v38 = 0; // [sp+1Ch] [bp-14h]@1
     int v39 = 0; // [sp+20h] [bp-10h]@39
-    int v41 = 0; // [sp+2Ch] [bp-4h]@1
+    int v41 = 0;
     
     this->AddProvidedQuestWithItemID(THE_FORCE, 2);
     this->AddProvidedQuestWithItemID(LOCATOR, 1);
@@ -1373,21 +1369,44 @@ int YodaDocument::Unknown_5(int16* world){
     v38 = v4;
     
     int x_1 = 0, y_1 = 0;
-    if ( this->providedItems.size() <= 0 ) {
-    LABEL_5:
-        Message("YodaDocument::Unknown_5 -> cleanup\n");
-        if ( v38 > 0 ) {
-            v10 = 0;
-            v11 = v38;
-            do {
-                v12 = this->providedItems[v10];
-                if ( v12 )
-                    ; // dealloc v12
-                
-                ++v10;
-                v11--;
+    int do_second_part = this->providedItems.size() == 0;
+    if ( this->providedItems.size()) {
+        while (1) {
+            int x = 0, y = 0;
+            Message("v3 = %d\n", v3*4);
+            Message("v3 = %d\n", v3*4);
+            Quest *quest = this->providedItems[v3];
+            if ( place_puzzles__(quest->unknown, world, &x, &y) != 1 )
+                return 0;
+            
+            zone_id_2 = this->GetZoneIdWithType(ZONETYPE_Find, -1, -1, quest->itemID, -1, quest->unknown, 0);
+            if ( zone_id_2 < 0 ) {
+                Message("YodaDocument::Unknown_5 => %d\n", 0);
+                return 0;
             }
-            while ( v11 );
+            
+            ++v3;
+            
+            int idx = x + 10 * y;
+            this->world_things[idx].zone_type = ZONETYPE_Find;
+            this->world_things[idx].zone_id = zone_id_2;
+            this->world_things[idx].findItemID = this->wg_last_added_item_id;
+            this->worldZones[idx] = this->zones[zone_id_2];
+            world[idx] = 306;
+            
+            this->AddZoneWithIdToWorld(zone_id_2);
+            
+            if ( ++v41 >= v38 ) {
+                do_second_part = true;
+                break;
+            }
+        }
+    }
+    
+    if(do_second_part){
+        Message("YodaDocument::Unknown_5 -> cleanup\n");
+        for(Quest *quest : this->providedItems) {
+            delete quest;
         }
         this->providedItems.clear();
         this->item_ids.clear();
@@ -1432,15 +1451,13 @@ int YodaDocument::Unknown_5(int16* world){
                             break;
                         
                         Message("y = %d\n", y_1);
-                        if ( !y_1 )
-                        {
+                        if ( !y_1 ) {
                             y_1=1;
                             v39 = x;
                             v38 = y;
                             Message("x = %d\n", x_1);
-                            if ( !x_1 )
-                                break;
-                        LABEL_56:
+                            if ( !x_1 ) break;
+                            
                             x_1 = 0;
                             zone_id_1 = -1;
                             break;
@@ -1454,7 +1471,10 @@ int YodaDocument::Unknown_5(int16* world){
                                 Message("x = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
-                                goto LABEL_56;
+                                
+                                x_1 = 0;
+                                zone_id_1 = -1;
+                                break;
                             }
                         } else if ( world_size == WORLD_SIZE_MEDIUM ) {
                             if ( abs(v39 - x) > 1 || abs(v38 - y) > 1 ) {
@@ -1464,7 +1484,10 @@ int YodaDocument::Unknown_5(int16* world){
                                 Message("x_1 = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
-                                goto LABEL_56;
+                                
+                                x_1 = 0;
+                                zone_id_1 = -1;
+                                break;
                             }
                         } else {
                             if ( world_size != WORLD_SIZE_LARGE ) break;
@@ -1475,7 +1498,10 @@ int YodaDocument::Unknown_5(int16* world){
                                 Message("x = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
-                                goto LABEL_56;
+                                
+                                x_1 = 0;
+                                zone_id_1 = -1;
+                                break;
                             }
                         }
                         zone_id_1 = zone_id;
@@ -1526,36 +1552,6 @@ int YodaDocument::Unknown_5(int16* world){
             }
         }
         result = 1;
-    } else {
-        while (1) {
-            int x = 0, y = 0;
-            Message("v3 = %d\n", v3*4);
-            Message("v3 = %d\n", v3*4);
-            quest = this->providedItems[v3];
-            if ( place_puzzles__(quest->unknown, world, &x, &y) != 1 )
-                break;
-            zone_id_2 = this->GetZoneIdWithType(ZONETYPE_Find, -1, -1, quest->itemID, -1, quest->unknown, 0);
-            if ( zone_id_2 < 0 ) {
-                Message("YodaDocument::Unknown_5 => %d\n", 0);
-                return 0;
-            }
-            
-            ++v3;
-            
-            int idx = x + 10 * y;
-            this->world_things[idx].zone_type = ZONETYPE_Find;
-            this->world_things[idx].zone_id = zone_id_2;
-            this->world_things[idx].findItemID = this->wg_last_added_item_id;
-            this->worldZones[idx] = this->zones[zone_id_2];
-            world[idx] = 306;
-            
-            this->AddZoneWithIdToWorld(zone_id_2);
-            
-            if ( ++v41 >= v38 ) {
-                goto LABEL_5;
-            }
-        }
-        result = 0;
     }
     
     Message("YodaDocument::Unknown_5 => %d\n", result);
