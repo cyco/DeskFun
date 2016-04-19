@@ -656,7 +656,7 @@ LABEL_296:
             int16 zone_id_1 = -1;
             if ( (unsigned int)((int16)zone_2 - 201) <= 103 )
             {
-                zone_id_1 = [self doPuzzle:doc x:x y:y type:zone_2 nothing_placed:&did_not_place_zone];
+                zone_id_1 = [self doPuzzle:doc x:x y:y type:(WORLD_ITEM)zone_2 nothing_placed:&did_not_place_zone];
             }
             
             if ( zone_id_1 < 0 ) {
@@ -857,66 +857,44 @@ LABEL_296:
     Message("-= FAILURE 3 =-\n");
 }
 
-- (int)doPuzzle:(YodaDocument*)doc x:(int)x y:(int)y type:(int16)zone_2 nothing_placed:(int*)did_not_place_zone {
-    int distance = 0;
-    int zone_id_1 = -1;
+- (int)doPuzzle:(YodaDocument*)doc x:(int)x y:(int)y type:(WORLD_ITEM)zone_2 nothing_placed:(int*)did_not_place_zone {
+    int distance = Map::GetDistanceToCenter(x, y);
     WorldThing *worldThing = &doc->world_things[x+10*y];
-    switch (zone_2) {
-        case WORLD_ITEM_SPACEPORT:
-            distance = Map::GetDistanceToCenter(x, y);
-            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Town, -1, -1, -1, -1, distance, 0);
-            if ( zone_id_1 >= 0 )
-                worldThing->zone_type = ZONETYPE_Town;
-            *did_not_place_zone = 1;
-            break;
-        case WORLD_ITEM_BLOCK_WEST:
-            distance = Map::GetDistanceToCenter(x, y);
-            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeWest, -1, -1, -1, -1, distance, 0);
-            if ( zone_id_1 < 0 )
-            {
-                *did_not_place_zone = 1;
-                break;
-            }
-            worldThing->zone_type = ZONETYPE_BlockadeWest;
-            worldThing->requiredItemID = doc->wg_item_id;
-            break;
-        case WORLD_ITEM_BLOCK_EAST:
-            distance = Map::GetDistanceToCenter(x, y);
-            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeEast, -1, -1, -1, -1, distance, 0);
-            if ( zone_id_1 < 0 )
-            {
-                *did_not_place_zone = 1;
-                break;
-            }
-            
-            worldThing->zone_type = ZONETYPE_BlockadeEast;
-            worldThing->requiredItemID = doc->wg_item_id;
-            break;
-        case WORLD_ITEM_BLOCK_NORTH:
-            distance = Map::GetDistanceToCenter(x, y);
-            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeNorth, -1, -1, -1, -1, distance, 0);
-            if ( zone_id_1 < 0 ) {
-                *did_not_place_zone = 1;
-                return -1;
-            }
-            worldThing->zone_type = ZONETYPE_BlockadeNorth;
-            worldThing->requiredItemID = doc->wg_item_id;
-            break;
-        case WORLD_ITEM_BLOCK_SOUTH:
-            distance = Map::GetDistanceToCenter(x, y);
-            zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_BlockadeSouth, -1, -1, -1, -1, distance, 0);
-            if ( zone_id_1 >= 0 ) {
-                worldThing->zone_type = ZONETYPE_BlockadeSouth;
-            LABEL_332:;
-                worldThing->requiredItemID = doc->wg_item_id;
-                // worldThing->zone_type = (ZONE_TYPE)doc->wg_item_id;
-                break;
-            }
-            *did_not_place_zone = 1;
-            break;
-        default: break;
+    ZONE_TYPE type = [self zoneTypeForWorldItem:zone_2];
+    
+    *did_not_place_zone = 0;
+    
+    if(type == ZONETYPE_Town) {
+        int result = doc->GetZoneIdWithType(type, -1, -1, -1, -1, distance, 0);
+        if(result >= 0) worldThing->zone_type = ZONETYPE_Town;
+        
+        *did_not_place_zone = 1;
+        return result;
     }
-    return zone_id_1;
+    
+    if(ZONETYPE_BlockadeNorth <= type && type <=  ZONETYPE_BlockadeWest) {
+        int result = doc->GetZoneIdWithType(type, -1, -1, -1, -1, distance, 0);
+        if(result < 0) {
+            *did_not_place_zone = 1;
+            return -1;
+        }
+        worldThing->zone_type = type;
+        worldThing->requiredItemID = doc->wg_item_id;
+        return result;
+    }
+    
+    return -1;
+}
+
+- (ZONE_TYPE)zoneTypeForWorldItem:(WORLD_ITEM)item {
+    switch(item){
+        case WORLD_ITEM_SPACEPORT: return ZONETYPE_Town;
+        case WORLD_ITEM_BLOCK_WEST: return ZONETYPE_BlockadeWest;
+        case WORLD_ITEM_BLOCK_EAST: return ZONETYPE_BlockadeEast;
+        case WORLD_ITEM_BLOCK_NORTH: return ZONETYPE_BlockadeNorth;
+        case WORLD_ITEM_BLOCK_SOUTH: return ZONETYPE_BlockadeSouth;
+        default: return ZONETYPE_Empty;
+    }
 }
 
 @end
