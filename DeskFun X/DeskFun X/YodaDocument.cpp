@@ -134,8 +134,15 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
     while (1) {
         puzzle_id = puzzle_ids[puzzle_idx];
         puzzle_1 = this->puzzles[puzzle_id];
-        if ( ContainsPuzzleId(puzzle_id) )
-            goto LABEL_75;
+        if ( ContainsPuzzleId(puzzle_id) ) {
+            if ( !break_from_loop ) {
+                ++puzzle_idx;
+                if ( puzzle_idx >= count )
+                    ++break_from_loop;
+                if ( !break_from_loop )
+                    continue;
+            } else { return -1; }
+        }
         if ( zone_type <= ZONETYPE_Trade ) {
             if ( zone_type == ZONETYPE_Trade ) {
                 if ( puzzle_1->type == PuzzleTypeTrade && puzzle_1->questItemIDs[0] == item_id ) {
@@ -146,7 +153,13 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
                 Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
                 return puzzle_ids[puzzle_idx];
             }
-            goto LABEL_75;
+            if ( !break_from_loop ) {
+                ++puzzle_idx;
+                if ( puzzle_idx >= count )
+                    ++break_from_loop;
+                if ( !break_from_loop )
+                    continue;
+            } else return -1;
         }
         if ( zone_type != ZONETYPE_Use )
             break;
@@ -155,21 +168,27 @@ int16 YodaDocument::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, 
             Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
             return puzzle_ids[puzzle_idx];
         }
-    LABEL_75:
         if ( !break_from_loop ) {
             ++puzzle_idx;
             if ( puzzle_idx >= count )
                 ++break_from_loop;
             if ( !break_from_loop )
                 continue;
-        }
+        } else return -1;
         
         Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", -1, -1);
         return -1;
     }
     
-    if ( zone_type != 9999 || puzzle_1->type != PuzzleTypeEnd )
-        goto LABEL_75;
+    if ( zone_type != 9999 || puzzle_1->type != PuzzleTypeEnd ){
+        if ( !break_from_loop ) {
+            ++puzzle_idx;
+            if ( puzzle_idx >= count )
+                ++break_from_loop;
+            if ( !break_from_loop )
+                printf("IF THIS EVER HAPPENS WE'D HAVE TO JUMP BACK INTO THE LOOP AND CONTINUE\n");
+        } else return -1;
+    }
     
     Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
     return puzzle_ids[puzzle_idx];
