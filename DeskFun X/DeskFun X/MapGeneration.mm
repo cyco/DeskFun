@@ -335,9 +335,13 @@ static int logging;
                     int16 item_1 = doc->puzzles[zone_2]->item_1;
                     int16 item_2 = doc->puzzles[zone_2]->item_2;
                     
+                    int breakAgain=0;
                     zone_id_3 = -1;
                     while (1) {
-                        if ( zone_id_3 >= 0 ) goto LABEL_242;
+                        if ( zone_id_3 >= 0 ) {
+                            breakAgain = 1;
+                            break;
+                        }
                         if ( zone_id_10 == puzzle_count ) {
                             int distance = Map::GetDistanceToCenter(x, y);
                             zone_id_3 = doc->GetZoneIdWithType(ZONETYPE_Goal, zone_id_11 - 1, puzzles2_count-1, item_1, item_2, distance, 1);
@@ -405,26 +409,17 @@ static int logging;
                             doc->AddProvidedQuestWithItemID(doc->wg_item_id, distance);
                             
                             Message("v206 = %d\n", x_4);
-                            goto LABEL_242;
+                            breakAgain = 1;
+                            break;
                         }
                         
                         Message("v206 = %d\n", x_4);
-                        if(v206 > 200) goto LABEL_242;
+                        if(v206 > 200) { breakAgain=1; break; };
                     }
                     
-                    // TODO: clear panet puzzle id array
-                    // TODO: clear provided quests
-                    // TODO: clear required quest
+                    if(breakAgain) break;
                     
-                    doc->puzzle_ids_1.clear();
-                    doc->puzzle_ids_2.clear();
-                    doc->item_ids.clear();
-                    doc->providedItems.clear();
-                    doc->requiredItems.clear();
-                    doc->puzzle_ids.clear();
-                    doc->chosen_zone_ids.clear();
-                    
-                    Message("-= FAILURE 2 =-");
+                    [self doCleanup:doc];
                     return;
                 }
                 
@@ -436,7 +431,6 @@ static int logging;
                 x = 0;
             }
             while ( row < 100); // (__int16 *)&v230;
-        LABEL_242:
             Message("x_4 = %d\n", x_4);
             if ( !x_4 ) {
                 int distance_1 = Map::GetDistanceToCenter(x, y);
