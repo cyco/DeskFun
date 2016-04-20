@@ -12,6 +12,8 @@
 #import "AppDelegate.h"
 #import "YodaDocument.hpp"
 #import "Map.hpp"
+#include "MapGenerator.hpp"
+#include "win_rand.h"
 
 #import "complete_samples.h"
 
@@ -237,10 +239,15 @@ static int logging;
     doc->seed = seed;
     doc->size = (WorldSize)size;
     
-    Map *nmap = new Map();
-    int puzzle_count = nmap->generate(seed, (WORLD_SIZE)size);
-    memcpy(map, nmap->tiles, sizeof(uint16) * 100);
-    memcpy(puzzles, nmap->puzzles, sizeof(uint16) * 100);
+    
+    win_srand(seed);
+    
+    MapGenerator generator((WorldSize)size);
+    generator.generate();
+    
+    int puzzle_count = generator.puzzleCount;
+    memcpy(map, generator.map, sizeof(uint16) * 100);
+    memcpy(puzzles, generator.puzzles, sizeof(uint16) * 100);
     
     int puzzles1_count, puzzles2_count;
     if ( (char)puzzle_count % -2 ) {
@@ -294,12 +301,11 @@ static int logging;
     
     Message("After Loop 1\n");
     Message("After Loop 1\n");
-    if ( puzzles1_count - 1 > 0 ) {
-        if(![self loop1:doc zoneType:puzzles2_count-1 puzzles:puzzles v199:puzzles1_count - 1 x_8:puzzles1_count]) return 0;
-    }
+    if(![self loop1:doc zoneType:puzzles2_count-1 puzzles:puzzles v199:puzzles1_count - 1 x_8:puzzles1_count]) return 0;
     
     Message("After Loop 2\n");
-    [self loop2:doc map:map];
+    if(![self loop2:doc map:map])
+        return 0;
     
     Message("After Loop 3\n");
     int result = doc->Unknown_5((int16*)map);

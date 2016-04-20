@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83160E321CC7EB83008F9C4F /* WorldGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83160E301CC7EB83008F9C4F /* WorldGenerator.cpp */; };
+		83160E381CC7EC00008F9C4F /* MapGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83160E361CC7EC00008F9C4F /* MapGenerator.cpp */; };
 		83193FE41AEC115700EB3A44 /* play.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83193FE21AEC115700EB3A44 /* play.pdf */; };
 		831F5A371AF8055D0060E762 /* ActionWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 831F5A361AF8055D0060E762 /* ActionWindowController.mm */; };
 		831F5A3B1AF8057E0060E762 /* ActionWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 831F5A3A1AF8057E0060E762 /* ActionWindowController.xib */; };
@@ -143,6 +145,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		83160E301CC7EB83008F9C4F /* WorldGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldGenerator.cpp; sourceTree = "<group>"; };
+		83160E311CC7EB83008F9C4F /* WorldGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldGenerator.hpp; sourceTree = "<group>"; };
+		83160E361CC7EC00008F9C4F /* MapGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapGenerator.cpp; sourceTree = "<group>"; };
+		83160E371CC7EC00008F9C4F /* MapGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MapGenerator.hpp; sourceTree = "<group>"; };
 		83193FE21AEC115700EB3A44 /* play.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = play.pdf; sourceTree = "<group>"; };
 		831F5A351AF8055D0060E762 /* ActionWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionWindowController.h; sourceTree = "<group>"; };
 		831F5A361AF8055D0060E762 /* ActionWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionWindowController.mm; sourceTree = "<group>"; };
@@ -282,6 +288,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83160E351CC7EBDC008F9C4F /* Generators */ = {
+			isa = PBXGroup;
+			children = (
+				83160E301CC7EB83008F9C4F /* WorldGenerator.cpp */,
+				83160E311CC7EB83008F9C4F /* WorldGenerator.hpp */,
+				83160E361CC7EC00008F9C4F /* MapGenerator.cpp */,
+				83160E371CC7EC00008F9C4F /* MapGenerator.hpp */,
+			);
+			name = Generators;
+			sourceTree = "<group>";
+		};
 		83193FDF1AEC10D500EB3A44 /* UI Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,6 +382,7 @@
 		83645C051CB106D400845F16 /* MapGeneration */ = {
 			isa = PBXGroup;
 			children = (
+				83160E351CC7EBDC008F9C4F /* Generators */,
 				83645C331CB1324500845F16 /* Stuff */,
 				83645C291CB126A400845F16 /* New Group */,
 				83645C0E1CB120D300845F16 /* Generation */,
@@ -773,6 +791,7 @@
 				83645C361CB1325100845F16 /* YodaDocument.cpp in Sources */,
 				835789761AE3CCB60070EC21 /* DADisabledScrollView.m in Sources */,
 				83CAF1E819F0343A002BF7C1 /* TileCollectionView.mm in Sources */,
+				83160E321CC7EB83008F9C4F /* WorldGenerator.cpp in Sources */,
 				83DAAC291B1CD929007CA000 /* DACursor.mm in Sources */,
 				8332CCF319F0785400D153D9 /* ItemsController.mm in Sources */,
 				833A25051B8CED1800347930 /* SaveGameWindowController.mm in Sources */,
@@ -785,6 +804,7 @@
 				835789721AE3B7BF0070EC21 /* DASpeechContoller.m in Sources */,
 				835E17B41B1BB7A1004A981E /* CocoaInputManager.mm in Sources */,
 				831F5A371AF8055D0060E762 /* ActionWindowController.mm in Sources */,
+				83160E381CC7EC00008F9C4F /* MapGenerator.cpp in Sources */,
 				837D7E9B1B048C430006BB19 /* LoadingView.m in Sources */,
 				83645C281CB120E700845F16 /* win_rand.c in Sources */,
 				83B762801CB4361D00225FB3 /* WorldThing.cpp in Sources */,
