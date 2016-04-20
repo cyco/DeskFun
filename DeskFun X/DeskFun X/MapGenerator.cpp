@@ -9,10 +9,13 @@
 #include "MapGenerator.hpp"
 #include "Map.hpp"
 #define Message(fmt, ...) if(0) printf(fmt, ##__VA_ARGS__);
+
+// TODO: get rid of macros
 #define get(_x_,_y_) map[(_x_)+10*(_y_)]
 #define set(_x_,_y_,_v_) map[(_x_)+10*(_y_)] = _v_
 #define getPuzzle(_x_,_y_) puzzles[(_x_)+10*(_y_)]
 #define setPuzzle(_x_, _y_, _v_) puzzles[(_x_)+10*(_y_)] = _v_
+
 #pragma mark - lifecyle
 MapGenerator::MapGenerator(WorldSize s) {
     size = s;
