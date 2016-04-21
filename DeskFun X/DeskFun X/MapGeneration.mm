@@ -165,7 +165,6 @@ static int logging;
 - (void)testSample:(uint32_t*)sample seed:(uint16)seed size:(WorldSize)size {
     YodaDocument *doc = [self makeNewDocument];
     doc->logging = logging;
-    Map::logging = logging;
     
     uint16 map[100] = {0};
     [self _generateWorld:seed withSize:size document:doc map:map];
@@ -225,7 +224,6 @@ static int logging;
 
 - (int)_generateWorld:(uint16_t)seed withSize:(int)size document:(YodaDocument*)doc map:(uint16*)map {
     doc->logging = logging;
-    Map::logging = logging;
     
     WorldGenerator generator(doc);
     generator.generateWorld(seed, (WorldSize)size);
@@ -240,5 +238,4 @@ static int logging;
     return 1;
 }
 
-#pragma mark -
 @end

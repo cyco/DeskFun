@@ -9,6 +9,7 @@
 #include "YodaDocument.hpp"
 #include "Map.hpp"
 #include "GameDataParser.hpp"
+#include "MapGenerator.hpp"
 
 #define Message(fmt, ...) if(this->logging) printf(fmt, ##__VA_ARGS__);
 
@@ -1389,7 +1390,7 @@ int YodaDocument::Unknown_5(int16* world){
             for(x=0; x < 10; x++) {
                 int intermediate_puzzle_item = world[x + 10 * y];
                 if ( intermediate_puzzle_item == 1 || intermediate_puzzle_item == 300 || intermediate_puzzle_item == 104 ) {
-                    int distance = Map::GetDistanceToCenter(x, y);
+                    int distance = MapGenerator::GetDistanceToCenter(x, y);
                     this->field_2E64 = intermediate_puzzle_item == 104 || distance < 2;
                     
                     if ( this->field_2E64 ) {
@@ -1506,7 +1507,7 @@ int YodaDocument::Unknown_5(int16* world){
             v24 = v38;
             v25 = v39;
             this->field_2E64 = 1;
-            int v26 = Map::GetDistanceToCenter(v25, v24);
+            int v26 = MapGenerator::GetDistanceToCenter(v25, v24);
             zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, v26, v27);
             if (zone_id_3 >= 0) {
                 zone_1 = this->zones[zone_id_3];
@@ -1539,7 +1540,7 @@ int YodaDocument::place_puzzles__(int maxDistance, int16 *world, int* xref, int*
             int idx = x + 10 * y;
             int item = world[idx];
             MapPoint *point = new MapPoint(x, y);
-            if ( Map::GetDistanceToCenter(x, y) > maxDistance )  {
+            if ( MapGenerator::GetDistanceToCenter(x, y) > maxDistance )  {
                 if ( item == 1 ) {
                     Message("1) %dx%d\n", x, y);
                     farPoints.push_back(point);

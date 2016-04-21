@@ -29,25 +29,4 @@ typedef enum {
     WORLD_ITEM_PUZZLE = 306,
 } WORLD_ITEM;
 
-class Map {
-public:
-    static int logging;
-    
-    uint16 tiles[100];
-    int16 puzzles[100];
-    
-    Map();
-    static int GetDistanceToCenter(int x, int y);
-    
-    void set(int x, int y, uint16 v);
-    uint16 get(int x, int y);
-    uint16 get(int i);
-    
-    void setPuzzle(int x, int y, int16 v);
-    int16 getPuzzle(int x, int y);
-    
-    void clear();
-    void print();
-private:
-};
 #endif /* Map_hpp */

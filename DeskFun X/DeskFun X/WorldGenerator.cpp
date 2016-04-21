@@ -126,7 +126,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             if(mapGenerator->map[idx] != WORLD_ITEM_TRAVEL_START)
                 continue;
             
-            int distance = Map::GetDistanceToCenter(x, y);
+            int distance = MapGenerator::GetDistanceToCenter(x, y);
             int16 zone_id_8 = doc->GetZoneIdWithType(ZONETYPE_TravelStart, -1, -1, -1, -1, distance, 1);
             
             int zone_id_10 = -1;
@@ -276,7 +276,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
                 if (v192 == 1 || v192 == 104 || v192 == 300) continue;
                 if (!did_not_place_zone ) continue;
                 
-                int distance = Map::GetDistanceToCenter(x, y);
+                int distance = MapGenerator::GetDistanceToCenter(x, y);
                 zone_id_1 = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
                 if ( zone_id_1 > 0 ) continue;
                 worldThing->zone_type = ZONETYPE_Empty;
@@ -340,7 +340,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                 while ( 1 ) {
                     if ( zone_id_5 >= 0 ) { breakYLoop=1; break;}
                     if ( v199 == x_8 ) {
-                        int distance = Map::GetDistanceToCenter(x, y);
+                        int distance = MapGenerator::GetDistanceToCenter(x, y);
                         zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Goal, v199-1, -1, idx_6, -1, distance, 0);
                         if ( zone_id_5 < 0 ) {
                             return doCleanup(doc);
@@ -355,7 +355,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                         // LOWORD(idx_6) = v199 - 1;
                         // item_id = idx_6 = v199-1;
                         // y_2 = 16 - ((unsigned int)((((unsigned __int64)rand_2 >> 32) ^ abs(rand_2) & 1) - ((unsigned __int64)rand_2 >> 32)) < 1);
-                        int distance = Map::GetDistanceToCenter(x, y);
+                        int distance = MapGenerator::GetDistanceToCenter(x, y);
                         zone_id_5 = doc->GetZoneIdWithType(type, zone_type-1, -1, item_1, -1, distance, 0);
                         int break_some_more = 0;
                         if ( zone_id_5 >= 0 ) {
@@ -364,7 +364,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                         }
                         
                         if (!break_some_more && zone_type == ZONETYPE_Use ) {
-                            int distance = Map::GetDistanceToCenter(x, y);
+                            int distance = MapGenerator::GetDistanceToCenter(x, y);
                             zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, 0, -1, distance, 0);
                             if ( zone_id_5 < 0 ) {
                                 return doCleanup(doc);
@@ -372,7 +372,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                             
                             doc->wg_zone_type = ZONETYPE_Trade;
                         } else if(!break_some_more) {
-                            int distance = Map::GetDistanceToCenter(x, y);
+                            int distance = MapGenerator::GetDistanceToCenter(x, y);
                             zone_id_5 = doc->GetZoneIdWithType(ZONETYPE_Use, v195, -1, 0, -1, distance, 0);
                             if ( zone_id_5 < 0 ) {
                                 return doCleanup(doc);
@@ -410,7 +410,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
         }
         
         if ( !v195 ) {
-            int distance = Map::GetDistanceToCenter(x, y);
+            int distance = MapGenerator::GetDistanceToCenter(x, y);
             int zone_id = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
             if ( zone_id >= 0 ) {
                 int world_idx_2 = x + 10 * y;
@@ -464,7 +464,7 @@ int WorldGenerator::doCleanup(YodaDocument* doc)
 
 int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, WORLD_ITEM zone_2, int* did_not_place_zone)
 {
-    int distance = Map::GetDistanceToCenter(x, y);
+    int distance = MapGenerator::GetDistanceToCenter(x, y);
     WorldThing *worldThing = &doc->world_things[x+10*y];
     ZONE_TYPE type = zoneTypeForWorldItem(zone_2);
     
@@ -552,7 +552,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                             break;
                         }
                         if ( zone_id_10 == puzzle_count ) {
-                            int distance = Map::GetDistanceToCenter(x, y);
+                            int distance = MapGenerator::GetDistanceToCenter(x, y);
                             zone_id_3 = doc->GetZoneIdWithType(ZONETYPE_Goal, zone_id_11 - 1, puzzles2_count-1, item_1, item_2, distance, 1);
                             if ( zone_id_3 < 0 ) break;
                             
@@ -563,7 +563,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                             int random = win_rand();
                             Message("random = %x\n", random);
                             int type = ((random ^ 1) & 1) + 15; // was win_rand() & 1
-                            int distance = Map::GetDistanceToCenter(x, y);
+                            int distance = MapGenerator::GetDistanceToCenter(x, y);
                             zone_id_3 = doc->GetZoneIdWithType((ZONE_TYPE)type,
                                                                zone_id_11 - 1,
                                                                -1,
@@ -573,12 +573,12 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                                                                0+1);
                             if ( zone_id_3 < 0) {
                                 if ( zone_id_10 == ZONETYPE_Use ) {
-                                    int distance = Map::GetDistanceToCenter(x, y);
+                                    int distance = MapGenerator::GetDistanceToCenter(x, y);
                                     zone_id_3 = doc->GetZoneIdWithType(ZONETYPE_Trade, v204, -1, ZONETYPE_Use, -1, distance, 0);
                                     if ( zone_id_3 < 0 ) break;
                                     doc->wg_zone_type = ZONETYPE_Trade;
                                 } else {
-                                    int distance = Map::GetDistanceToCenter(x, y);
+                                    int distance = MapGenerator::GetDistanceToCenter(x, y);
                                     zone_id_3 = doc->GetZoneIdWithType(ZONETYPE_Use, v204, -1, zone_id_10, -1, distance, 0);
                                     if ( zone_id_3 < 0 ) break;
                                     doc->wg_zone_type = ZONETYPE_Use;
@@ -610,7 +610,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                         
                         Message("y_2 = %d\n", zone_id_11);
                         if ( zone_id_11 == 1) { // esp = 0007F51C, y_2 = esp+14 == 0x7F530
-                            int distance = Map::GetDistanceToCenter(x, y);
+                            int distance = MapGenerator::GetDistanceToCenter(x, y);
                             doc->AddProvidedQuestWithItemID(doc->wg_item_id, distance);
                             
                             Message("v206 = %d\n", x_4);
@@ -637,7 +637,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
             while ( row < 100); // (__int16 *)&v230;
             Message("x_4 = %d\n", x_4);
             if ( !x_4 ) {
-                int distance_1 = Map::GetDistanceToCenter(x, y);
+                int distance_1 = MapGenerator::GetDistanceToCenter(x, y);
                 int zone_id_4 = doc->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance_1, 0);
                 if ( zone_id_4 >= 0 )
                 {

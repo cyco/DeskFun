@@ -16,6 +16,22 @@
 #define getPuzzle(_x_,_y_) puzzles[(_x_)+10*(_y_)]
 #define setPuzzle(_x_, _y_, _v_) puzzles[(_x_)+10*(_y_)] = _v_
 
+int MapGenerator::GetDistanceToCenter(int x, int y) {
+    Message("MapGenerator::GetDistanceToCenter %dx%d\n", x, y);
+    static int distances[] = {
+        5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+        5, 4, 4, 4, 4, 4, 4, 4, 4, 5,
+        5, 4, 3, 3, 3, 3, 3, 3, 4, 5,
+        5, 4, 3, 2, 2, 2, 2, 3, 4, 5,
+        5, 4, 3, 2, 1, 1, 2, 3, 4, 5,
+        5, 4, 3, 2, 1, 1, 2, 3, 4, 5,
+        5, 4, 3, 2, 2, 2, 2, 3, 4, 5,
+        5, 4, 3, 3, 3, 3, 3, 3, 4, 5,
+        5, 4, 4, 4, 4, 4, 4, 4, 4, 5,
+        5, 5, 5, 5, 5, 5, 5, 5, 5, 5
+    };
+    return distances[x + 10 * y];
+}
 #pragma mark - lifecyle
 MapGenerator::MapGenerator(WorldSize s) {
     size = s;
@@ -220,7 +236,7 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
             
             if ( blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold )
             {
-                if ( Map::GetDistanceToCenter(x - 1, y) < iteration )  {
+                if ( MapGenerator::GetDistanceToCenter(x - 1, y) < iteration )  {
                     if ( ( !item_above || item_above == WORLD_ITEM_KEPT_FREE )
                         && ( !item_below || item_below == WORLD_ITEM_KEPT_FREE ))
                     {
@@ -280,7 +296,7 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
             
             if (blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold )
             {
-                int distance_is_less_than_iteration = Map::GetDistanceToCenter(x + 1, y) < iteration;
+                int distance_is_less_than_iteration = MapGenerator::GetDistanceToCenter(x + 1, y) < iteration;
                 if (distance_is_less_than_iteration && (!item_above || item_above == WORLD_ITEM_KEPT_FREE) &&
                     (!item_below || item_below == WORLD_ITEM_KEPT_FREE) )
                 {
@@ -339,7 +355,7 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
             }
             
             if ( blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold ) {
-                int distance_less_than_iteration = Map::GetDistanceToCenter(x, y - 1) < iteration;
+                int distance_less_than_iteration = MapGenerator::GetDistanceToCenter(x, y - 1) < iteration;
                 
                 if (distance_less_than_iteration && ( !item_before || item_before == WORLD_ITEM_KEPT_FREE )
                     && ( !item_after || item_after == WORLD_ITEM_KEPT_FREE )) {
@@ -397,7 +413,7 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
             }
             
             if ( blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold ) {
-                int distance_less_than_iteration = Map::GetDistanceToCenter(x, y + 1) < iteration;
+                int distance_less_than_iteration = MapGenerator::GetDistanceToCenter(x, y + 1) < iteration;
                 
                 if (distance_less_than_iteration && ( !item_before || item_before == WORLD_ITEM_KEPT_FREE )
                     && ( !item_after || item_after == WORLD_ITEM_KEPT_FREE ))
@@ -745,7 +761,7 @@ int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_c
         if (placed_puzzles >= total_puzzle_count)
             break;
         
-        int distance = Map::GetDistanceToCenter(x, y);
+        int distance = MapGenerator::GetDistanceToCenter(x, y);
         if (distance >= 3 || i >= 150)
         {
             uint16_t item = get(x, y);
@@ -799,11 +815,11 @@ int MapGenerator::makeSureLastPuzzleIsNotTooCloseToCenter(int placed_puzzles) {
     int max_puzzle_x = 0, max_puzzle_y = 0;
     findPuzzle(placed_puzzles-1, &max_puzzle_x, &max_puzzle_y);
     
-    if(Map::GetDistanceToCenter(max_puzzle_x, max_puzzle_y) < 3) {
+    if(MapGenerator::GetDistanceToCenter(max_puzzle_x, max_puzzle_y) < 3) {
         for(int y=0; y < 10; y++) {
             for(int x=0; x < 10; x++) {
                 if(getPuzzle(x, y) >= 0
-                   && Map::GetDistanceToCenter(x, y) >= 3
+                   && MapGenerator::GetDistanceToCenter(x, y) >= 3
                    && (x != max_puzzle_x || y != max_puzzle_y)) {
                     int replacement_puzzle = getPuzzle(x, y);
                     setPuzzle(max_puzzle_x, max_puzzle_y, replacement_puzzle);

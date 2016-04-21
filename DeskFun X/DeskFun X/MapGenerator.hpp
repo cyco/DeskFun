@@ -18,6 +18,7 @@ private:
     WorldSize size;
 
 public:
+    static int GetDistanceToCenter(int x, int y);
     MapGenerator(WorldSize size);
     bool generate();
     ~MapGenerator();
