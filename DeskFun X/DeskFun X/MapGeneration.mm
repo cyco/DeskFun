@@ -14,8 +14,6 @@
 #include "WorldGenerator.hpp"
 #include "win_rand.h"
 
-#import "complete_samples.h"
-
 #define Message(fmt, ...) if(logging) printf(fmt, ##__VA_ARGS__);
 
 static int logging;
@@ -129,37 +127,7 @@ static int logging;
     return seed;
 }
 
-- (void)_testSamples {
-
-    //* Valid Maps
-    logging = 0;
-    [self testSample:world_things_aea6_1 seed:0xaea6 size:WorldSize_SMALL];
-    [self testSample:world_things_aea6_2 seed:0xaea6 size:WorldSize_MEDIUM];
-    [self testSample:world_things_aea6_3 seed:0xaea6 size:WorldSize_LARGE];
-    [self testSample:world_things_42b7_1 seed:0x42B7 size:WorldSize_SMALL];
-    [self testSample:world_things_42b7_2 seed:0x42B7 size:WorldSize_MEDIUM];
-    [self testSample:world_things_42b7_3 seed:0x42B7 size:WorldSize_LARGE];
-    [self testSample:world_things_c698_1 seed:0xc698 size:WorldSize_SMALL];
-    [self testSample:world_things_1421_1 seed:0x1421 size:WorldSize_SMALL];
-    [self testSample:world_things_ebe9_3 seed:0xEBE9 size:WorldSize_LARGE];
-    [self testSample:world_things_e43f_3 seed:0xE43F size:WorldSize_LARGE];
-    [self testSample:world_things_1e77_3 seed:0x1E77 size:WorldSize_LARGE];
-    [self testSample:world_things_70A3_3 seed:0x70A3 size:WorldSize_LARGE];
-    [self testSample:world_things_dead_1 seed:0xDEAD size:WorldSize_SMALL];
-    [self testSample:world_things_08FF_3 seed:0x08FF size:WorldSize_LARGE];
-    [self testSample:world_things_BB41_3 seed:0xBB41 size:WorldSize_LARGE];
-    [self testSample:world_things_60B2_3 seed:0x60B2 size:WorldSize_LARGE];
-    [self testSample:world_things_23C6_3 seed:0x23C6 size:WorldSize_LARGE];
-    
-    //*/
-    /* VALID INVALIDS
-     [self testSample:world_things_FCA5_3 seed:0xFCA5 size:WorldSize_LARGE];
-     [self testSample:world_things_dead_3 seed:0xDEAD size:WorldSize_LARGE];
-     //*/
-    /* Failing in map generation
-     [self testSample:world_things_568C_3 seed:0x568C size:WorldSize_LARGE];
-     //*/
-}
+- (void)_testSamples {}
 
 - (void)testSample:(uint32_t*)sample seed:(uint16)seed size:(WorldSize)size {
     YodaDocument *doc = [self makeNewDocument];

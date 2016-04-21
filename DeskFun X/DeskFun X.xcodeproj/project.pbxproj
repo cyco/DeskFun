@@ -36,11 +36,14 @@
 		83645C0D1CB1096400845F16 /* MapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83645C0C1CB1096400845F16 /* MapView.mm */; };
 		83645C281CB120E700845F16 /* win_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 83645C1F1CB120E700845F16 /* win_rand.c */; };
 		83645C361CB1325100845F16 /* YodaDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83645C341CB1325100845F16 /* YodaDocument.cpp */; };
+		8364C4691CC97250005F227E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4A53F19EC436800AA73A0 /* main.m */; };
 		8365D04D1AC86DC90031E23E /* PuzzleWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */; };
 		8365D04E1AC86DC90031E23E /* PuzzleWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */; };
 		8374EAA21B35AD3C00B90F60 /* DeskFunUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */; };
 		837D7E961B0482C40006BB19 /* TileLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837D7E951B0482C40006BB19 /* TileLayer.mm */; };
 		837D7E9B1B048C430006BB19 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 837D7E9A1B048C430006BB19 /* LoadingView.m */; };
+		839B06BC1CC96AFB00C28C1E /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839B06BA1CC96AFB00C28C1E /* TestSuite.cpp */; };
+		839B06BE1CC96E0C00C28C1E /* samples.c in Sources */ = {isa = PBXBuildFile; fileRef = 839B06BD1CC96E0C00C28C1E /* samples.c */; };
 		83B762801CB4361D00225FB3 /* WorldThing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B7627E1CB4361D00225FB3 /* WorldThing.cpp */; };
 		83B762851CB4390400225FB3 /* Quest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B762831CB4390400225FB3 /* Quest.cpp */; };
 		83C0907A1AE2A37600D5CD23 /* DASpeechBubbleWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C090791AE2A37600D5CD23 /* DASpeechBubbleWindow.m */; };
@@ -48,8 +51,7 @@
 		83C248D51B23AB550024C087 /* HostCallbacks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C248D31B23AB550024C087 /* HostCallbacks.mm */; };
 		83C46B721B35EBBB00E73B02 /* libdfengine-osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C46B6F1B35EBAF00E73B02 /* libdfengine-osx.a */; };
 		83CAF1E819F0343A002BF7C1 /* TileCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83CAF1E719F0343A002BF7C1 /* TileCollectionView.mm */; };
-		83D4A53E19EC436800AA73A0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4A53D19EC436800AA73A0 /* AppDelegate.m */; };
-		83D4A54019EC436800AA73A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4A53F19EC436800AA73A0 /* main.m */; };
+		83D4A53E19EC436800AA73A0 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D4A53D19EC436800AA73A0 /* AppDelegate.mm */; };
 		83D4A54219EC436800AA73A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D4A54119EC436800AA73A0 /* Images.xcassets */; };
 		83D4A59119EC45F300AA73A0 /* DAGameWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D4A57D19EC45F300AA73A0 /* DAGameWindowController.mm */; };
 		83D4A59219EC45F300AA73A0 /* DAGameWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83D4A57E19EC45F300AA73A0 /* DAGameWindowController.xib */; };
@@ -65,6 +67,12 @@
 		83DAAC391B1CE9DC007CA000 /* cursors.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83DAAC381B1CE9DC007CA000 /* cursors.plist */; };
 		83DAAC3B1B1CF6CA007CA000 /* west.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83DAAC3A1B1CF6CA007CA000 /* west.pdf */; };
 		83DAAC3D1B1D010C007CA000 /* block.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83DAAC3C1B1D010C007CA000 /* block.pdf */; };
+		83DC424F1CC973E60070A401 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DC424E1CC973E60070A401 /* OpenGL.framework */; };
+		83DC42511CC973EC0070A401 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DC42501CC973EC0070A401 /* CoreGraphics.framework */; };
+		83DC42531CC973F80070A401 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DC42521CC973F80070A401 /* Cocoa.framework */; };
+		83DC42551CC973FC0070A401 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DC42541CC973FC0070A401 /* AppKit.framework */; };
+		83DC42571CC9740C0070A401 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DC42561CC9740C0070A401 /* QuartzCore.framework */; };
+		83DC42591CC97FF60070A401 /* complete_samples.c in Sources */ = {isa = PBXBuildFile; fileRef = 836C5AEC1CC2CA0900988087 /* complete_samples.c */; };
 		83E192F21AC833BE00E9C2BA /* ZoneWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E192F01AC833BE00E9C2BA /* ZoneWindowController.mm */; };
 		83E192F31AC833BE00E9C2BA /* ZoneWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83E192F11AC833BE00E9C2BA /* ZoneWindowController.xib */; };
 		83E192F71AC8345A00E9C2BA /* ZoneView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E192F61AC8345A00E9C2BA /* ZoneView.mm */; };
@@ -202,7 +210,7 @@
 		8365D04A1AC86DC90031E23E /* PuzzleWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PuzzleWindowController.h; sourceTree = "<group>"; };
 		8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PuzzleWindowController.mm; sourceTree = "<group>"; };
 		8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PuzzleWindowController.xib; sourceTree = "<group>"; };
-		836C5AEC1CC2CA0900988087 /* complete_samples.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = complete_samples.h; sourceTree = "<group>"; };
+		836C5AEC1CC2CA0900988087 /* complete_samples.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = complete_samples.c; sourceTree = "<group>"; };
 		8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = DeskFunUI.framework; path = "/Users/chris/Library/Developer/Xcode/DerivedData/DeskFun-bqfulufdmfmqghgbybwodglzrzhz/Build/Products/Debug/DeskFunUI.framework"; sourceTree = "<absolute>"; };
 		8374EAA41B35AD5600B90F60 /* DeskFunUI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeskFunUI.xcodeproj; path = ../../DeskFunUI/DeskFunUI.xcodeproj; sourceTree = "<group>"; };
 		837D7E941B0482C40006BB19 /* TileLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileLayer.h; sourceTree = "<group>"; };
@@ -211,6 +219,9 @@
 		837D7E9A1B048C430006BB19 /* LoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		838FC8D61B3DC73000B4FDE7 /* CocoaSoundMixer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaSoundMixer.mm; path = ../DeskFunTests/CocoaSoundMixer.mm; sourceTree = "<group>"; };
 		838FC8D71B3DC73000B4FDE7 /* CocoaSoundMixer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CocoaSoundMixer.hpp; path = ../DeskFunTests/CocoaSoundMixer.hpp; sourceTree = "<group>"; };
+		839B06BA1CC96AFB00C28C1E /* TestSuite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestSuite.cpp; sourceTree = "<group>"; };
+		839B06BB1CC96AFB00C28C1E /* TestSuite.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestSuite.hpp; sourceTree = "<group>"; };
+		839B06BD1CC96E0C00C28C1E /* samples.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = samples.c; sourceTree = "<group>"; };
 		83AA42191B36D21D00A2FE8F /* DeskFunX.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DeskFunX.pch; path = ../DeskFunX.pch; sourceTree = "<group>"; };
 		83B7627E1CB4361D00225FB3 /* WorldThing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldThing.cpp; sourceTree = "<group>"; };
 		83B7627F1CB4361D00225FB3 /* WorldThing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = WorldThing.hpp; sourceTree = "<group>"; };
@@ -228,8 +239,8 @@
 		83D4A53719EC436800AA73A0 /* DeskFun X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DeskFun X.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D4A53B19EC436800AA73A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D4A53C19EC436800AA73A0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		83D4A53D19EC436800AA73A0 /* AppDelegate.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AppDelegate.m; sourceTree = "<group>"; };
-		83D4A53F19EC436800AA73A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		83D4A53D19EC436800AA73A0 /* AppDelegate.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		83D4A53F19EC436800AA73A0 /* main.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = main.m; sourceTree = "<group>"; };
 		83D4A54119EC436800AA73A0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		83D4A54419EC436800AA73A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		83D4A57C19EC45F300AA73A0 /* DAGameWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAGameWindowController.h; sourceTree = "<group>"; };
@@ -249,6 +260,12 @@
 		83DAAC381B1CE9DC007CA000 /* cursors.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = cursors.plist; sourceTree = "<group>"; };
 		83DAAC3A1B1CF6CA007CA000 /* west.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = west.pdf; sourceTree = "<group>"; };
 		83DAAC3C1B1D010C007CA000 /* block.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = block.pdf; sourceTree = "<group>"; };
+		83DC424E1CC973E60070A401 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		83DC42501CC973EC0070A401 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		83DC42521CC973F80070A401 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		83DC42541CC973FC0070A401 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		83DC42561CC9740C0070A401 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		83DC42581CC97F3D0070A401 /* complete_samples.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = complete_samples.h; sourceTree = "<group>"; };
 		83E192EF1AC833BE00E9C2BA /* ZoneWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoneWindowController.h; sourceTree = "<group>"; };
 		83E192F01AC833BE00E9C2BA /* ZoneWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZoneWindowController.mm; sourceTree = "<group>"; };
 		83E192F11AC833BE00E9C2BA /* ZoneWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZoneWindowController.xib; sourceTree = "<group>"; };
@@ -277,6 +294,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83DC42571CC9740C0070A401 /* QuartzCore.framework in Frameworks */,
+				83DC42511CC973EC0070A401 /* CoreGraphics.framework in Frameworks */,
+				83DC42551CC973FC0070A401 /* AppKit.framework in Frameworks */,
+				83DC42531CC973F80070A401 /* Cocoa.framework in Frameworks */,
+				83DC424F1CC973E60070A401 /* OpenGL.framework in Frameworks */,
 				83C46B721B35EBBB00E73B02 /* libdfengine-osx.a in Frameworks */,
 				8374EAA21B35AD3C00B90F60 /* DeskFunUI.framework in Frameworks */,
 			);
@@ -388,7 +410,8 @@
 				83645C061CB106FE00845F16 /* MapGeneration.h */,
 				83645C071CB106FE00845F16 /* MapGeneration.mm */,
 				83645C081CB106FE00845F16 /* MapGeneration.xib */,
-				836C5AEC1CC2CA0900988087 /* complete_samples.h */,
+				836C5AEC1CC2CA0900988087 /* complete_samples.c */,
+				83DC42581CC97F3D0070A401 /* complete_samples.h */,
 			);
 			name = MapGeneration;
 			sourceTree = "<group>";
@@ -400,6 +423,7 @@
 				83645C1E1CB120E700845F16 /* types.h */,
 				83645C1F1CB120E700845F16 /* win_rand.c */,
 				83645C201CB120E700845F16 /* win_rand.h */,
+				839B06BD1CC96E0C00C28C1E /* samples.c */,
 			);
 			name = Generation;
 			sourceTree = "<group>";
@@ -446,6 +470,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		839B06B91CC96AED00C28C1E /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				839B06BA1CC96AFB00C28C1E /* TestSuite.cpp */,
+				839B06BB1CC96AFB00C28C1E /* TestSuite.hpp */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 		83C090861AE2B35000D5CD23 /* Speech Bubble */ = {
 			isa = PBXGroup;
 			children = (
@@ -474,6 +507,11 @@
 		83D4A52E19EC436800AA73A0 = {
 			isa = PBXGroup;
 			children = (
+				83DC42561CC9740C0070A401 /* QuartzCore.framework */,
+				83DC42541CC973FC0070A401 /* AppKit.framework */,
+				83DC42521CC973F80070A401 /* Cocoa.framework */,
+				83DC42501CC973EC0070A401 /* CoreGraphics.framework */,
+				83DC424E1CC973E60070A401 /* OpenGL.framework */,
 				83D4A53919EC436800AA73A0 /* DeskFun X */,
 				835E17A51B1B9CF0004A981E /* DeskFun X Tests */,
 				83D4A53819EC436800AA73A0 /* Products */,
@@ -492,9 +530,10 @@
 		83D4A53919EC436800AA73A0 /* DeskFun X */ = {
 			isa = PBXGroup;
 			children = (
+				839B06B91CC96AED00C28C1E /* Tests */,
 				83645C051CB106D400845F16 /* MapGeneration */,
 				83D4A53C19EC436800AA73A0 /* AppDelegate.h */,
-				83D4A53D19EC436800AA73A0 /* AppDelegate.m */,
+				83D4A53D19EC436800AA73A0 /* AppDelegate.mm */,
 				83E3171E19F01395000476AB /* Debug */,
 				83D4A59E19EC463900AA73A0 /* Controls */,
 				83D4A59F19EC466500AA73A0 /* Game View */,
@@ -765,14 +804,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8364C4691CC97250005F227E /* main.m in Sources */,
 				83C248D51B23AB550024C087 /* HostCallbacks.mm in Sources */,
 				832283B91B02864A006AA266 /* PaletteView.mm in Sources */,
 				83C090891AE2B37200D5CD23 /* DASpeechBubbleView.m in Sources */,
 				83E192F21AC833BE00E9C2BA /* ZoneWindowController.mm in Sources */,
 				83C0907A1AE2A37600D5CD23 /* DASpeechBubbleWindow.m in Sources */,
 				83E3171B19F0134C000476AB /* TileWindowController.mm in Sources */,
-				83D4A54019EC436800AA73A0 /* main.m in Sources */,
 				8332CCFE19F0812900D153D9 /* CharsController.mm in Sources */,
+				83DC42591CC97FF60070A401 /* complete_samples.c in Sources */,
+				839B06BE1CC96E0C00C28C1E /* samples.c in Sources */,
 				83D4A59D19EC463200AA73A0 /* DASceneView.mm in Sources */,
 				833DCEE01B4EF2190069D420 /* NSNumber+StringReading.m in Sources */,
 				83E3172119F013A0000476AB /* TileView.mm in Sources */,
@@ -794,11 +835,12 @@
 				83F809141AFF8C35005A9001 /* SetupWindowController.mm in Sources */,
 				83E192F71AC8345A00E9C2BA /* ZoneView.mm in Sources */,
 				83645C091CB106FE00845F16 /* MapGeneration.mm in Sources */,
-				83D4A53E19EC436800AA73A0 /* AppDelegate.m in Sources */,
+				83D4A53E19EC436800AA73A0 /* AppDelegate.mm in Sources */,
 				835789721AE3B7BF0070EC21 /* DASpeechContoller.m in Sources */,
 				835E17B41B1BB7A1004A981E /* CocoaInputManager.mm in Sources */,
 				831F5A371AF8055D0060E762 /* ActionWindowController.mm in Sources */,
 				83160E381CC7EC00008F9C4F /* MapGenerator.cpp in Sources */,
+				839B06BC1CC96AFB00C28C1E /* TestSuite.cpp in Sources */,
 				837D7E9B1B048C430006BB19 /* LoadingView.m in Sources */,
 				83645C281CB120E700845F16 /* win_rand.c in Sources */,
 				83B762801CB4361D00225FB3 /* WorldThing.cpp in Sources */,
@@ -853,11 +895,12 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "Desktop Adventure Tests/Info.plist";
+				INFOPLIST_FILE = DeskFunTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.ccl.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "DeskFun X";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeskFun X.app/Contents/MacOS/DeskFun X";
+				USER_HEADER_SEARCH_PATHS = ../dfengine/include;
 			};
 			name = Debug;
 		};
@@ -873,11 +916,12 @@
 					"$(inherited)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Desktop Adventure Tests/Info.plist";
+				INFOPLIST_FILE = DeskFunTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "de.ccl.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "DeskFun X";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeskFun X.app/Contents/MacOS/DeskFun X";
+				USER_HEADER_SEARCH_PATHS = ../dfengine/include;
 			};
 			name = Release;
 		};
@@ -966,6 +1010,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/DeskFunX.pch";
 				INFOPLIST_FILE = "DeskFun X/Info.plist";
@@ -982,6 +1027,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/DeskFunX.pch";
 				INFOPLIST_FILE = "DeskFun X/Info.plist";

@@ -89,7 +89,7 @@
 - (NSPoint*)_arrowCoordinatesForType:(ArrowType)type inRect:(NSRect)frame
 {
     const NSSize arrowSize = [self arrowSize];
-    NSPoint *points = calloc(sizeof(NSPoint), 3);
+    NSPoint *points = (NSPoint*)calloc(sizeof(NSPoint), 3);
     switch (_type) {
         case BottomLeft:
             points[0] = (NSPoint){NSMidX(frame), NSMinY(frame)};
