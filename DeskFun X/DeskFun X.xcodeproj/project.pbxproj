@@ -36,7 +36,6 @@
 		83645C0D1CB1096400845F16 /* MapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83645C0C1CB1096400845F16 /* MapView.mm */; };
 		83645C281CB120E700845F16 /* win_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 83645C1F1CB120E700845F16 /* win_rand.c */; };
 		83645C361CB1325100845F16 /* YodaDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83645C341CB1325100845F16 /* YodaDocument.cpp */; };
-		83645C4D1CB139A700845F16 /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83645C4B1CB139A700845F16 /* Map.cpp */; };
 		8365D04D1AC86DC90031E23E /* PuzzleWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */; };
 		8365D04E1AC86DC90031E23E /* PuzzleWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */; };
 		8374EAA21B35AD3C00B90F60 /* DeskFunUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */; };
@@ -200,8 +199,6 @@
 		83645C341CB1325100845F16 /* YodaDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = YodaDocument.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		83645C351CB1325100845F16 /* YodaDocument.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = YodaDocument.hpp; sourceTree = "<group>"; };
 		83645C401CB1331500845F16 /* CppTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppTypes.h; sourceTree = "<group>"; };
-		83645C4B1CB139A700845F16 /* Map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
-		83645C4C1CB139A700845F16 /* Map.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Map.hpp; sourceTree = "<group>"; };
 		8365D04A1AC86DC90031E23E /* PuzzleWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PuzzleWindowController.h; sourceTree = "<group>"; };
 		8365D04B1AC86DC90031E23E /* PuzzleWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PuzzleWindowController.mm; sourceTree = "<group>"; };
 		8365D04C1AC86DC90031E23E /* PuzzleWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PuzzleWindowController.xib; sourceTree = "<group>"; };
@@ -422,8 +419,6 @@
 				83645C341CB1325100845F16 /* YodaDocument.cpp */,
 				83645C351CB1325100845F16 /* YodaDocument.hpp */,
 				83645C401CB1331500845F16 /* CppTypes.h */,
-				83645C4B1CB139A700845F16 /* Map.cpp */,
-				83645C4C1CB139A700845F16 /* Map.hpp */,
 				83B7627E1CB4361D00225FB3 /* WorldThing.cpp */,
 				83B7627F1CB4361D00225FB3 /* WorldThing.hpp */,
 				83B762831CB4390400225FB3 /* Quest.cpp */,
@@ -780,7 +775,6 @@
 				8332CCFE19F0812900D153D9 /* CharsController.mm in Sources */,
 				83D4A59D19EC463200AA73A0 /* DASceneView.mm in Sources */,
 				833DCEE01B4EF2190069D420 /* NSNumber+StringReading.m in Sources */,
-				83645C4D1CB139A700845F16 /* Map.cpp in Sources */,
 				83E3172119F013A0000476AB /* TileView.mm in Sources */,
 				83B762851CB4390400225FB3 /* Quest.cpp in Sources */,
 				8332CCF919F07EBA00D153D9 /* SoundsController.mm in Sources */,

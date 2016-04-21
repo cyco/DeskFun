@@ -7,7 +7,6 @@
 //
 
 #include "MapGenerator.hpp"
-#include "Map.hpp"
 #define Message(fmt, ...) if(0) printf(fmt, ##__VA_ARGS__);
 
 // TODO: get rid of macros
@@ -68,12 +67,12 @@ bool MapGenerator::generate() {
     int spaceport_y_rand = win_rand();
     int spaceport_y = (spaceport_y_rand & 1) + 4;
     
-    map[44] = WORLD_ITEM_EMPTY;
-    map[45] = WORLD_ITEM_EMPTY;
-    map[54] = WORLD_ITEM_EMPTY;
-    map[55] = WORLD_ITEM_EMPTY;
+    map[44] = MapType_EMPTY;
+    map[45] = MapType_EMPTY;
+    map[54] = MapType_EMPTY;
+    map[55] = MapType_EMPTY;
     
-    map[spaceport_x + 10 * spaceport_y] = WORLD_ITEM_SPACEPORT;
+    map[spaceport_x + 10 * spaceport_y] = MapType_SPACEPORT;
     
     int placed_puzzle_count = 4;
     int max1, base1, max2, base2, max3, base3, max4, base4;
@@ -183,7 +182,7 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
     
     for(int i=0; i <= 144 && puzzle_count_to_place > 0; i++)
     {
-        int16 last_item = WORLD_ITEM_NONE;
+        int16 last_item = MapType_NONE;
         
         int x, y;
         if(win_rand() % 2) {
@@ -202,20 +201,20 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
         int16 item_above = get(x, y-1);
         int16 item_below = get(x, y+1);
         
-        if (item_before != WORLD_ITEM_NONE && item_before != WORLD_ITEM_KEPT_FREE) {
+        if (item_before != MapType_NONE && item_before != MapType_KEPT_FREE) {
             // Look at left neighbor
             last_item = map[item_idx-1];
-            if ( item_before > WORLD_ITEM_TRAVEL_START && item_before != WORLD_ITEM_SPACEPORT && item_before != WORLD_ITEM_PUZZLE)
+            if ( item_before > MapType_TRAVEL_START && item_before != MapType_SPACEPORT && item_before != MapType_PUZZLE)
             {
-                if((item_before == WORLD_ITEM_PUZZLE_CANDIDATE
-                    || item_before == WORLD_ITEM_BLOCK_EAST)
+                if((item_before == MapType_PUZZLE_CANDIDATE
+                    || item_before == MapType_BLOCK_EAST)
                    
-                   && ((item_above==WORLD_ITEM_NONE || item_above == WORLD_ITEM_KEPT_FREE)
-                       && (item_below==WORLD_ITEM_NONE || item_below == WORLD_ITEM_KEPT_FREE)))
+                   && ((item_above==MapType_NONE || item_above == MapType_KEPT_FREE)
+                       && (item_below==MapType_NONE || item_below == MapType_KEPT_FREE)))
                 {
-                    map[item_idx] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                    map[item_idx-10] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+10] = WORLD_ITEM_KEPT_FREE;
+                    map[item_idx] = MapType_PUZZLE_CANDIDATE;
+                    map[item_idx-10] = MapType_KEPT_FREE;
+                    map[item_idx+10] = MapType_KEPT_FREE;
                     
                     ++*placed_puzzle_count_ref;
                     --puzzle_count_to_place;
@@ -225,10 +224,10 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
                 continue;
             }
             
-            if ( item_before != WORLD_ITEM_TRAVEL_START
-                && item_before != WORLD_ITEM_EMPTY
-                && item_before != WORLD_ITEM_SPACEPORT
-                && item_before != WORLD_ITEM_PUZZLE)
+            if ( item_before != MapType_TRAVEL_START
+                && item_before != MapType_EMPTY
+                && item_before != MapType_SPACEPORT
+                && item_before != MapType_PUZZLE)
             {
                 tryPlacingTransport(item_idx, transport_count, placed_transport_count_ref, iteration, threshold_2, last_item);
                 continue;
@@ -237,145 +236,145 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
             if ( blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold )
             {
                 if ( MapGenerator::GetDistanceToCenter(x - 1, y) < iteration )  {
-                    if ( ( !item_above || item_above == WORLD_ITEM_KEPT_FREE )
-                        && ( !item_below || item_below == WORLD_ITEM_KEPT_FREE ))
+                    if ( ( !item_above || item_above == MapType_KEPT_FREE )
+                        && ( !item_below || item_below == MapType_KEPT_FREE ))
                     {
-                        map[item_idx] = WORLD_ITEM_BLOCK_EAST;
+                        map[item_idx] = MapType_BLOCK_EAST;
                         --puzzle_count_to_place;
                         *placed_puzzle_count_ref += 2;
-                        map[item_idx-10] = WORLD_ITEM_KEPT_FREE;
-                        map[item_idx+10] = WORLD_ITEM_KEPT_FREE;
-                        map[item_idx+1] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                        map[item_idx-9] = WORLD_ITEM_KEPT_FREE;
-                        map[item_idx+11] = WORLD_ITEM_KEPT_FREE;
+                        map[item_idx-10] = MapType_KEPT_FREE;
+                        map[item_idx+10] = MapType_KEPT_FREE;
+                        map[item_idx+1] = MapType_PUZZLE_CANDIDATE;
+                        map[item_idx-9] = MapType_KEPT_FREE;
+                        map[item_idx+11] = MapType_KEPT_FREE;
                         ++*placed_blockade_count_ref;
-                    } else if ( item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
-                        map[item_idx] = WORLD_ITEM_EMPTY;
+                    } else if ( item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
+                        map[item_idx] = MapType_EMPTY;
                         
                         ++*placed_puzzle_count_ref;
                         --puzzle_count_to_place;
                     }
                 }
-            } else if ( item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
-                map[item_idx] = WORLD_ITEM_EMPTY;
+            } else if ( item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
+                map[item_idx] = MapType_EMPTY;
                 ++*placed_puzzle_count_ref;
                 --puzzle_count_to_place;
             }
-        } else if (item_after != WORLD_ITEM_NONE && item_after != WORLD_ITEM_KEPT_FREE) { // Look at right neighbor
+        } else if (item_after != MapType_NONE && item_after != MapType_KEPT_FREE) { // Look at right neighbor
             last_item = map[item_idx+1];
             switch ( item_after ) {
-                case WORLD_ITEM_PUZZLE_CANDIDATE:
-                case WORLD_ITEM_BLOCK_WEST:
-                    if ((item_above == 0 || item_above == WORLD_ITEM_KEPT_FREE )
-                        && (item_below == 0 || item_below == WORLD_ITEM_KEPT_FREE )) {
+                case MapType_PUZZLE_CANDIDATE:
+                case MapType_BLOCK_WEST:
+                    if ((item_above == 0 || item_above == MapType_KEPT_FREE )
+                        && (item_below == 0 || item_below == MapType_KEPT_FREE )) {
                         
-                        map[item_idx] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                        map[item_idx-10] = WORLD_ITEM_KEPT_FREE;
-                        map[item_idx+10] = WORLD_ITEM_KEPT_FREE;
+                        map[item_idx] = MapType_PUZZLE_CANDIDATE;
+                        map[item_idx-10] = MapType_KEPT_FREE;
+                        map[item_idx+10] = MapType_KEPT_FREE;
                         
                         ++*placed_puzzle_count_ref;
                         --puzzle_count_to_place;
                     }
                     /* intentional fallthrough */
-                case WORLD_ITEM_INVALID:
-                case WORLD_ITEM_NONE:
-                case WORLD_ITEM_TRAVEL_END:
-                case WORLD_ITEM_KEPT_FREE:
-                case WORLD_ITEM_ISLAND:
-                case WORLD_ITEM_BLOCK_SOUTH:
-                case WORLD_ITEM_BLOCK_NORTH:
-                case WORLD_ITEM_BLOCK_EAST:
+                case MapType_INVALID:
+                case MapType_NONE:
+                case MapType_TRAVEL_END:
+                case MapType_KEPT_FREE:
+                case MapType_ISLAND:
+                case MapType_BLOCK_SOUTH:
+                case MapType_BLOCK_NORTH:
+                case MapType_BLOCK_EAST:
                     tryPlacingTransport(item_idx, transport_count, placed_transport_count_ref, iteration, threshold_2, last_item);
                     continue;
-                case WORLD_ITEM_TRAVEL_START:
-                case WORLD_ITEM_EMPTY:
-                case WORLD_ITEM_SPACEPORT:
-                case WORLD_ITEM_PUZZLE:
+                case MapType_TRAVEL_START:
+                case MapType_EMPTY:
+                case MapType_SPACEPORT:
+                case MapType_PUZZLE:
                     break;
             }
             
             if (blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold )
             {
                 int distance_is_less_than_iteration = MapGenerator::GetDistanceToCenter(x + 1, y) < iteration;
-                if (distance_is_less_than_iteration && (!item_above || item_above == WORLD_ITEM_KEPT_FREE) &&
-                    (!item_below || item_below == WORLD_ITEM_KEPT_FREE) )
+                if (distance_is_less_than_iteration && (!item_above || item_above == MapType_KEPT_FREE) &&
+                    (!item_below || item_below == MapType_KEPT_FREE) )
                 {
-                    map[item_idx] = WORLD_ITEM_BLOCK_WEST;
+                    map[item_idx] = MapType_BLOCK_WEST;
                     --puzzle_count_to_place;
                     *placed_puzzle_count_ref += 2;
-                    map[item_idx-10] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+10] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx-1] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                    map[item_idx-11] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+9] = WORLD_ITEM_KEPT_FREE;
+                    map[item_idx-10] = MapType_KEPT_FREE;
+                    map[item_idx+10] = MapType_KEPT_FREE;
+                    map[item_idx-1] = MapType_PUZZLE_CANDIDATE;
+                    map[item_idx-11] = MapType_KEPT_FREE;
+                    map[item_idx+9] = MapType_KEPT_FREE;
                     ++*placed_blockade_count_ref;
-                } else if (distance_is_less_than_iteration && item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
-                    map[item_idx] = WORLD_ITEM_EMPTY;
+                } else if (distance_is_less_than_iteration && item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
+                    map[item_idx] = MapType_EMPTY;
                     
                     ++*placed_puzzle_count_ref;
                     --puzzle_count_to_place;
                 }
-            } else if ( item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
+            } else if ( item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
                 
-                map[item_idx] = WORLD_ITEM_EMPTY;
+                map[item_idx] = MapType_EMPTY;
                 
                 ++*placed_puzzle_count_ref;
                 --puzzle_count_to_place;
             }
-        } else if ( item_above != WORLD_ITEM_NONE && item_above != WORLD_ITEM_KEPT_FREE ) {  // Look at neighbor above
+        } else if ( item_above != MapType_NONE && item_above != MapType_KEPT_FREE ) {  // Look at neighbor above
             last_item = map[item_idx-10];
             switch (item_above) {
-                case WORLD_ITEM_PUZZLE_CANDIDATE:
-                case WORLD_ITEM_BLOCK_SOUTH:
-                    if ((item_before == WORLD_ITEM_NONE || item_before == WORLD_ITEM_KEPT_FREE)
-                        && (item_after == WORLD_ITEM_NONE || item_after == WORLD_ITEM_KEPT_FREE) ) {
-                        map[item_idx] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                        map[item_idx-1] = WORLD_ITEM_KEPT_FREE;
-                        map[item_idx+1] = WORLD_ITEM_KEPT_FREE;
+                case MapType_PUZZLE_CANDIDATE:
+                case MapType_BLOCK_SOUTH:
+                    if ((item_before == MapType_NONE || item_before == MapType_KEPT_FREE)
+                        && (item_after == MapType_NONE || item_after == MapType_KEPT_FREE) ) {
+                        map[item_idx] = MapType_PUZZLE_CANDIDATE;
+                        map[item_idx-1] = MapType_KEPT_FREE;
+                        map[item_idx+1] = MapType_KEPT_FREE;
                         
                         ++*placed_puzzle_count_ref;
                         --puzzle_count_to_place;
                     }
                     /* INTENTIONAL FALLTHROUGH */
-                case WORLD_ITEM_NONE:
-                case WORLD_ITEM_BLOCK_WEST:
-                case WORLD_ITEM_INVALID:
-                case WORLD_ITEM_TRAVEL_END:
-                case WORLD_ITEM_KEPT_FREE:
-                case WORLD_ITEM_ISLAND:
-                case WORLD_ITEM_BLOCK_EAST:
-                case WORLD_ITEM_BLOCK_NORTH:
+                case MapType_NONE:
+                case MapType_BLOCK_WEST:
+                case MapType_INVALID:
+                case MapType_TRAVEL_END:
+                case MapType_KEPT_FREE:
+                case MapType_ISLAND:
+                case MapType_BLOCK_EAST:
+                case MapType_BLOCK_NORTH:
                     tryPlacingTransport(item_idx, transport_count, placed_transport_count_ref, iteration, threshold_2, last_item);
                     continue;
-                case WORLD_ITEM_EMPTY:
-                case WORLD_ITEM_TRAVEL_START:
-                case WORLD_ITEM_SPACEPORT:
-                case WORLD_ITEM_PUZZLE:
+                case MapType_EMPTY:
+                case MapType_TRAVEL_START:
+                case MapType_SPACEPORT:
+                case MapType_PUZZLE:
                     break;
             }
             
             if ( blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold ) {
                 int distance_less_than_iteration = MapGenerator::GetDistanceToCenter(x, y - 1) < iteration;
                 
-                if (distance_less_than_iteration && ( !item_before || item_before == WORLD_ITEM_KEPT_FREE )
-                    && ( !item_after || item_after == WORLD_ITEM_KEPT_FREE )) {
-                    map[item_idx] = WORLD_ITEM_BLOCK_SOUTH;
+                if (distance_less_than_iteration && ( !item_before || item_before == MapType_KEPT_FREE )
+                    && ( !item_after || item_after == MapType_KEPT_FREE )) {
+                    map[item_idx] = MapType_BLOCK_SOUTH;
                     --puzzle_count_to_place;
                     *placed_puzzle_count_ref += 2;
-                    map[item_idx-1] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+1] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+10] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                    map[item_idx+9] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+11] = WORLD_ITEM_KEPT_FREE;
+                    map[item_idx-1] = MapType_KEPT_FREE;
+                    map[item_idx+1] = MapType_KEPT_FREE;
+                    map[item_idx+10] = MapType_PUZZLE_CANDIDATE;
+                    map[item_idx+9] = MapType_KEPT_FREE;
+                    map[item_idx+11] = MapType_KEPT_FREE;
                     ++*placed_blockade_count_ref;
-                } else if (distance_less_than_iteration &&  item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
-                    map[item_idx] = WORLD_ITEM_EMPTY;
+                } else if (distance_less_than_iteration &&  item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
+                    map[item_idx] = MapType_EMPTY;
                     
                     ++*placed_puzzle_count_ref;
                     --puzzle_count_to_place;
                 }
-            } else if ( item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
-                map[item_idx] = WORLD_ITEM_EMPTY;
+            } else if ( item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
+                map[item_idx] = MapType_EMPTY;
                 
                 ++*placed_puzzle_count_ref;
                 --puzzle_count_to_place;
@@ -383,57 +382,57 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
         } else { // Look at neighbor below
             last_item = map[item_idx+10];
             switch ( item_below ) {
-                case WORLD_ITEM_PUZZLE_CANDIDATE:
-                case WORLD_ITEM_BLOCK_NORTH:
-                    if((item_before == WORLD_ITEM_NONE || item_before == WORLD_ITEM_KEPT_FREE)
-                       && (item_after == WORLD_ITEM_NONE || item_after == WORLD_ITEM_KEPT_FREE)) {
-                        map[item_idx] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                        map[item_idx-1] = WORLD_ITEM_KEPT_FREE;
-                        map[item_idx+1] = WORLD_ITEM_KEPT_FREE;
+                case MapType_PUZZLE_CANDIDATE:
+                case MapType_BLOCK_NORTH:
+                    if((item_before == MapType_NONE || item_before == MapType_KEPT_FREE)
+                       && (item_after == MapType_NONE || item_after == MapType_KEPT_FREE)) {
+                        map[item_idx] = MapType_PUZZLE_CANDIDATE;
+                        map[item_idx-1] = MapType_KEPT_FREE;
+                        map[item_idx+1] = MapType_KEPT_FREE;
                         
                         ++*placed_puzzle_count_ref;
                         --puzzle_count_to_place;
                     }
                     /* INTENTIONAL FALLTHROUGH */
-                case WORLD_ITEM_NONE:
-                case WORLD_ITEM_BLOCK_EAST:
-                case WORLD_ITEM_BLOCK_SOUTH:
-                case WORLD_ITEM_ISLAND:
-                case WORLD_ITEM_KEPT_FREE:
-                case WORLD_ITEM_TRAVEL_END:
-                case WORLD_ITEM_INVALID:
-                case WORLD_ITEM_BLOCK_WEST:
+                case MapType_NONE:
+                case MapType_BLOCK_EAST:
+                case MapType_BLOCK_SOUTH:
+                case MapType_ISLAND:
+                case MapType_KEPT_FREE:
+                case MapType_TRAVEL_END:
+                case MapType_INVALID:
+                case MapType_BLOCK_WEST:
                     tryPlacingTransport(item_idx, transport_count, placed_transport_count_ref, iteration, threshold_2, last_item);
                     continue;
-                case WORLD_ITEM_SPACEPORT:
-                case WORLD_ITEM_PUZZLE:
-                case WORLD_ITEM_TRAVEL_START:
-                case WORLD_ITEM_EMPTY:
+                case MapType_SPACEPORT:
+                case MapType_PUZZLE:
+                case MapType_TRAVEL_START:
+                case MapType_EMPTY:
                     break;
             }
             
             if ( blockade_count > *placed_blockade_count_ref && win_rand() % probablility < threshold ) {
                 int distance_less_than_iteration = MapGenerator::GetDistanceToCenter(x, y + 1) < iteration;
                 
-                if (distance_less_than_iteration && ( !item_before || item_before == WORLD_ITEM_KEPT_FREE )
-                    && ( !item_after || item_after == WORLD_ITEM_KEPT_FREE ))
+                if (distance_less_than_iteration && ( !item_before || item_before == MapType_KEPT_FREE )
+                    && ( !item_after || item_after == MapType_KEPT_FREE ))
                 {
-                    map[item_idx] = WORLD_ITEM_BLOCK_NORTH;
+                    map[item_idx] = MapType_BLOCK_NORTH;
                     --puzzle_count_to_place;
                     *placed_puzzle_count_ref += 2;
-                    map[item_idx-1] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx+1] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx-10] = WORLD_ITEM_PUZZLE_CANDIDATE;
-                    map[item_idx-11] = WORLD_ITEM_KEPT_FREE;
-                    map[item_idx-9] = WORLD_ITEM_KEPT_FREE;
+                    map[item_idx-1] = MapType_KEPT_FREE;
+                    map[item_idx+1] = MapType_KEPT_FREE;
+                    map[item_idx-10] = MapType_PUZZLE_CANDIDATE;
+                    map[item_idx-11] = MapType_KEPT_FREE;
+                    map[item_idx-9] = MapType_KEPT_FREE;
                     ++*placed_blockade_count_ref;
-                } else if ( distance_less_than_iteration && item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE) {
-                    map[item_idx] = WORLD_ITEM_EMPTY;
+                } else if ( distance_less_than_iteration && item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE) {
+                    map[item_idx] = MapType_EMPTY;
                     ++*placed_puzzle_count_ref;
                     --puzzle_count_to_place;
                 }
-            } else if ( item_before < WORLD_ITEM_PUZZLE_CANDIDATE && item_after < WORLD_ITEM_PUZZLE_CANDIDATE && item_above < WORLD_ITEM_PUZZLE_CANDIDATE && item_below < WORLD_ITEM_PUZZLE_CANDIDATE ) {
-                map[item_idx] = WORLD_ITEM_EMPTY;
+            } else if ( item_before < MapType_PUZZLE_CANDIDATE && item_after < MapType_PUZZLE_CANDIDATE && item_above < MapType_PUZZLE_CANDIDATE && item_below < MapType_PUZZLE_CANDIDATE ) {
+                map[item_idx] = MapType_EMPTY;
                 ++*placed_puzzle_count_ref;
                 --puzzle_count_to_place;
             }
@@ -447,10 +446,10 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
 
 int MapGenerator::tryPlacingTransport(int item_idx, int transport_count, int *placed_transport_count_ref, int iteration, int threshold_2, int v36) {
     
-    if (map[item_idx] == WORLD_ITEM_EMPTY && transport_count > *placed_transport_count_ref
-        && ((win_rand()) & 7) < threshold_2 && v36 != WORLD_ITEM_TRAVEL_START && iteration > 2 )
+    if (map[item_idx] == MapType_EMPTY && transport_count > *placed_transport_count_ref
+        && ((win_rand()) & 7) < threshold_2 && v36 != MapType_TRAVEL_START && iteration > 2 )
     {
-        map[item_idx] = WORLD_ITEM_TRAVEL_START;
+        map[item_idx] = MapType_TRAVEL_START;
         ++*placed_transport_count_ref;
     }
     return 0;
@@ -479,16 +478,16 @@ int MapGenerator::additionalPuzzleLocations(int travels_to_place, int* placed_pu
         int16 item_below = get(x, y+1);
         
         int y_diff = 0, x_diff = 0;
-        if (is_vertical && x == 9 && item_before != WORLD_ITEM_KEPT_FREE) {
+        if (is_vertical && x == 9 && item_before != MapType_KEPT_FREE) {
             x_diff = 1;
             y_diff = 0;
-        } else if(is_vertical && x==0 && item_after != WORLD_ITEM_KEPT_FREE) {
+        } else if(is_vertical && x==0 && item_after != MapType_KEPT_FREE) {
             x_diff = -1;
             y_diff = 0;
-        } else if(!is_vertical && y == 9 && item_above != WORLD_ITEM_KEPT_FREE) {
+        } else if(!is_vertical && y == 9 && item_above != MapType_KEPT_FREE) {
             x_diff = 0;
             y_diff = 1;
-        } else if(!is_vertical && y == 0 && item_below != WORLD_ITEM_KEPT_FREE) {
+        } else if(!is_vertical && y == 0 && item_below != MapType_KEPT_FREE) {
             x_diff = 0;
             y_diff = -1;
         }
@@ -496,67 +495,67 @@ int MapGenerator::additionalPuzzleLocations(int travels_to_place, int* placed_pu
         if(x_diff == 0 && y_diff == 0) continue;
         
         int16 item_neighbor = get(x-x_diff, y - y_diff);
-        if(item_neighbor <= WORLD_ITEM_NONE) continue;
+        if(item_neighbor <= MapType_NONE) continue;
         
         switch (item_neighbor) {
-            case WORLD_ITEM_EMPTY:
-            case WORLD_ITEM_TRAVEL_START:
-            case WORLD_ITEM_SPACEPORT:
+            case MapType_EMPTY:
+            case MapType_TRAVEL_START:
+            case MapType_SPACEPORT:
                 map[world_idx] = 1;
                 break;
-            case WORLD_ITEM_PUZZLE_CANDIDATE:
+            case MapType_PUZZLE_CANDIDATE:
                 map[world_idx] = 300;
                 
                 if (!x_diff ) {
-                    if (x > 0) map[world_idx - 1] = WORLD_ITEM_KEPT_FREE;
-                    if (x < 9) map[world_idx + 1] = WORLD_ITEM_KEPT_FREE;
+                    if (x > 0) map[world_idx - 1] = MapType_KEPT_FREE;
+                    if (x < 9) map[world_idx + 1] = MapType_KEPT_FREE;
                 } else if (!y_diff) {
-                    if ( y > 0 ) map[world_idx - 10] = WORLD_ITEM_KEPT_FREE;
-                    if ( y < 9 ) map[world_idx + 10] = WORLD_ITEM_KEPT_FREE;
+                    if ( y > 0 ) map[world_idx - 10] = MapType_KEPT_FREE;
+                    if ( y < 9 ) map[world_idx + 10] = MapType_KEPT_FREE;
                 }
                 
                 continue;
-            case WORLD_ITEM_BLOCK_WEST:
+            case MapType_BLOCK_WEST:
                 if (x_diff != -1) continue;
-                if (WORLD_ITEM_NONE < item_above && item_above <= WORLD_ITEM_BLOCK_NORTH)
+                if (MapType_NONE < item_above && item_above <= MapType_BLOCK_NORTH)
                     continue;
-                if (WORLD_ITEM_NONE < item_below && item_below <= WORLD_ITEM_BLOCK_NORTH)
+                if (MapType_NONE < item_below && item_below <= MapType_BLOCK_NORTH)
                     continue;
                 
                 map[world_idx] = 300;
                 
-                if ( y > 0 ) map[world_idx - 10] = WORLD_ITEM_KEPT_FREE;
-                if ( y < 9 ) map[world_idx + 10] = WORLD_ITEM_KEPT_FREE;
+                if ( y > 0 ) map[world_idx - 10] = MapType_KEPT_FREE;
+                if ( y < 9 ) map[world_idx + 10] = MapType_KEPT_FREE;
                 break;
-            case WORLD_ITEM_BLOCK_EAST:
+            case MapType_BLOCK_EAST:
                 if ( x_diff != 1 ) continue;
-                if (WORLD_ITEM_NONE < item_below && item_below <= WORLD_ITEM_BLOCK_NORTH) continue;
-                if (WORLD_ITEM_NONE < item_above && item_above <= WORLD_ITEM_BLOCK_NORTH) continue;
+                if (MapType_NONE < item_below && item_below <= MapType_BLOCK_NORTH) continue;
+                if (MapType_NONE < item_above && item_above <= MapType_BLOCK_NORTH) continue;
                 
                 map[world_idx] = 300;
                 
-                if ( y > 0 ) map[world_idx - 10] = WORLD_ITEM_KEPT_FREE;
-                if ( y < 9 ) map[world_idx + 10] = WORLD_ITEM_KEPT_FREE;
+                if ( y > 0 ) map[world_idx - 10] = MapType_KEPT_FREE;
+                if ( y < 9 ) map[world_idx + 10] = MapType_KEPT_FREE;
                 break;
-            case WORLD_ITEM_BLOCK_NORTH:
+            case MapType_BLOCK_NORTH:
                 if ( y_diff != -1 ) continue;
-                if ( WORLD_ITEM_NONE < item_before && item_before <= WORLD_ITEM_BLOCK_NORTH) continue;
-                if ( WORLD_ITEM_NONE < item_after && item_after <= WORLD_ITEM_BLOCK_NORTH) continue;
+                if ( MapType_NONE < item_before && item_before <= MapType_BLOCK_NORTH) continue;
+                if ( MapType_NONE < item_after && item_after <= MapType_BLOCK_NORTH) continue;
                 
                 map[world_idx] = 300;
                 
-                if ( x > 0 ) map[world_idx-1] = WORLD_ITEM_KEPT_FREE;
-                if ( x < 9 ) map[world_idx + 1] = WORLD_ITEM_KEPT_FREE;
+                if ( x > 0 ) map[world_idx-1] = MapType_KEPT_FREE;
+                if ( x < 9 ) map[world_idx + 1] = MapType_KEPT_FREE;
                 break;
-            case WORLD_ITEM_BLOCK_SOUTH:
+            case MapType_BLOCK_SOUTH:
                 if ( y_diff != 1 ) continue;
-                if (WORLD_ITEM_NONE < item_before && item_before <= WORLD_ITEM_BLOCK_NORTH) continue;
-                if (WORLD_ITEM_NONE < item_after && item_after <= WORLD_ITEM_BLOCK_NORTH) continue;
+                if (MapType_NONE < item_before && item_before <= MapType_BLOCK_NORTH) continue;
+                if (MapType_NONE < item_after && item_after <= MapType_BLOCK_NORTH) continue;
                 
                 map[world_idx] = 300;
                 
-                if ( x > 0) map[world_idx-1] = WORLD_ITEM_KEPT_FREE;
-                if ( x < 9 ) map[world_idx + 1] = WORLD_ITEM_KEPT_FREE;
+                if ( x > 0) map[world_idx-1] = MapType_KEPT_FREE;
+                if ( x < 9 ) map[world_idx + 1] = MapType_KEPT_FREE;
                 break;
             default: continue;
         }
@@ -586,7 +585,7 @@ int MapGenerator::choosePuzzlesBehindBlockades() {
         for(int x=0; x < 10; x++){
             int i = x + y * 10;
             switch (get(x, y)) {
-                case WORLD_ITEM_BLOCK_WEST:
+                case MapType_BLOCK_WEST:
                     if (get(x-1, y) == 300 ) {
                         if ( x <= 1 || get(x-2, y) != 300 ){
                             map[i-1] = 306;
@@ -598,7 +597,7 @@ int MapGenerator::choosePuzzlesBehindBlockades() {
                         puzzles_placed++;
                     }
                     break;
-                case WORLD_ITEM_BLOCK_EAST:
+                case MapType_BLOCK_EAST:
                     if (get(x+1, y) == 300 ) {
                         if ( x >= 8 || get(x+2, y) != 300 ) {
                             map[i+1] = 306;
@@ -610,7 +609,7 @@ int MapGenerator::choosePuzzlesBehindBlockades() {
                         puzzles_placed++;
                     }
                     break;
-                case WORLD_ITEM_BLOCK_NORTH:
+                case MapType_BLOCK_NORTH:
                     if(get(x, y-1) == 300) {
                         if ( y <= 1 || get(x, y-2) != 300 ) {
                             set(x, y-1, 306);
@@ -622,7 +621,7 @@ int MapGenerator::choosePuzzlesBehindBlockades() {
                         puzzles_placed++;
                     }
                     break;
-                case WORLD_ITEM_BLOCK_SOUTH:
+                case MapType_BLOCK_SOUTH:
                     if(get(x, y+1) == 300 ) {
                         if ( y >= 8 || get(x, y+2) != 300 ) {
                             set(x, y+1, 306);
@@ -791,18 +790,18 @@ int MapGenerator::countStuff(int* travels, int* blockades, int *puzzles){
     *travels = 0, *blockades = 0, *puzzles = 0;
     for(int i=0; i < 100; i++){
         switch (map[i]) {
-            case WORLD_ITEM_EMPTY:
-            case WORLD_ITEM_ISLAND:
-            case WORLD_ITEM_PUZZLE_CANDIDATE:
+            case MapType_EMPTY:
+            case MapType_ISLAND:
+            case MapType_PUZZLE_CANDIDATE:
                 *puzzles += 1;
                 break;
-            case WORLD_ITEM_BLOCK_NORTH:
-            case WORLD_ITEM_BLOCK_EAST:
-            case WORLD_ITEM_BLOCK_SOUTH:
-            case WORLD_ITEM_BLOCK_WEST:
+            case MapType_BLOCK_NORTH:
+            case MapType_BLOCK_EAST:
+            case MapType_BLOCK_SOUTH:
+            case MapType_BLOCK_WEST:
                 *blockades += 1;
                 break;
-            case WORLD_ITEM_TRAVEL_START:
+            case MapType_TRAVEL_START:
                 *travels += 1;
             default:
                 break;
@@ -892,7 +891,7 @@ int MapGenerator::placeTransportLeft(){
     int v5 = 0;
     int idx = 0;
     for(int i=0; i < 10; i++) {
-        if (map[idx] || (map[idx+1] && map[idx+1] != WORLD_ITEM_KEPT_FREE)) {
+        if (map[idx] || (map[idx+1] && map[idx+1] != MapType_KEPT_FREE)) {
             if ( v4 < v3 ) {
                 v4 = v3;
                 v5 = i - v3;

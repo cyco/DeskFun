@@ -13,10 +13,27 @@
 #include "types.h"
 #include "YodaDocument.hpp"
 
+typedef enum {
+    MapType_INVALID = -1,
+    MapType_NONE = 0,
+    MapType_EMPTY = 1,
+    MapType_TRAVEL_START = 101,
+    MapType_TRAVEL_END = 102,
+    MapType_ISLAND = 104,
+    MapType_SPACEPORT = 201,
+    MapType_BLOCK_WEST = 301,
+    MapType_BLOCK_EAST = 302,
+    MapType_BLOCK_NORTH = 303,
+    MapType_BLOCK_SOUTH = 304,
+    MapType_KEPT_FREE = 305,
+    MapType_PUZZLE_CANDIDATE = 300,
+    MapType_PUZZLE = 306,
+} MapType;
+
 class MapGenerator {
 private:
     WorldSize size;
-
+    
 public:
     static int GetDistanceToCenter(int x, int y);
     MapGenerator(WorldSize size);

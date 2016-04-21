@@ -11,7 +11,6 @@
 #import "Palette.h"
 #import "AppDelegate.h"
 #import "YodaDocument.hpp"
-#import "Map.hpp"
 #include "WorldGenerator.hpp"
 #include "win_rand.h"
 

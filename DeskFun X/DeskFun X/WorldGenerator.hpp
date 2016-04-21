@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include "YodaDocument.hpp"
 #include "MapGenerator.hpp"
-#include "Map.hpp"
 
 class WorldGenerator {
 private:
@@ -26,8 +25,8 @@ public:
     
 private:
     int doLoop0(YodaDocument *doc, const int puzzle_count, const int puzzles2_count, const uint16* puzzles);
-    ZONE_TYPE zoneTypeForWorldItem(WORLD_ITEM item);
-    int doPuzzle(YodaDocument *doc, int x, int y, WORLD_ITEM zone_2, int* did_not_place_zone);
+    ZONE_TYPE zoneTypeForWorldItem(MapType item);
+    int doPuzzle(YodaDocument *doc, int x, int y, MapType zone_2, int* did_not_place_zone);
     int doCleanup(YodaDocument* doc);
     int loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, int v199, int x_8);
     int loop2(YodaDocument* doc, uint16* map);

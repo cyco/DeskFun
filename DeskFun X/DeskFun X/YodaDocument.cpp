@@ -7,7 +7,6 @@
 //
 
 #include "YodaDocument.hpp"
-#include "Map.hpp"
 #include "GameDataParser.hpp"
 #include "MapGenerator.hpp"
 

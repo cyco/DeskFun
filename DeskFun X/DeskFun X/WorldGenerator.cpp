@@ -123,7 +123,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             doc->wg_item_id = -1;
             doc->wg_last_added_item_id = -1;
             
-            if(mapGenerator->map[idx] != WORLD_ITEM_TRAVEL_START)
+            if(mapGenerator->map[idx] != MapType_TRAVEL_START)
                 continue;
             
             int distance = MapGenerator::GetDistanceToCenter(x, y);
@@ -151,7 +151,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             int target_x = 0;
             int target_y = 0;
             for(int y=0; y < 10; y++) {
-                if(mapGenerator->map[target_x + y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[target_x + y * 10]) {
+                if(mapGenerator->map[target_x + y * 10] == MapType_TRAVEL_END && !doc->worldZones[target_x + y * 10]) {
                     target_y = y;
                     foundTravelTarget = true;
                     break;
@@ -162,7 +162,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                 target_x = 0;
                 target_y = 0;
                 for(int x=0; x < 10; x++) {
-                    if(mapGenerator->map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                    if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
                         target_x = x;
                         foundTravelTarget = true;
                         break;
@@ -208,7 +208,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             target_y = 9;
             target_x = 0;
             for(int x=0; x < 10; x++) {
-                if(mapGenerator->map[x + target_y * 10] == WORLD_ITEM_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
                     target_x = x;
                     foundTravelTarget = true;
                 }
@@ -259,7 +259,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
             int idx = x + 10 * y;
-            WORLD_ITEM zone_2 = (WORLD_ITEM)map[idx];
+            MapType zone_2 = (MapType)map[idx];
             int did_not_place_zone = 0;
             doc->field_3394 = -1;
             doc->field_3390 = -1;
@@ -267,8 +267,8 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
             doc->wg_last_added_item_id = -1;
             
             WorldThing *worldThing = &doc->world_things[idx];
-            if ( zone_2 == WORLD_ITEM_NONE) continue;
-            if(zone_2 == WORLD_ITEM_KEPT_FREE) continue;
+            if ( zone_2 == MapType_NONE) continue;
+            if(zone_2 == MapType_KEPT_FREE) continue;
             if(doc->worldZones[idx] != NULL) continue;
             
             int16 zone_id_1 = doPuzzle(doc, x, y, zone_2, &did_not_place_zone);
@@ -462,7 +462,7 @@ int WorldGenerator::doCleanup(YodaDocument* doc)
     return 0;
 }
 
-int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, WORLD_ITEM zone_2, int* did_not_place_zone)
+int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, MapType zone_2, int* did_not_place_zone)
 {
     int distance = MapGenerator::GetDistanceToCenter(x, y);
     WorldThing *worldThing = &doc->world_things[x+10*y];
@@ -492,13 +492,13 @@ int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, WORLD_ITEM zone_2,
     return -1;
 }
 
-ZONE_TYPE WorldGenerator::zoneTypeForWorldItem(WORLD_ITEM item) {
+ZONE_TYPE WorldGenerator::zoneTypeForWorldItem(MapType item) {
     switch(item){
-        case WORLD_ITEM_SPACEPORT: return ZONETYPE_Town;
-        case WORLD_ITEM_BLOCK_WEST: return ZONETYPE_BlockadeWest;
-        case WORLD_ITEM_BLOCK_EAST: return ZONETYPE_BlockadeEast;
-        case WORLD_ITEM_BLOCK_NORTH: return ZONETYPE_BlockadeNorth;
-        case WORLD_ITEM_BLOCK_SOUTH: return ZONETYPE_BlockadeSouth;
+        case MapType_SPACEPORT: return ZONETYPE_Town;
+        case MapType_BLOCK_WEST: return ZONETYPE_BlockadeWest;
+        case MapType_BLOCK_EAST: return ZONETYPE_BlockadeEast;
+        case MapType_BLOCK_NORTH: return ZONETYPE_BlockadeNorth;
+        case MapType_BLOCK_SOUTH: return ZONETYPE_BlockadeSouth;
         default: return ZONETYPE_Empty;
     }
 }
