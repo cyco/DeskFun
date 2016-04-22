@@ -22,6 +22,10 @@
 #define TestWorld(_seed_, _size_) success &= testWorld(_seed_, (WorldSize)_size_, world_things_ ## _seed_ ## _ ## _size_);
 #define xTestWorld(_seed_, _size_) do {} while(false);
 
+TestSuite::TestSuite(){
+    queue = dispatch_queue_create("tests", DISPATCH_QUEUE_CONCURRENT);
+}
+
 int TestSuite::runTests() {
     int success = 1;
     
@@ -162,6 +166,10 @@ int TestSuite::runMapTests() {
     TestMap(0x0009, 1);
     TestMap(0x0008, 1);
     
+    dispatch_barrier_sync(queue, ^{
+        printf("all done\n");
+    });
+    
     return success;
 }
 
@@ -197,6 +205,7 @@ int TestSuite::testMap(uint16 seed, WorldSize size, uint16 *expected_map, int16 
     MapGenerator generator(size);
     generator.generate();
     
+    
     for(int i=0; i < 100; i++) {
         if(generator.map[i] != expected_map[i] || generator.puzzles[i] != expected_puzzles[i]) {
             success = 0;
@@ -206,8 +215,8 @@ int TestSuite::testMap(uint16 seed, WorldSize size, uint16 *expected_map, int16 
     
     if(success) ; // printf("[OK] 0x%04x %s\n", seed, size == 1 ? "small" : (size == 2 ? "medium" : "large"));
     else printf("[FAIL] 0x%04x %s\n", seed, size == 1 ? "small" : (size == 2 ? "medium" : "large"));
-
-    return 1;
+    
+    return success;
 }
 
 int TestSuite::testWorld(uint16 seed, WorldSize size, uint32 *sample) {

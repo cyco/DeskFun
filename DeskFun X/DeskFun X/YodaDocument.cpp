@@ -236,9 +236,8 @@ void YodaDocument::GetPuzzleCandidates(vector<int16> &result, uint16 item_id, in
 
 int YodaDocument::ContainsPuzzleId(uint16 puzzle_id)
 {
-    for(uint16 id : puzzle_ids) {
+    for(uint16 id : puzzle_ids)
         if(id == puzzle_id) return 1;
-    }
     return 0;
 }
 

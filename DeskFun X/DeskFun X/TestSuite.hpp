@@ -10,16 +10,21 @@
 #define TestSuite_hpp
 
 #include <stdio.h>
+#include <dispatch/dispatch.h>
 #include "MapGenerator.hpp"
 #include "YodaDocument.hpp"
 
 class TestSuite {
 public:
+    TestSuite();
+    
     int runTests();
     int runMapTests();
     int runWorldTests();
     
 private:
+    
+    dispatch_queue_t queue;
     int testMap(uint16 seed, WorldSize size, uint16 *expected_map, int16 *expected_puzzles);
     int testWorld(uint16 seed, WorldSize size, uint32 *expected_result);
 };
