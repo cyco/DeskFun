@@ -70,7 +70,7 @@ public:
 #pragma mark -
     Zone* getZoneByID(const uint16 zoneID);
     int worldContainsZoneId(uint16 zoneID);
-    void AddZoneWithIdToWorld(uint16 zoneID);
+    void addZoneWithIdToWorld(uint16 zoneID);
     uint16 getZoneID(const Zone *zone);
     uint16 getZoneIDAt(const int x, const int y);
     Quest* AddProvidedQuestWithItemID(const uint16 itemID, const uint16 unknown);
@@ -78,17 +78,17 @@ public:
     void RemoveQuestProvidingItem(uint16 itemID);
     void RemoveQuestRequiringItem(uint16 itemID);
     int HasQuestRequiringItem(uint16 itemID);
-    int GetLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut);
-    int AddRequiredItemsFromHotspots(uint16 zoneID);
+    int getLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut);
+    void addRequiredItemsFromHotspots(uint16 zoneID);
     int ZoneLeadsToItem(uint16 zoneID, uint16 itemID);
     int GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int use_array_2_ids);
     signed int GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap);
     int SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2, int use_required_items_array);
-    signed int RequiredItemForZoneWasNotPlaced(__int16 zone_id);
+    signed int RequiredItemForZoneWasNotPlaced(const uint16 zone_id);
     int16 GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, __int16 item_id_3, int a8);
     int AssociateItemWithZoneHotspot(__int16 zone_id, int item_id, int a4);
     int Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int unknown, int a6);
-    signed int ChooseItemIDFromZone(__int16 zone_id, int item_id, int a4);
+    signed int ChooseItemIDFromZone(uint16 zoneID, uint16 itemID, int a4);
     signed int ChooseItemIDFromZone_0(__int16 zone_id, int item_id);
     signed int ChooseItemIDFromZone_1(__int16 a2, int a3, int a4, __int16 a5, int a6);
     signed int ZoneWithIDHasItem(__int16 zone_id, __int16 a3, int a4);

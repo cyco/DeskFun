@@ -198,8 +198,8 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                      LOWORD(idx_3) = (_WORD)zone_id_8;
                      *(_DWORD *)transport_count = v87;
                      */
-                    doc->AddZoneWithIdToWorld(zone_id_8);
-                    doc->AddZoneWithIdToWorld(zone_id_9);
+                    doc->addZoneWithIdToWorld(zone_id_8);
+                    doc->addZoneWithIdToWorld(zone_id_9);
                 }
                 
                 continue;
@@ -231,8 +231,8 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                      LOWORD(idx_3) = (_WORD)zone_id_8;
                      *(_DWORD *)transport_count = v87;
                      */
-                    doc->AddZoneWithIdToWorld(zone_id_8);
-                    doc->AddZoneWithIdToWorld(zone_id_9);
+                    doc->addZoneWithIdToWorld(zone_id_8);
+                    doc->addZoneWithIdToWorld(zone_id_9);
                 }
             }
             else
@@ -288,7 +288,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
                  LOWORD(worldThing->zone_type) = -1;
                  worldThing->required_item_id = -1;
                  */
-                doc->AddZoneWithIdToWorld(zone_id_1);
+                doc->addZoneWithIdToWorld(zone_id_1);
             } else {
                 worldThing->zone_id = zone_id_1;
                 /*
@@ -296,7 +296,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
                  worldThing->field_C = -1;
                  */
                 if ( worldThing->zone_type != ZONETYPE_Town)
-                    doc->AddZoneWithIdToWorld(zone_id_1);
+                    doc->addZoneWithIdToWorld(zone_id_1);
                     }
         }
     }
@@ -386,7 +386,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                     }
                     
                     doc->field_3394 = -1;
-                    doc->AddZoneWithIdToWorld(zone_id_5);
+                    doc->addZoneWithIdToWorld(zone_id_5);
                     
                     ++idx_6;
                     int idx_5 = x + 10 * y;
@@ -417,7 +417,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                 doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)doc->wg_zone_type;
                 doc->worldZones[world_idx_2] = doc->zones[zone_id];
                 doc->world_things[world_idx_2].zone_id = zone_id;
-                doc->AddZoneWithIdToWorld(zone_id);
+                doc->addZoneWithIdToWorld(zone_id);
             }
         }
     }
@@ -589,7 +589,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                                 doc->field_3394 = world_puz_idx - 1;
                             }
                         }
-                        doc->AddZoneWithIdToWorld(zone_id_3);
+                        doc->addZoneWithIdToWorld(zone_id_3);
                         if ( zone_id_3 < 0 ) break;
                         int world_idx_1 = x + 10 * y;
                         v204 = 1;
@@ -645,7 +645,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                     doc->world_things[idx_4].zone_type = (ZONE_TYPE)doc->wg_zone_type;
                     doc->worldZones[idx_4] = doc->zones[zone_id_4];
                     doc->world_things[idx_4].zone_id = zone_id_4;
-                    doc->AddZoneWithIdToWorld(zone_id_4);
+                    doc->addZoneWithIdToWorld(zone_id_4);
                 }
             }
             Message("v198 = %d\n", zone_id_11);
