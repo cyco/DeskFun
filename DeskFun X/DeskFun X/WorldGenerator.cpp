@@ -634,7 +634,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                 y++;
                 x = 0;
             }
-            while ( row < 100); // (__int16 *)&v230;
+            while ( row < 100); // (int16 *)&v230;
             Message("x_4 = %d\n", x_4);
             if ( !x_4 ) {
                 int distance_1 = MapGenerator::GetDistanceToCenter(x, y);

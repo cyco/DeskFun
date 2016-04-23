@@ -19,6 +19,5 @@ typedef int int32;
 typedef unsigned short uint16_t;
 typedef unsigned short uint16;
 typedef unsigned int uint32;
-typedef signed short __int16;
 #include "win_rand.h"
 #endif
