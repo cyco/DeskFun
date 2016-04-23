@@ -14,6 +14,5 @@ void win_srand(int seed) {
 }
 
 int win_rand(void){
-    return (((current_rand = (int)(current_rand * 214013L)
-              + 2531011L) >> 16) & 0x7fff );
+    return (((current_rand = (int)(current_rand * 214013L) + 2531011L) >> 16) & 0x7fff );
 }

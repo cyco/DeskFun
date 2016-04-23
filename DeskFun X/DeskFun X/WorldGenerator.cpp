@@ -119,7 +119,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
         for(int x=0; x < 10; x++) {
             int idx = x + y * 10;
             
-            doc->field_3390 = -1;
+            doc->wg_npc_id = -1;
             doc->wg_item_id = -1;
             doc->wg_last_added_item_id = -1;
             
@@ -262,7 +262,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
             MapType zone_2 = (MapType)map[idx];
             int did_not_place_zone = 0;
             doc->field_3394 = -1;
-            doc->field_3390 = -1;
+            doc->wg_npc_id = -1;
             doc->wg_item_id = -1;
             doc->wg_last_added_item_id = -1;
             
@@ -313,7 +313,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
         doc->wg_item_id_unknown_2 = -1;
         doc->wg_item_id = -1;
         doc->wg_item_id_unknown_3 = -1;
-        doc->field_3390 = -1;
+        doc->wg_npc_id = -1;
         doc->field_3394 = -1;
         doc->field_3398 = -1;
         idx_6 = 0;
@@ -399,7 +399,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                     
                     // v147 = (char *)doc + 52 * idx_5;
                     /*
-                     *((_WORD *)v147 + 612) = doc->field_3390;
+                     *((_WORD *)v147 + 612) = doc->wg_npc_id;
                      *((_WORD *)v147 + 624) = 0;
                      */
                     doc->worldZones[idx_5] = doc->zones[zone_id_5];
@@ -520,7 +520,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
             doc->wg_item_id_unknown_2 = -1;
             doc->wg_item_id_unknown_3 = -1;
             doc->wg_last_added_item_id = -1;
-            doc->field_3390 = -1;
+            doc->wg_npc_id = -1;
             doc->field_3394 = -1;
             doc->field_3398 = -1;
             
@@ -602,7 +602,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                         /*
                          *((_WORD *)v113 + 611) = doc->wg_item_id_unknown_2;
                          *((_WORD *)v113 + 609) = doc->wg_item_id_unknown_3;
-                         *((_WORD *)v113 + 612) = doc->field_3390;
+                         *((_WORD *)v113 + 612) = doc->wg_npc_id;
                          *((_WORD *)v113 + 607) = doc->field_3398;
                          *((_WORD *)v113 + 624) = 1;
                          */

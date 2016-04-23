@@ -41,6 +41,12 @@ int TestSuite::runTests() {
      [self testSample:world_things_568C_3 seed:0x568C size:WorldSize_LARGE];
      //*/
 
+    
+    dispatch_barrier_sync(queue, ^{
+        printf("all tests run\n");
+    });
+    
+    
     return success;
 }
 
@@ -165,10 +171,6 @@ int TestSuite::runMapTests() {
     TestMap(0x000a, 1);
     TestMap(0x0009, 1);
     TestMap(0x0008, 1);
-    
-    dispatch_barrier_sync(queue, ^{
-        printf("all done\n");
-    });
     
     return success;
 }

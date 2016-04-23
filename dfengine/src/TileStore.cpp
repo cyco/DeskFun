@@ -29,7 +29,7 @@ size_t TileStore::readFromFile(FILE *file)
         tiles[i] = tile;
         tiles[i]->index = i;
 
-        GameContext::CurrentContext()->tileStore.RegisterTile(tiles[i]);
+        // GameContext::CurrentContext()->tileStore.RegisterTile(tiles[i]);
     }
     return tileCount;
 }

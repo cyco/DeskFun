@@ -60,7 +60,7 @@ int TILE_SPEC_USEFUL  = 0x80;
 int TILE_SPEC_MAP    = 0x100000;
 
 
-#pragma mark - STUBS
+#pragma mark - STUBS -
 void YodaDocument::WritePlanetValues() {
     /*
      switch (this->planet) {
@@ -71,11 +71,114 @@ void YodaDocument::WritePlanetValues() {
      */
 }
 
-#pragma mark - DONE
+signed int YodaDocument::GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap) {
+    return 0;
+}
+
+int YodaDocument::PuzzleUsedInLastGame(uint16 puzzle_id, Planet planet) {
+    return 0;
+}
+
+void YodaDocument::GetTileProvidedByZonesHotspots(int16 zone_id)
+{
+    /*
+     vector<Zone*> *tile_id; // eax@1
+     Zone *zone; // edi@2
+     int v4; // ebp@3
+     int index; // esi@4
+     Hotspot *hotspot; // ebx@5
+     int x; // [sp-10h] [bp-20h]@9
+     int y; // [sp-Ch] [bp-1Ch]@9
+     __int16 tile_id_1; // [sp-4h] [bp-14h]@9
+     
+     if ( zone_id >= 0 )
+     {
+     tile_id = &this->zones;
+     zone = (*tile_id)[zone_id];
+     if ( zone )
+     {
+     v4 = (int)zone->_hotspots.size();
+     if ( v4 > 0 )
+     {
+     index = 0;
+     do
+     {
+     hotspot = zone->_hotspots[index];
+     tile_id = 0;
+     switch ( hotspot->type )
+     {
+     case TriggerLocation:
+     case SpawnLocation:
+     case ForceLocation:
+     case LocatorThingy:
+     case CrateItem:
+     case PuzzleNPC:
+     case CrateWeapon:
+     if ( hotspot->enabled == 1 && hotspot->arg1 >= 0 )
+     {
+     int id = zone->GetTileIdAt(zone, hotspot->x, hotspot->y, OBJECTS);
+     if ( id < 0 )
+     {
+     tile_id_1 = hotspot->arg1;
+     y = hotspot->y;
+     x = hotspot->x;
+     goto get_tile;
+     }
+     }
+     break;
+     case Unused:
+     if ( hotspot->enabled == 1 )
+     {
+     hotspot->arg1 = ADEGAN_CRYSTAL;
+     int tile_id = zone->GetTileIdAt(hotspot->x, hotspot->y, OBJECTS);
+     if ( tile_id < 0 )
+     {
+     tile_id_1 = ADEGAN_CRYSTAL;
+     y = hotspot->y;
+     x = hotspot->x;
+     get_tile:
+     tile_id = zone->SetTileAt(zone, x, y, 1, tile_id_1);
+     }
+     }
+     break;
+     default:
+     break;
+     }
+     ++index;
+     --v4;
+     }
+     while ( v4 );
+     }
+     }
+     }
+     //        return (unsigned int)tile_id;
+     */
+}
+
+#pragma mark - DONE -
 int YodaDocument::ContainsPuzzleId(const uint16 puzzle_id)
 {
     for(uint16 id : puzzle_ids)
         if(id == puzzle_id) return 1;
+    
+    return 0;
+}
+
+bool YodaDocument::ZoneHasItem(uint16 zoneID, uint16 targetItemID, int a4)
+{
+    Message("YodaDocument::ZoneHasItem(%d, %d, %d)\n", zoneID, targetItemID, a4);
+    Zone *zone = getZoneByID(zoneID);
+    if ( !zone ) return 0;
+    
+    vector<uint16> &itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : itemIDs)
+        if(itemID == targetItemID)
+            return 1;
+    
+    for(Hotspot *hotspot : zone->_hotspots)
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0)
+            if(ZoneHasItem(hotspot->arg1, targetItemID, a4))
+                return 1;
     
     return 0;
 }
@@ -266,7 +369,177 @@ void YodaDocument::addRequiredItemsFromHotspots(uint16 zoneID) {
         }
     }
 }
-#pragma mark - TODO
+
+int16 YodaDocument::findUnusedNPCForZone(uint16 zone_id)
+{
+    Message("YodaDocument::findUnusedNPCForZone(%d)\n", zone_id);
+    Zone *zone = getZoneByID(zone_id);
+    if (!zone) return -1;
+    
+    vector<uint16> npcCandidates;
+    for(int16 npcTileID : zone->puzzleNPCTileIDs)
+        if(!HasQuestRequiringItem(npcTileID))
+            npcCandidates.push_back(npcTileID);
+    
+    if(npcCandidates.size()) {
+        int idx = win_rand() % npcCandidates.size();
+        return npcCandidates[idx];
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = findUnusedNPCForZone(hotspot->arg1);
+            if(result >= 0) return result;
+        }
+    }
+    
+    return -1;
+}
+
+bool YodaDocument::hasPuzzleNPC(uint16 zoneID, int16 targetNPCID)
+{
+    Message("YodaDocument::hasPuzzleNPC(%d, %d)\n", zoneID, targetNPCID);
+    
+    Zone *zone = getZoneByID(zoneID);
+    if (!zone ) return 0;
+    
+    if ( targetNPCID == -1 ) {
+        printf("Is this really a valid call?\n");
+        return zone->puzzleNPCTileIDs.size() != 0;
+    }
+    
+    for(uint16 npcID : zone->puzzleNPCTileIDs)
+        if(npcID == targetNPCID) return true;
+    
+    for(Hotspot *hotspot : zone->_hotspots)
+        if (hotspot->type == DoorIn && hotspot->arg1 != -1)
+            if(hasPuzzleNPC(hotspot->arg1, targetNPCID))
+                return true;
+    
+    return false;
+}
+
+bool YodaDocument::ZoneHasProvidedItem(uint16 zoneID, uint16 itemID) {
+    Message("YodaDocument::ZoneHasProvidedItem(%d, %d)\n", zoneID, itemID);
+    Zone *zone = getZoneByID(zoneID);
+    for(uint16 itemIDInZone : zone->providedItemIDs)
+        if(itemIDInZone == itemID) return true;
+    
+    for(Hotspot* hotspot : zone->_hotspots)
+        if(hotspot->type == DoorIn && hotspot->arg1 != -1 && ZoneHasProvidedItem(hotspot->arg1, itemID))
+            return true;
+    
+    return false;
+}
+
+
+signed int YodaDocument::ChooseSpawnForPuzzleNPC(int16 zoneID, int npcID)
+{
+    Message("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", zoneID, npcID);
+    Zone *zone = getZoneByID(zoneID);
+    if ( !zone ) return -1;
+    
+    vector<Hotspot*> hotspotCandidates;
+    for(uint16 npcTileID : zone->puzzleNPCTileIDs) {
+        if(npcTileID != npcID) continue;
+        
+        hotspotCandidates.clear();
+        for(Hotspot *hotspot : zone->_hotspots) {
+            if(hotspot->type == SpawnLocation && hotspot->arg1 == -1) {
+                hotspotCandidates.push_back(hotspot);
+            }
+        }
+        
+        if(hotspotCandidates.size()) {
+            int idx = win_rand() % hotspotCandidates.size();
+            Hotspot *hotspot = hotspotCandidates[idx];
+            
+            hotspot->arg1 = npcID;
+            hotspot->enabled = 1;
+            this->wg_npc_id = npcID;
+            
+            return npcID;
+        }
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseSpawnForPuzzleNPC(hotspot->arg1, npcID);
+            if(result != -1) return result;
+        }
+    }
+    
+    return -1;
+}
+
+
+int YodaDocument::PuzzleIsGoal(uint16 puzzle_id, Planet planet){
+    if ( planet == TATOOINE ) {
+        switch ( puzzle_id ) {
+            case GOAL_FALCON:
+            case GOAL_HAN:
+            case GOAL_AMULET:
+            case GOAL_ADEGAN_CRYSTAL:
+            case GOAL_THREEPIOS_PARTS:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    
+    if ( planet == HOTH ) {
+        switch ( puzzle_id ) {
+            case GOAL_GENERAL_MARUTZ:
+            case GOAL_HIDDEN_FACTORY:
+            case GOAL_WARN_THE_REBELS:
+            case GOAL_RESCUE_YODA:
+            case GOAL_CAR:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    
+    if ( planet == ENDOR ) {
+        switch ( puzzle_id ) {
+            case GOAL_FIND_LEIA:
+            case GOAL_IMPERIAL_BATTLE_STATION:
+            case GOAL_LANTERN_OF_SACRED_LIGHT:
+            case GOAL_IMPERIAL_BATTLE_CODE:
+            case GOAL_RELAY_STATION:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    
+    return 0;
+}
+
+int YodaDocument::GetItemIDThatsNotRequiredYet(uint16 zoneID, int unused, bool use_array_2_ids)
+{
+    Message("YodaDocument::GetItemIDThatsNotRequiredYet(%d, %d, %d)\n", zoneID, unused, use_array_2_ids);
+    vector<uint16> itemIDs;
+    Zone *zone = zones[zoneID];
+    
+    vector<uint16> &zoneItemIds = use_array_2_ids ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : zoneItemIds)
+        if(!HasQuestRequiringItem(itemID))
+            itemIDs.push_back(itemID);
+    
+    if(itemIDs.size())
+        return itemIDs[win_rand() % itemIDs.size()];
+    
+    for(Hotspot *hotspot : zone->_hotspots){
+        if(hotspot->type == DoorIn && hotspot->arg1 != -1) {
+            int16 itemID = GetItemIDThatsNotRequiredYet(hotspot->arg1, unused, use_array_2_ids);
+            if(itemID != -1) return itemID;
+        }
+    }
+    
+    return -1;
+}
+#pragma mark - TODO -
 void YodaDocument::ShuffleVector(vector<int16> &array) {
     size_t count = array.size();
     if ( count == 0 ) return;
@@ -424,116 +697,6 @@ void YodaDocument::GetPuzzleCandidates(vector<int16> &result, uint16 item_id, in
     }
 }
 
-int YodaDocument::PuzzleUsedInLastGame(uint16 puzzle_id, Planet planet) {
-    return 0;
-}
-
-int YodaDocument::PuzzleIsGoal(uint16 puzzle_id, Planet planet){
-    if ( planet == TATOOINE ) {
-        switch ( puzzle_id ) {
-            case GOAL_FALCON:
-            case GOAL_HAN:
-            case GOAL_AMULET:
-            case GOAL_ADEGAN_CRYSTAL:
-            case GOAL_THREEPIOS_PARTS:
-                return 1;
-            default:
-                return 0;
-        }
-    }
-    
-    if ( planet == HOTH ) {
-        switch ( puzzle_id ) {
-            case GOAL_GENERAL_MARUTZ:
-            case GOAL_HIDDEN_FACTORY:
-            case GOAL_WARN_THE_REBELS:
-            case GOAL_RESCUE_YODA:
-            case GOAL_CAR:
-                return 1;
-            default:
-                return 0;
-        }
-    }
-    
-    if ( planet == ENDOR
-        && puzzle_id >= (signed int)GOAL_FIND_LEIA
-        && (puzzle_id <= (signed int)GOAL_IMPERIAL_BATTLE_STATION
-            || puzzle_id == GOAL_LANTERN_OF_SACRED_LIGHT) ) {
-            return 1;
-        }
-    
-    return 0;
-}
-#pragma mark -
-
-
-
-int YodaDocument::ZoneLeadsToItem(uint16 zoneID, uint16 itemID) {
-    Message("YodaDocument::ZoneLeadsToItem(%d, %d)\n", zoneID, itemID);
-    Zone *zone = getZoneByID(zoneID);
-    for(uint16 itemIDInZone : zone->providedItemIDs)
-        if(itemIDInZone == itemID) return 1;
-    
-    for(Hotspot* hotspot : zone->_hotspots)
-        if(hotspot->type == DoorIn && hotspot->arg1 >= 0 && ZoneLeadsToItem(hotspot->arg1, itemID))
-            return 1;
-    
-    return 0;
-}
-
-int YodaDocument::GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int use_array_2_ids)
-{
-    Message("YodaDocument::GetItemIDThatsNotRequiredYet(%d, %d, %d)\n", zone_id, unused, use_array_2_ids);
-    vector<uint16> itemIDs;
-    Zone *zone = zones[zone_id];
-    
-    vector<uint16>* zoneItemIds = use_array_2_ids ? &(zone->assignedItemIDs) : &(zone->requiredItemIDs);
-    for(uint16 itemID : *zoneItemIds) {
-        if(!HasQuestRequiringItem(itemID)) {
-            itemIDs.push_back(itemID);
-        }
-    }
-    
-    if(itemIDs.size()){
-        return itemIDs[win_rand() % itemIDs.size()];
-    }
-    
-    for(Hotspot *hotspot : zone->_hotspots){
-        if(hotspot->type == DoorIn) {
-            int16 itemID = GetItemIDThatsNotRequiredYet(hotspot->arg1, unused, use_array_2_ids);
-            if(itemID >= 0) return itemID;
-        }
-    }
-    
-    return -1;
-}
-#pragma mark -
-signed int YodaDocument::GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap) {
-    return 0;
-}
-
-
-
-signed int YodaDocument::ZoneWithIDHasItem(__int16 zone_id, __int16 a3, int a4)
-{
-    Message("YodaDocument::ZoneWithIDHasItem(%d, %d, %d)\n", zone_id, a3, a4);
-    Zone *zone = getZoneByID(zone_id);
-    if ( !zone ) return 0;
-    
-    vector<uint16> &itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
-    for(uint16 itemID : itemIDs)
-        if(itemID == a3) return 1;
-    
-    for(Hotspot *hotspot : zone->_hotspots) {
-        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
-            int result = ZoneWithIDHasItem(hotspot->arg1, a3, a4);
-            if(result) return result;
-        }
-    }
-    
-    return 0;
-}
-
 
 signed int YodaDocument::ChooseItemIDFromZone_0(__int16 zone_id, int itemID)
 {
@@ -614,71 +777,6 @@ signed int YodaDocument::ChooseItemIDFromZone_1(__int16 zoneID, int a3, int a4, 
     return 0;
 }
 
-signed int YodaDocument::ChoosePuzzleNPCForZone(__int16 zone_id)
-{
-    Message("YodaDocument::ChoosePuzzleNPCForZone(%d)\n", zone_id);
-    Zone *zone = getZoneByID(zone_id);
-    if (!zone) return -1;
-    
-    vector<uint16> npcCandidates;
-    for(int16 npcTileID : zone->puzzleNPCTileIDs)
-        if(!HasQuestRequiringItem(npcTileID))
-            npcCandidates.push_back(npcTileID);
-    
-    if(npcCandidates.size()) {
-        int idx = win_rand() % npcCandidates.size();
-        return npcCandidates[idx];
-    }
-    
-    for(Hotspot *hotspot : zone->_hotspots) {
-        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
-            int result = ChoosePuzzleNPCForZone(hotspot->arg1);
-            if(result >= 0) return result;
-        }
-    }
-    
-    return -1;
-}
-
-signed int YodaDocument::ChooseSpawnForPuzzleNPC(int16 zoneID, int itemID)
-{
-    Message("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", zoneID, itemID);
-    Zone *zone = getZoneByID(zoneID);
-    if ( !zone ) return -1;
-    
-    vector<Hotspot*> hotspotCandidates;
-    for(uint16 npcTileID : zone->puzzleNPCTileIDs) {
-        if(npcTileID != itemID) continue;
-        
-        hotspotCandidates.clear();
-        for(Hotspot *hotspot : zone->_hotspots) {
-            if(hotspot->type == SpawnLocation ) {
-                hotspotCandidates.push_back(hotspot);
-            }
-        }
-        
-        if(hotspotCandidates.size()) {
-            int idx = win_rand() % hotspotCandidates.size();
-            Hotspot *hotspot = hotspotCandidates[idx];
-            
-            hotspot->arg1 = itemID;
-            hotspot->enabled = 1;
-            this->field_3390 = itemID;
-            
-            return itemID;
-        }
-    }
-    
-    for(Hotspot *hotspot : zone->_hotspots) {
-        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
-            int result = ChooseSpawnForPuzzleNPC(hotspot->arg1, itemID);
-            if(result >= 0) return result;
-        }
-    }
-    
-    return -1;
-}
-
 signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int16 item_id_1, __int16 a5)
 {
     Message("YodaDocument::use_ids_from_array_1(%d, %d, %d, %d)\n", zone_id, a3, item_id_1, a5);
@@ -725,19 +823,19 @@ signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int
     item_id = -1;
     a3a = v12->item_1;
     if ( v10 >= 0 ) item_id = v13->item_1;
-    v15 = ChoosePuzzleNPCForZone(zone_id);
+    v15 = findUnusedNPCForZone(zone_id);
     if ( v15 < 0 ) return 0;
     
     int v19 = 1;
-    int a3_2a = ZoneWithIDHasItem(zone_id, a3a, 0);
+    int a3_2a = ZoneHasItem(zone_id, a3a, 0);
     if ( item_id >= 0 )
-        v19 = ZoneLeadsToItem(zone_id, item_id);
+        v19 = ZoneHasProvidedItem(zone_id, item_id);
     
     if ( !a3_2a || !v19 ) return 0;
     
     if ( ChooseSpawnForPuzzleNPC(zone_id, v15) < 0 ) return 0;
     
-    this->field_3390 = v15;
+    this->wg_npc_id = v15;
     this->wg_last_added_item_id = item_id;
     this->wg_item_id = a3a;
     this->field_3394 = a3;
@@ -746,30 +844,6 @@ signed int YodaDocument::use_ids_from_array_1(__int16 zone_id, __int16 a3, __int
     addRequiredItemsFromHotspots(zone_id);
     
     return 1;
-}
-
-signed int YodaDocument::ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unknown)
-{
-    Message("YodaDocument::ChoosePuzzleNPCForZone_0(%d, %d)\n", zone_id, unknown);
-    
-    Zone *zone = getZoneByID(zone_id);
-    if (!zone ) return 0;
-    
-    if ( unknown == -1 )
-        return zone->puzzleNPCTileIDs.size() != 0;
-    
-    for(uint16 npcID : zone->puzzleNPCTileIDs) {
-        if(npcID == unknown) return 1;
-    }
-    
-    for(Hotspot *hotspot : zone->_hotspots) {
-        if (hotspot->type == DoorIn && hotspot->arg1 >= 0) {
-            int result = ChoosePuzzleNPCForZone_0(hotspot->arg1, unknown);
-            if(result) return result;
-        }
-    }
-    
-    return 0;
 }
 
 int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int unknown, int a6)
@@ -801,22 +875,22 @@ int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int
     Puzzle *puzzle2 = puzzles[this->puzzle_ids_2[a4]];
     
     puzzle1->unknown_3 = 0;
-    v14 = ChoosePuzzleNPCForZone(zone_id);
+    v14 = findUnusedNPCForZone(zone_id);
     v15 = v14;
     if ( v14 >= 0 )
-        puzzle1->unknown_3 = ChoosePuzzleNPCForZone_0(zone_id, v14);
+        puzzle1->unknown_3 = hasPuzzleNPC(zone_id, v14);
     
-    v16 = ZoneWithIDHasItem(zone_id, puzzle1->item_1, 0);
-    ZoneWithIDHasItem(zone_id, puzzle2->item_1, 1);
-    v23 = ZoneLeadsToItem(zone_id, puzzle3->item_1);
-    ZoneLeadsToItem(zone_id, puzzle3->item_2);
+    v16 = ZoneHasItem(zone_id, puzzle1->item_1, 0);
+    ZoneHasItem(zone_id, puzzle2->item_1, 1);
+    v23 = ZoneHasProvidedItem(zone_id, puzzle3->item_1);
+    ZoneHasProvidedItem(zone_id, puzzle3->item_2);
     if ( !v16 || !v23 )
         return 0;
     
     if ( puzzle1->unknown_3 ) {
         addRequiredItemsFromHotspots(zone_id);
         
-        this->field_3390 = v15;
+        this->wg_npc_id = v15;
         this->wg_last_added_item_id = item;
         this->wg_item_id_unknown_2 = puzzle1->item_1;
         this->wg_item_id = puzzle1->item_1;
@@ -846,7 +920,7 @@ int YodaDocument::Unknown_7(__int16 zone_id, __int16 puzzle_idx, __int16 a4, int
             RemoveQuestRequiringItem(puzzle1->item_1);
             result = 0;
         } else {
-            this->field_3390 = -1;
+            this->wg_npc_id = -1;
             this->wg_last_added_item_id = puzzle3->item_1;
             this->wg_item_id = puzzle1->item_1;
             this->field_3394 = puzzle_idx;
@@ -1170,9 +1244,9 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
             case ZONETYPE_Goal:
                 if ( zone_1->getType() != ZONETYPE_Goal )
                     continue;
-                if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 )
+                if ( ZoneHasProvidedItem(zone_id, item_id_1) != 1 )
                     continue;
-                if ( ZoneLeadsToItem(zone_id, item_id_2) != 1 )
+                if ( ZoneHasProvidedItem(zone_id, item_id_2) != 1 )
                     continue;
                 
                 item_id[0] = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
@@ -1208,7 +1282,7 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
                 return zone_id;
             case ZONETYPE_Trade:
                 if ( zone_1->getType() != 15 ) continue;
-                if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 ) continue;
+                if ( ZoneHasProvidedItem(zone_id, item_id_1) != 1 ) continue;
                 v38 = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
                 if ( v38 < 0 ) continue;
                 v25 = GetNewPuzzleId(v38, item_id_1, ZONETYPE_Trade, !a3);
@@ -1227,7 +1301,7 @@ int16 YodaDocument::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item
             {
                 if ( zone_1->getType() != 16 )
                     continue;
-                if ( ZoneLeadsToItem(zone_id, item_id_1) != 1 )
+                if ( ZoneHasProvidedItem(zone_id, item_id_1) != 1 )
                     continue;
                 int16 puzzleID1 = GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
                 if ( puzzleID1 < 0 ) continue;
@@ -1586,82 +1660,6 @@ int YodaDocument::place_puzzles__(int maxDistance, int16 *world, int* xref, int*
     pointsCloseToPuzzles.clear();
     
     return array != NULL;
-}
-
-void YodaDocument::GetTileProvidedByZonesHotspots(int16 zone_id)
-{
-    /*
-     vector<Zone*> *tile_id; // eax@1
-     Zone *zone; // edi@2
-     int v4; // ebp@3
-     int index; // esi@4
-     Hotspot *hotspot; // ebx@5
-     int x; // [sp-10h] [bp-20h]@9
-     int y; // [sp-Ch] [bp-1Ch]@9
-     __int16 tile_id_1; // [sp-4h] [bp-14h]@9
-     
-     if ( zone_id >= 0 )
-     {
-     tile_id = &this->zones;
-     zone = (*tile_id)[zone_id];
-     if ( zone )
-     {
-     v4 = (int)zone->_hotspots.size();
-     if ( v4 > 0 )
-     {
-     index = 0;
-     do
-     {
-     hotspot = zone->_hotspots[index];
-     tile_id = 0;
-     switch ( hotspot->type )
-     {
-     case TriggerLocation:
-     case SpawnLocation:
-     case ForceLocation:
-     case LocatorThingy:
-     case CrateItem:
-     case PuzzleNPC:
-     case CrateWeapon:
-     if ( hotspot->enabled == 1 && hotspot->arg1 >= 0 )
-     {
-     int id = zone->GetTileIdAt(zone, hotspot->x, hotspot->y, OBJECTS);
-     if ( id < 0 )
-     {
-     tile_id_1 = hotspot->arg1;
-     y = hotspot->y;
-     x = hotspot->x;
-     goto get_tile;
-     }
-     }
-     break;
-     case Unused:
-     if ( hotspot->enabled == 1 )
-     {
-     hotspot->arg1 = ADEGAN_CRYSTAL;
-     int tile_id = zone->GetTileIdAt(hotspot->x, hotspot->y, OBJECTS);
-     if ( tile_id < 0 )
-     {
-     tile_id_1 = ADEGAN_CRYSTAL;
-     y = hotspot->y;
-     x = hotspot->x;
-     get_tile:
-     tile_id = zone->SetTileAt(zone, x, y, 1, tile_id_1);
-     }
-     }
-     break;
-     default:
-     break;
-     }
-     ++index;
-     --v4;
-     }
-     while ( v4 );
-     }
-     }
-     }
-     //        return (unsigned int)tile_id;
-     */
 }
 
 int YodaDocument::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID)

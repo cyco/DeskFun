@@ -30,7 +30,9 @@ public:
     WorldSize size;
     uint16 seed;
     
-    int field_68, field_3390, wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, goal_puzzle_id_again, goal_tile_id_1, goal_tile_id_2, wg_zone_type;
+    int field_68;
+    int wg_npc_id; // originally field_3390
+    int wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, goal_puzzle_id_again, goal_tile_id_1, goal_tile_id_2, wg_zone_type;
     vector<int> some_array;
     
     vector<WorldThing> world_things;
@@ -80,8 +82,8 @@ public:
     int HasQuestRequiringItem(uint16 itemID);
     int getLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut);
     void addRequiredItemsFromHotspots(uint16 zoneID);
-    int ZoneLeadsToItem(uint16 zoneID, uint16 itemID);
-    int GetItemIDThatsNotRequiredYet(__int16 zone_id, int unused, int use_array_2_ids);
+    bool ZoneHasProvidedItem(uint16 zoneID, uint16 itemID);
+    int GetItemIDThatsNotRequiredYet(uint16 zone_id, int unused, bool use_array_2_ids);
     signed int GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap);
     int SetupRequiredItemForZone_(__int16 zone_id, __int16 arg2, int use_required_items_array);
     signed int RequiredItemForZoneWasNotPlaced(const uint16 zone_id);
@@ -91,11 +93,11 @@ public:
     signed int ChooseItemIDFromZone(uint16 zoneID, uint16 itemID, int a4);
     signed int ChooseItemIDFromZone_0(__int16 zone_id, int item_id);
     signed int ChooseItemIDFromZone_1(__int16 a2, int a3, int a4, __int16 a5, int a6);
-    signed int ZoneWithIDHasItem(__int16 zone_id, __int16 a3, int a4);
+    bool ZoneHasItem(uint16 zone_id, uint16 itemID, int a4);
     signed int use_ids_from_array_1(__int16 zone_id, __int16 a3, __int16 item_id_1, __int16 a5);
     signed int ChooseSpawnForPuzzleNPC(__int16 a2, int a3);
-    signed int ChoosePuzzleNPCForZone(__int16 zone_id);
-    signed int ChoosePuzzleNPCForZone_0(__int16 zone_id, __int16 unknown);
+    int16 findUnusedNPCForZone(uint16 zone_id);
+    bool hasPuzzleNPC(uint16 zoneID, int16 targetNPCID);
     signed int Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8);
     
     void RemoveEmptyZoneIdsFromWorld();
