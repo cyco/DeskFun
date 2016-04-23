@@ -8,7 +8,7 @@
 
 #include "win_rand.h"
 
-static unsigned long current_rand = 0;
+__thread static unsigned long current_rand = 0;
 void win_srand(int seed) {
     current_rand = seed;
 }
