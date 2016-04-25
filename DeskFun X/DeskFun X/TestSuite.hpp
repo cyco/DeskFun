@@ -21,11 +21,13 @@ public:
     int runTests();
     int runMapTests();
     int runWorldTests();
+    int runCompleteTets();
     
 private:
     
     dispatch_queue_t queue;
     int testMap(uint16 seed, WorldSize size, uint16 *expected_map, int16 *expected_puzzles);
     int testWorld(uint16 seed, WorldSize size, uint32 *expected_result);
+    int testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uint16* sample);
 };
 #endif /* TestSuite_hpp */

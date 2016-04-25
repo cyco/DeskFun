@@ -61,6 +61,7 @@ public:
     int puzzles_can_be_reused;
     
     YodaDocument(const char* path);
+    ~YodaDocument();
     GameDataParser *parser;
     
     int16 GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
@@ -102,7 +103,7 @@ public:
     
     void RemoveEmptyZoneIdsFromWorld();
     int Unknown_5(int16* unknown);
-    int place_puzzles__(int maxDistance, int16* world, int* xref, int* yref);
+    bool findPlaceToPutPuzzle(int maxDistance, int16* world, int* xref, int* yref);
     void GetTileProvidedByZonesHotspots(int16 zone_id);
     int Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID);
     void WritePlanetValues();

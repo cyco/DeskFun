@@ -193,7 +193,7 @@ static int logging;
     doc->logging = logging;
     
     WorldGenerator generator(doc);
-    generator.generateWorld(seed, (WorldSize)size);
+    generator.generateWorld(seed, (WorldSize)size, HOTH);
     Message("Generate New World (calc)\n");
     
     uint16 puzzles[100];

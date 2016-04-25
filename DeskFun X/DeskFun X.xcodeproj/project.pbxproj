@@ -31,6 +31,7 @@
 		835E17A91B1B9CF0004A981E /* Desktop_Adventure_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 835E17A81B1B9CF0004A981E /* Desktop_Adventure_Tests.m */; };
 		835E17B01B1B9D2F004A981E /* DirectionTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 835E17AF1B1B9D2F004A981E /* DirectionTest.mm */; };
 		835E17B41B1BB7A1004A981E /* CocoaInputManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 835E17B21B1BB7A1004A981E /* CocoaInputManager.mm */; };
+		835EAA121CCE7C1900228113 /* full_samples.c in Sources */ = {isa = PBXBuildFile; fileRef = 835EAA101CCE7C1900228113 /* full_samples.c */; };
 		83645C091CB106FE00845F16 /* MapGeneration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83645C071CB106FE00845F16 /* MapGeneration.mm */; };
 		83645C0A1CB106FE00845F16 /* MapGeneration.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83645C081CB106FE00845F16 /* MapGeneration.xib */; };
 		83645C0D1CB1096400845F16 /* MapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83645C0C1CB1096400845F16 /* MapView.mm */; };
@@ -193,6 +194,8 @@
 		835E17AF1B1B9D2F004A981E /* DirectionTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DirectionTest.mm; sourceTree = "<group>"; };
 		835E17B21B1BB7A1004A981E /* CocoaInputManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaInputManager.mm; sourceTree = "<group>"; };
 		835E17B31B1BB7A1004A981E /* CocoaInputManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CocoaInputManager.hpp; sourceTree = "<group>"; };
+		835EAA101CCE7C1900228113 /* full_samples.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = full_samples.c; sourceTree = "<group>"; };
+		835EAA111CCE7C1900228113 /* full_samples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = full_samples.h; sourceTree = "<group>"; };
 		83645C061CB106FE00845F16 /* MapGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapGeneration.h; sourceTree = "<group>"; };
 		83645C071CB106FE00845F16 /* MapGeneration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MapGeneration.mm; sourceTree = "<group>"; };
 		83645C081CB106FE00845F16 /* MapGeneration.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapGeneration.xib; sourceTree = "<group>"; };
@@ -424,6 +427,8 @@
 				83645C1F1CB120E700845F16 /* win_rand.c */,
 				83645C201CB120E700845F16 /* win_rand.h */,
 				839B06BD1CC96E0C00C28C1E /* samples.c */,
+				835EAA101CCE7C1900228113 /* full_samples.c */,
+				835EAA111CCE7C1900228113 /* full_samples.h */,
 			);
 			name = Generation;
 			sourceTree = "<group>";
@@ -454,6 +459,11 @@
 		8374EA9D1B35ACD000B90F60 /* Frameworks & Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				83DC42561CC9740C0070A401 /* QuartzCore.framework */,
+				83DC42541CC973FC0070A401 /* AppKit.framework */,
+				83DC42521CC973F80070A401 /* Cocoa.framework */,
+				83DC42501CC973EC0070A401 /* CoreGraphics.framework */,
+				83DC424E1CC973E60070A401 /* OpenGL.framework */,
 				83C46B061B35CF4100E73B02 /* DeskFun Engine.xcodeproj */,
 				8374EAA11B35AD3C00B90F60 /* DeskFunUI.framework */,
 				8374EAA41B35AD5600B90F60 /* DeskFunUI.xcodeproj */,
@@ -507,11 +517,6 @@
 		83D4A52E19EC436800AA73A0 = {
 			isa = PBXGroup;
 			children = (
-				83DC42561CC9740C0070A401 /* QuartzCore.framework */,
-				83DC42541CC973FC0070A401 /* AppKit.framework */,
-				83DC42521CC973F80070A401 /* Cocoa.framework */,
-				83DC42501CC973EC0070A401 /* CoreGraphics.framework */,
-				83DC424E1CC973E60070A401 /* OpenGL.framework */,
 				83D4A53919EC436800AA73A0 /* DeskFun X */,
 				835E17A51B1B9CF0004A981E /* DeskFun X Tests */,
 				83D4A53819EC436800AA73A0 /* Products */,
@@ -819,6 +824,7 @@
 				83E3172119F013A0000476AB /* TileView.mm in Sources */,
 				83B762851CB4390400225FB3 /* Quest.cpp in Sources */,
 				8332CCF919F07EBA00D153D9 /* SoundsController.mm in Sources */,
+				835EAA121CCE7C1900228113 /* full_samples.c in Sources */,
 				837D7E961B0482C40006BB19 /* TileLayer.mm in Sources */,
 				8365D04D1AC86DC90031E23E /* PuzzleWindowController.mm in Sources */,
 				83645C0D1CB1096400845F16 /* MapView.mm in Sources */,
