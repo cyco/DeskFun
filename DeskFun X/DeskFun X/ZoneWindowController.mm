@@ -74,7 +74,7 @@
     NSInteger row = [[self tableView] selectedRow];
     if(row == -1 || currentZone == NULL) return;
 
-    currentZone->_actions.insert(currentZone->_actions.begin()+row, Action());
+    currentZone->_actions.insert(currentZone->_actions.begin()+row, new Action());
     [[self actionsView] reloadData];
     [[self itemsTableView1] reloadData];
     [[self itemsTableView2] reloadData];
@@ -196,7 +196,7 @@
 
     if(currentZone)
     {
-        Action *currentAction = &currentZone->_actions.at(selectedAction);
+        Action *currentAction = currentZone->_actions.at(selectedAction);
         [[self actionController] setAction:currentAction];
     }
 }
@@ -358,10 +358,10 @@
         NSTableCellView *cellView = [tableView makeViewWithIdentifier:@"action_cell" owner:self];
         NSTextField *label = [[cellView subviews] objectAtIndex:0];
 
-        Action action = currentZone->_actions[row];
+        Action *action = currentZone->_actions[row];
         NSString *actionName = nil;
-        if(action.getName().length())
-            actionName = [NSString stringWithFormat:@"%s", action.getName().c_str()];
+        if(action->getName().length())
+            actionName = [NSString stringWithFormat:@"%s", action->getName().c_str()];
         else
             actionName = [NSString stringWithFormat:@"Action %ld", row];
 

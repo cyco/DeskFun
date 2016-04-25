@@ -108,7 +108,7 @@ private:
     uint32_t auxiliaryDataLengths[4];
     char *auxiliaryData[4];
 public:
-    vector<Action> _actions;
+    vector<Action*> _actions;
     Tile **_tile_ptrs;
     std::vector<Hotspot*> _hotspots;
     bool _visited;

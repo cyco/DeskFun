@@ -31,7 +31,7 @@ void Action::ReadFromFile(FILE *file, range range, vector<Zone*> zones)
         fread(&number_of_actions, sizeof(uint16_t), 1, file);
         for(int i=0; i < number_of_actions; i++) {
             Zone *zone = zones[zoneIdx];
-            zone->_actions.push_back(Action(file, zone, i));
+            zone->_actions.push_back(new Action(file, zone, i));
         }
     }
 }
@@ -86,6 +86,16 @@ Action::Action(FILE *file, Zone* zone, unsigned actionIdx)
     }
 }
 
+Action::~Action() {
+    // _clearInstructions();
+    for(Instruction i: conditions)
+        if(i.additionalData) free(i.additionalData);
+    conditions.clear();
+    
+    for(Instruction i : instructions)
+        if(i.additionalData) free(i.additionalData);
+    instructions.clear();
+}
 #include "ActionIndySizes.cpp"
 
 void Action::ReadNamesFromFile(FILE *file, range range, vector<Zone*> zones)
@@ -102,9 +112,9 @@ void Action::ReadNamesFromFile(FILE *file, range range, vector<Zone*> zones)
             if(actionID >= z->_actions.size())
             {
                 printf("Should not need to create additional actions when reading name %hu of zone #%hu\n", actionID, zoneID);
-                z->_actions.push_back(Action());
+                z->_actions.push_back(new Action());
             }
-            zones[zoneID]->_actions[actionID].readName(file);
+            zones[zoneID]->_actions[actionID]->readName(file);
         }
     }
 }
@@ -115,10 +125,6 @@ Action::Action()
     _isAtEnd = false;
 }
 
-Action::~Action()
-{
-    // _clearInstructions();
-}
 #pragma mark -
 size_t Action::write(char *buffer)
 {

@@ -21,7 +21,7 @@ private:
 public:
     WorldGenerator(YodaDocument *document);
     bool generateRandomWorld(WorldSize size);
-    bool generateWorld(uint16 seed, WorldSize size);
+    bool generateWorld(uint16 seed, WorldSize size, Planet planet);
     
 private:
     int doLoop0(YodaDocument *doc, const int puzzle_count, const int puzzles2_count, const uint16* puzzles);

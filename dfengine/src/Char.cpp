@@ -90,6 +90,7 @@ Char::Char(FILE *f)
     this->frames[2] = frames[2];
 
     delete [] name;
+    delete frames;
 }
 
 Char::~Char(){

@@ -94,6 +94,8 @@ Zone::Zone(FILE* file)
     for(int i=0; i < tileSize; i++)
         _tile_ptrs[i] = context->getTile(tileIDs[i]);
 
+    delete [] tileIDs;
+
     _size.width  = zoneWidth;
     _size.height = zoneHeight;
     _type   = (Type)type;
@@ -110,6 +112,17 @@ Zone::Zone(FILE* file)
 
 Zone::~Zone()
 {
+    delete [] _tile_ptrs;
+    for(Hotspot *hotspot : _hotspots) {
+        delete hotspot;
+    }
+    _hotspots.clear();
+    
+    
+    for(Action *action : _actions) {
+        delete action;
+    }
+    _actions.clear();
 }
 #pragma mark - Deserialization
 void Zone::_readHotspots(FILE *file)
@@ -272,7 +285,7 @@ void Zone::_readActions(FILE *file)
     fread(&iact_count, sizeof(iact_count), 1, file);
 
     for(int j=0; j < iact_count; j++) {
-        _actions.push_back(Action(file, this, j));
+        _actions.push_back(new Action(file, this, j));
     }
 }
 
@@ -408,7 +421,7 @@ size_t Zone::_writeActions(char *buffer)
     bytesWritten += sizeof(uint16_t);
 
     for(int i=0; i < _actions.size(); i++)
-        bytesWritten += _actions[i].write(buffer ? buffer+bytesWritten : NULL);
+        bytesWritten += _actions[i]->write(buffer ? buffer+bytesWritten : NULL);
 
     return bytesWritten;
 }

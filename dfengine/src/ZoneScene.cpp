@@ -50,7 +50,7 @@ bool ZoneScene::update(double delta)
         bool handleInput = true;
         for(int i=0; i < _zone->_actions.size(); i++)
         {
-            handleInput &= executeAction(&_zone->_actions[i]);
+            handleInput &= executeAction(_zone->_actions[i]);
             if(_action) break;
         }
 

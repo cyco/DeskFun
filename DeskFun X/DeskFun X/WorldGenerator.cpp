@@ -15,12 +15,11 @@ WorldGenerator::WorldGenerator(YodaDocument *document) {
 }
 
 bool WorldGenerator::generateRandomWorld(WorldSize size) {
-    return this->generateWorld(win_rand(), size);
+    return this->generateWorld(win_rand(), size, HOTH);
 }
 
-bool WorldGenerator::generateWorld(uint16 seed, WorldSize size) {
-    
-    doc->planet = HOTH;
+bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
+    doc->planet = planet;
     doc->seed = seed;
     doc->size = (WorldSize)size;
     
@@ -54,6 +53,7 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size) {
     }
     
     if(goalID < 0) {
+        delete mapGenerator;
         return 0;
     }
     
@@ -75,21 +75,29 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size) {
     doc->goal_tile_id_2 = goalPuzzle->item_2;
     
     // TODO: add goal puzzle to planet puzzle ids
-    if(!placeTransport(doc, mapGenerator->map)) return 0;
+    if(!placeTransport(doc, mapGenerator->map)) {
+        delete mapGenerator;
+        return 0;
+    }
     
     if(!doLoop0(doc, puzzle_count, puzzles2_count, (uint16*)mapGenerator->puzzles)) return 0;
     
     Message("After Loop 1\n");
     Message("After Loop 1\n");
-    if(!loop1(doc, puzzles2_count-1, (uint16*)mapGenerator->puzzles, puzzles1_count - 1, puzzles1_count))
+    if(!loop1(doc, puzzles2_count-1, (uint16*)mapGenerator->puzzles, puzzles1_count - 1, puzzles1_count)){
+        delete mapGenerator;
         return 0;
+    }
     
     Message("After Loop 2\n");
-    if(!loop2(doc, mapGenerator->map))
+    if(!loop2(doc, mapGenerator->map)){
+        delete mapGenerator;
         return 0;
+    }
     
     Message("After Loop 3\n");
     if(!doc->Unknown_5((int16*)mapGenerator->map)) {
+        delete mapGenerator;
         return doCleanup(doc);
     }
     
@@ -110,6 +118,7 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size) {
      */
     Message("End Generate New World\n");
     
+    delete mapGenerator;
     return 0;
 }
 

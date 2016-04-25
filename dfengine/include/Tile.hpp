@@ -35,7 +35,6 @@ public:
     uint32_t _specs;
     uint8_t* _data;
 
-
 public:
     static const char NAMES_CATEGORY[];
     const static int HEIGHT = 32;

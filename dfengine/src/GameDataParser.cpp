@@ -64,6 +64,33 @@ GameDataParser::GameDataParser(const char *path)
 
 GameDataParser::~GameDataParser()
 {
+    for(Char *chara : _chars) {
+        delete chara;
+    }
+    _chars.clear();
+    
+    for(Sound *sound : _sounds) {
+        delete sound;
+    }
+    _sounds.clear();
+    
+    for(Puzzle *puzzle : _puzzles) {
+        delete puzzle;
+    }
+    _puzzles.clear();
+    for(Zone *zone : _zones) {
+        delete zone;
+    }
+    _zones.clear();
+    
+    for(Tile *tile : _tiles) {
+        delete tile;
+    }
+    _tiles.clear();
+    
+    free(_loadingImage);
+    _loadingImage = NULL;
+    
     fclose(_file);
 }
 
@@ -578,7 +605,7 @@ size_t GameDataParser::_getActionNameData(char *outBuffer)
                 uint16_t_pack(wb, j); wb += sizeof(uint16_t);
 
                 memset(wb, 0, 0x10); // clear memory
-                sprintf(wb, "%s", zone->_actions.at(j).getName().c_str()); wb += 0x10;
+                sprintf(wb, "%s", zone->_actions.at(j)->getName().c_str()); wb += 0x10;
             }
             uint16_t_pack(wb, 0xFFFF); wb += sizeof(uint16_t);
         }

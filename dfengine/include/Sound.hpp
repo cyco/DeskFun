@@ -22,6 +22,7 @@ class Sound
 
 public: // Serialization
     Sound(FILE* file);
+    ~Sound();
     size_t write(char* buffer);
 protected:
     string fileName;

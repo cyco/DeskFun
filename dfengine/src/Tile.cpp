@@ -82,6 +82,7 @@ void Tile::readName(FILE *f)
     name[entryLength] = '\0';
 
     this->name = string(name);
+    delete [] name;
 }
 
 size_t Tile::writeName(void* buffer)

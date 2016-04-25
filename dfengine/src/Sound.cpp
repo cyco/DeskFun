@@ -20,6 +20,8 @@ Sound::Sound(FILE* file)
     this->fileName = string(fileName);
 }
 
+Sound::~Sound() {}
+
 size_t Sound::write(char* buffer)
 {
     const uint16_t length = fileName.length() + 1;

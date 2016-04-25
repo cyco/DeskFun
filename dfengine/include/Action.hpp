@@ -181,6 +181,7 @@ public:
     static void ReadNamesFromFile(FILE *file, range range, vector<Zone*> zones);
 
     Action(FILE *file, Zone* z, unsigned actionIndex);
+    ~Action();
     static uint32_t GetIndyActionSize(unsigned int zoneIdx, unsigned int actionIdx);
 
     void readName(FILE *file);
@@ -204,7 +205,6 @@ private:
 
 public:
     Action();
-    ~Action();
 
     vector<Instruction> conditions;
     vector<Instruction> instructions;
