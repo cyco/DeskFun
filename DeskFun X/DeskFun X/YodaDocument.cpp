@@ -875,7 +875,6 @@ signed int YodaDocument::use_ids_from_array_1(int16 zone_id, int16 a3, int16 ite
     Puzzle *v12 = NULL; // ecx@19
     Puzzle *v13 = NULL; // eax@22
     int16 item_id = 0; // bp@25
-    signed int v15 = 0; // ebx@27
     int16 a3a = 0; // [sp+12h] [bp-Ah]@25
     Puzzle *a3_2 = NULL; // [sp+14h] [bp-8h]@0
     
@@ -911,8 +910,8 @@ signed int YodaDocument::use_ids_from_array_1(int16 zone_id, int16 a3, int16 ite
     item_id = -1;
     a3a = v12->item_1;
     if ( v10 >= 0 ) item_id = v13->item_1;
-    v15 = findUnusedNPCForZone(zone_id);
-    if ( v15 < 0 ) return 0;
+    int16 npcID = findUnusedNPCForZone(zone_id);
+    if ( npcID < 0 ) return 0;
     
     int v19 = 1;
     int a3_2a = ZoneHasItem(zone_id, a3a, 0);
@@ -921,14 +920,14 @@ signed int YodaDocument::use_ids_from_array_1(int16 zone_id, int16 a3, int16 ite
     
     if ( !a3_2a || !v19 ) return 0;
     
-    if ( ChooseSpawnForPuzzleNPC(zone_id, v15) < 0 ) return 0;
+    if ( ChooseSpawnForPuzzleNPC(zone_id, npcID) < 0 ) return 0;
     
-    this->wg_npc_id = v15;
+    this->wg_npc_id = npcID;
     this->wg_last_added_item_id = item_id;
     this->wg_item_id = a3a;
     this->field_3394 = a3;
     
-    AddRequiredQuestWithItemID(v15, item_id_1);
+    AddRequiredQuestWithItemID(npcID, item_id_1);
     addRequiredItemsFromHotspots(zone_id);
     
     return 1;

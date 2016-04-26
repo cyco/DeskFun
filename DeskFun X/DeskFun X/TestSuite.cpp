@@ -24,19 +24,19 @@
 #define xTestWorld(_seed_, _size_) do {} while(false);
 
 
-#define TestComplete(_seed_, _size_, _planet_) dispatch_async(queue, ^{ testCompleteWorld((uint16)_seed_, (WorldSize)_size_, (Planet)_planet_, (uint16*)complete_ ## _seed_ ## _0x ## _size_ ## _ ## _planet_); })
+#define TestComplete(_seed_, _size_, _planet_) dispatch_async(queue, ^{ testCompleteWorld((uint16)_seed_, (WorldSize)_planet_, (Planet)_size_, (uint16*)complete_ ## _seed_ ## _0x ## _size_ ## _ ## _planet_); })
 #define xTestComplete(_seed_, _size_, _planet_) do {} while(false);
 
 TestSuite::TestSuite(){
-    queue = dispatch_queue_create("tests", DISPATCH_QUEUE_CONCURRENT);
+    queue = dispatch_queue_create("tests", DISPATCH_QUEUE_SERIAL);
 }
 
 int TestSuite::runTests() {
     int success = 1;
     
     // success &= runMapTests();
-    success &= runWorldTests();
-    // success &= runCompleteTets();
+    // success &= runWorldTests();
+    success &= runCompleteTets();
     
     //*/
     /* VALID INVALIDS
@@ -47,11 +47,9 @@ int TestSuite::runTests() {
      [self testSample:world_things_568C_3 seed:0x568C size:WorldSize_LARGE];
      //*/
 
-    
     dispatch_barrier_sync(queue, ^{
         printf("all tests run\n");
     });
-    
     
     return success;
 }
@@ -206,26 +204,159 @@ int TestSuite::runWorldTests() {
 }
 
 int TestSuite::runCompleteTets() {
-    TestComplete(0x0000, 2, 1);
+    //*
     TestComplete(0x0001, 2, 1);
-    TestComplete(0x0002, 2, 1);
-    TestComplete(0x0003, 2, 1);
-    TestComplete(0x0004, 2, 1);
-    TestComplete(0x0005, 2, 1);
-    TestComplete(0x0006, 2, 1);
-    TestComplete(0x0007, 2, 1);
     TestComplete(0x0008, 2, 1);
     TestComplete(0x0009, 2, 1);
-    TestComplete(0x000a, 2, 1);
+    TestComplete(0x0065, 2, 1);
+    TestComplete(0x01e0, 2, 1);
+    TestComplete(0x0214, 2, 1);
+    TestComplete(0x01f7, 2, 1);
+    TestComplete(0x0469, 2, 1);
+    TestComplete(0x04d9, 2, 1);
+    TestComplete(0x0776, 2, 1);
+    TestComplete(0x077f, 2, 1);
+    TestComplete(0x07dc, 2, 1);
+    TestComplete(0x086e, 2, 1);
+    TestComplete(0x08c5, 2, 1);
+    TestComplete(0x09a7, 2, 1);
+    TestComplete(0x0c1e, 2, 1);
+    TestComplete(0x0cf6, 2, 1);
+    TestComplete(0x0ea5, 2, 1);
+    TestComplete(0x111a, 2, 1);
+    TestComplete(0x12c9, 2, 1);
+    TestComplete(0x1398, 2, 1);
+    TestComplete(0x18bb, 2, 1);
+    TestComplete(0x19aa, 2, 1);
+    TestComplete(0x1a60, 2, 1);
+    TestComplete(0x1ade, 2, 1);
+    TestComplete(0x1afe, 2, 1);
+    TestComplete(0x1b7b, 2, 1);
+    TestComplete(0x1c18, 2, 1);
+    TestComplete(0x1d61, 2, 1);
+    TestComplete(0x1d9a, 2, 1);
+    TestComplete(0x1ecc, 2, 1);
+    TestComplete(0x20d4, 2, 1);
+    TestComplete(0x22cb, 2, 1);
+    TestComplete(0x25ff, 2, 1);
+    TestComplete(0x278e, 2, 1);
     TestComplete(0x000b, 2, 1);
+    TestComplete(0x000a, 2, 1);
+    TestComplete(0x0000, 2, 1);
+    TestComplete(0x0006, 2, 1);
+    TestComplete(0x000c, 2, 1);
+    TestComplete(0x000d, 2, 1);
+    TestComplete(0x000f, 2, 1);
+    TestComplete(0x000e, 2, 1);
+    TestComplete(0x00ef, 2, 1);
+    TestComplete(0x0123, 2, 1);
+    TestComplete(0x0119, 2, 1);
+    TestComplete(0x01c9, 2, 1);
+    TestComplete(0x014c, 2, 1);
+    TestComplete(0x024e, 2, 1);
+    TestComplete(0x0270, 2, 1);
+    TestComplete(0x0266, 2, 1);
+    TestComplete(0x0321, 2, 1);
+    TestComplete(0x0426, 2, 1);
+    TestComplete(0x0363, 2, 1);
+    TestComplete(0x044e, 2, 1);
+    TestComplete(0x049f, 2, 1);
+    TestComplete(0x0522, 2, 1);
+    TestComplete(0x05b6, 2, 1);
+    TestComplete(0x0592, 2, 1);
+    TestComplete(0x0641, 2, 1);
+    TestComplete(0x06c5, 2, 1);
+    TestComplete(0x072b, 2, 1);
+    TestComplete(0x0747, 2, 1);
+    TestComplete(0x0828, 2, 1);
+    TestComplete(0x0769, 2, 1);
+    TestComplete(0x08c6, 2, 1);
+    TestComplete(0x08f0, 2, 1);
+    TestComplete(0x097c, 2, 1);
+    TestComplete(0x09dc, 2, 1);
+    TestComplete(0x0a5a, 2, 1);
+    TestComplete(0x0cc9, 2, 1);
+    TestComplete(0x0ded, 2, 1);
+    TestComplete(0x0df9, 2, 1);
+    TestComplete(0x10cc, 2, 1);
+    TestComplete(0x10ef, 2, 1);
+    TestComplete(0x1111, 2, 1);
+    TestComplete(0x1204, 2, 1);
+    TestComplete(0x13d9, 2, 1);
+    TestComplete(0x1266, 2, 1);
+    TestComplete(0x153b, 2, 1);
+    TestComplete(0x15af, 2, 1);
+    TestComplete(0x15ca, 2, 1);
+    TestComplete(0x15de, 2, 1);
+    TestComplete(0x15dd, 2, 1);
+    TestComplete(0x15e0, 2, 1);
+    TestComplete(0x15e8, 2, 1);
+    TestComplete(0x1727, 2, 1);
+    TestComplete(0x1750, 2, 1);
+    TestComplete(0x184e, 2, 1);
+    TestComplete(0x1864, 2, 1);
+    TestComplete(0x18a4, 2, 1);
+    TestComplete(0x18f4, 2, 1);
+    TestComplete(0x193f, 2, 1);
+    TestComplete(0x199a, 2, 1);
+    TestComplete(0x199d, 2, 1);
+    TestComplete(0x19d8, 2, 1);
+    TestComplete(0x1a19, 2, 1);
+    TestComplete(0x1a30, 2, 1);
+    TestComplete(0x1acb, 2, 1);
+    TestComplete(0x1b00, 2, 1);
+    TestComplete(0x1b5f, 2, 1);
+    TestComplete(0x1b99, 2, 1);
+    TestComplete(0x1bf4, 2, 1);
+    TestComplete(0x1c08, 2, 1);
+    TestComplete(0x1d67, 2, 1);
+    TestComplete(0x1dcd, 2, 1);
+    TestComplete(0x1df9, 2, 1);
+    TestComplete(0x1e79, 2, 1);
+    TestComplete(0x1f9a, 2, 1);
+    TestComplete(0x1ee9, 2, 1);
+    TestComplete(0x1f9c, 2, 1);
+    TestComplete(0x1fc7, 2, 1);
+    TestComplete(0x2062, 2, 1);
+    TestComplete(0x2097, 2, 1);
+    TestComplete(0x2139, 2, 1);
+    TestComplete(0x217f, 2, 1);
+    TestComplete(0x2222, 2, 1);
+    TestComplete(0x2224, 2, 1);
+    TestComplete(0x2250, 2, 1);
+    TestComplete(0x2297, 2, 1);
+    TestComplete(0x22d8, 2, 1);
+    TestComplete(0x237b, 2, 1);
+    TestComplete(0x23ac, 2, 1);
+    TestComplete(0x245f, 2, 1);
+    TestComplete(0x2595, 2, 1);
+    TestComplete(0x2623, 2, 1);
+    TestComplete(0x25aa, 2, 1);
+    TestComplete(0x2641, 2, 1);
+    TestComplete(0x2646, 2, 1);
+    TestComplete(0x26c1, 2, 1);
+    TestComplete(0x27c4, 2, 1);
+    TestComplete(0x000a, 2, 1);
+    TestComplete(0x0000, 2, 1);
+     xTestComplete(0x052b, 2, 1);
+     xTestComplete(0x055c, 2, 1);
+     xTestComplete(0x055d, 2, 1);
+     TestComplete(0x0592, 2, 1);
+     TestComplete(0x05b6, 2, 1);
+     TestComplete(0x0641, 2, 1);
+    TestComplete(0x27c4, 2, 1);
+    TestComplete(0x2641, 2, 1);
+    TestComplete(0x2646, 2, 1);
+    TestComplete(0x26c1, 2, 1);
+    TestComplete(0x2595, 2, 1);
+    TestComplete(0x25aa, 2, 1);
+    TestComplete(0x2623, 2, 1);
+    TestComplete(0x0006, 2, 1);
     TestComplete(0x000c, 2, 1);
     TestComplete(0x000d, 2, 1);
     TestComplete(0x000e, 2, 1);
     TestComplete(0x000f, 2, 1);
-    TestComplete(0x0026, 2, 1);
-    TestComplete(0x0065, 2, 1);
     xTestComplete(0x0077, 2, 1);
-    TestComplete(0x00c2, 2, 1);
     TestComplete(0x00ef, 2, 1);
     TestComplete(0x0119, 2, 1);
     TestComplete(0x0123, 2, 1);
@@ -234,36 +365,40 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x01a3, 2, 1);
     xTestComplete(0x01b3, 2, 1);
     TestComplete(0x01c9, 2, 1);
-    TestComplete(0x01e0, 2, 1);
-    TestComplete(0x01f7, 2, 1);
-    TestComplete(0x0214, 2, 1);
     TestComplete(0x024e, 2, 1);
     xTestComplete(0x024f, 2, 1);
     TestComplete(0x0266, 2, 1);
     TestComplete(0x0270, 2, 1);
-    TestComplete(0x0282, 2, 1);
     xTestComplete(0x02cf, 2, 1);
     TestComplete(0x0321, 2, 1);
-    TestComplete(0x0348, 2, 1);
     TestComplete(0x0363, 2, 1);
-    xTestComplete(0x036d, 2, 1);
-    xTestComplete(0x0378, 2, 1);
-    xTestComplete(0x03a5, 2, 1);
-    xTestComplete(0x03d0, 2, 1);
-    xTestComplete(0x0425, 2, 1);
     TestComplete(0x0426, 2, 1);
     TestComplete(0x044e, 2, 1);
-    TestComplete(0x0469, 2, 1);
-    TestComplete(0x0476, 2, 1);
     TestComplete(0x049f, 2, 1);
-    TestComplete(0x04d9, 2, 1);
     TestComplete(0x0522, 2, 1);
-    xTestComplete(0x052b, 2, 1);
-    xTestComplete(0x055c, 2, 1);
-    xTestComplete(0x055d, 2, 1);
-    TestComplete(0x0592, 2, 1);
-    TestComplete(0x05b6, 2, 1);
-    TestComplete(0x0641, 2, 1);
+    TestComplete(0x245f, 2, 1);
+    TestComplete(0x237b, 2, 1);
+    TestComplete(0x23ac, 2, 1);
+    TestComplete(0x2297, 2, 1);
+    TestComplete(0x22d8, 2, 1);
+    TestComplete(0x2250, 2, 1);
+    TestComplete(0x2222, 2, 1);
+    TestComplete(0x2224, 2, 1);
+    TestComplete(0x217f, 2, 1);
+    TestComplete(0x2139, 2, 1);
+    TestComplete(0x2062, 2, 1);
+    TestComplete(0x2097, 2, 1);
+    TestComplete(0x1fc7, 2, 1);
+    TestComplete(0x1f9a, 2, 1);
+    TestComplete(0x1f9c, 2, 1);
+    TestComplete(0x1e79, 2, 1);
+    TestComplete(0x1ee9, 2, 1);
+    TestComplete(0x1df9, 2, 1);
+    TestComplete(0x1dcd, 2, 1);
+    TestComplete(0x1d67, 2, 1);
+    TestComplete(0x1c08, 2, 1);
+   return 0;
+    TestComplete(0x0476, 2, 1);
     TestComplete(0x0691, 2, 1);
     TestComplete(0x06c5, 2, 1);
     xTestComplete(0x06d5, 2, 1);
@@ -273,21 +408,16 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x0736, 2, 1);
     TestComplete(0x0747, 2, 1);
     TestComplete(0x0769, 2, 1);
-    TestComplete(0x0776, 2, 1);
-    TestComplete(0x077f, 2, 1);
     xTestComplete(0x0794, 2, 1);
     xTestComplete(0x07cf, 2, 1);
-    TestComplete(0x07dc, 2, 1);
     TestComplete(0x07e4, 2, 1);
     xTestComplete(0x080c, 2, 1);
     TestComplete(0x0828, 2, 1);
     xTestComplete(0x0858, 2, 1);
-    TestComplete(0x086e, 2, 1);
     xTestComplete(0x087e, 2, 1);
     xTestComplete(0x0897, 2, 1);
     xTestComplete(0x08bc, 2, 1);
     xTestComplete(0x08c0, 2, 1);
-    TestComplete(0x08c5, 2, 1);
     TestComplete(0x08c6, 2, 1);
     TestComplete(0x08f0, 2, 1);
     xTestComplete(0x08FF, 2, 1);
@@ -295,7 +425,6 @@ int TestSuite::runCompleteTets() {
     TestComplete(0x097c, 2, 1);
     xTestComplete(0x0985, 2, 1);
     xTestComplete(0x098e, 2, 1);
-    TestComplete(0x09a7, 2, 1);
     xTestComplete(0x09b7, 2, 1);
     TestComplete(0x09bd, 2, 1);
     TestComplete(0x09dc, 2, 1);
@@ -314,7 +443,6 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x0bc1, 2, 1);
     xTestComplete(0x0bcb, 2, 1);
     xTestComplete(0x0bcf, 2, 1);
-    TestComplete(0x0c1e, 2, 1);
     xTestComplete(0x0c3b, 2, 1);
     xTestComplete(0x0c40, 2, 1);
     xTestComplete(0x0c50, 2, 1);
@@ -323,7 +451,6 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x0c86, 2, 1);
     TestComplete(0x0cc9, 2, 1);
     xTestComplete(0x0cd7, 2, 1);
-    TestComplete(0x0cf6, 2, 1);
     xTestComplete(0x0d0d, 2, 1);
     TestComplete(0x0d77, 2, 1);
     xTestComplete(0x0d78, 2, 1);
@@ -332,7 +459,6 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x0e33, 2, 1);
     TestComplete(0x0e72, 2, 1);
     xTestComplete(0x0e99, 2, 1);
-    TestComplete(0x0ea5, 2, 1);
     xTestComplete(0x0eef, 2, 1);
     xTestComplete(0x0ef3, 2, 1);
     xTestComplete(0x0f1c, 2, 1);
@@ -345,7 +471,6 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x10e9, 2, 1);
     TestComplete(0x10ef, 2, 1);
     TestComplete(0x1111, 2, 1);
-    TestComplete(0x111a, 2, 1);
     TestComplete(0x1142, 2, 1);
     xTestComplete(0x1157, 2, 1);
     xTestComplete(0x115c, 2, 1);
@@ -359,10 +484,8 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x124c, 2, 1);
     TestComplete(0x1266, 2, 1);
     xTestComplete(0x12c8, 2, 1);
-    TestComplete(0x12c9, 2, 1);
     xTestComplete(0x1323, 2, 1);
     xTestComplete(0x138e, 2, 1);
-    TestComplete(0x1398, 2, 1);
     xTestComplete(0x139c, 2, 1);
     xTestComplete(0x13b9, 2, 1);
     TestComplete(0x13d9, 2, 1);
@@ -396,93 +519,43 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x1876, 2, 1);
     xTestComplete(0x1881, 2, 1);
     TestComplete(0x18a4, 2, 1);
-    TestComplete(0x18bb, 2, 1);
     TestComplete(0x18f4, 2, 1);
     TestComplete(0x1924, 2, 1);
     TestComplete(0x193f, 2, 1);
     TestComplete(0x199a, 2, 1);
     TestComplete(0x199d, 2, 1);
-    TestComplete(0x19aa, 2, 1);
     TestComplete(0x19d8, 2, 1);
     TestComplete(0x1a19, 2, 1);
     TestComplete(0x1a30, 2, 1);
-    TestComplete(0x1a60, 2, 1);
     TestComplete(0x1a9b, 2, 1);
     TestComplete(0x1acb, 2, 1);
-    TestComplete(0x1ade, 2, 1);
-    TestComplete(0x1afe, 2, 1);
     TestComplete(0x1b00, 2, 1);
     TestComplete(0x1b21, 2, 1);
     TestComplete(0x1b5f, 2, 1);
-    TestComplete(0x1b7b, 2, 1);
     xTestComplete(0x1B8C, 2, 1);
     TestComplete(0x1b99, 2, 1);
     TestComplete(0x1bf4, 2, 1);
     TestComplete(0x1bf8, 2, 1);
-    TestComplete(0x1c08, 2, 1);
-    TestComplete(0x1c18, 2, 1);
     xTestComplete(0x1cad, 2, 1);
     xTestComplete(0x1cc1, 2, 1);
     xTestComplete(0x1ccb, 2, 1);
-    TestComplete(0x1d61, 2, 1);
-    TestComplete(0x1d67, 2, 1);
     xTestComplete(0x1d69, 2, 1);
-    TestComplete(0x1d9a, 2, 1);
-    TestComplete(0x1dcd, 2, 1);
     TestComplete(0x1dec, 2, 1);
-    TestComplete(0x1df9, 2, 1);
     xTestComplete(0x1e27, 2, 1);
     xTestComplete(0x1e29, 2, 1);
     TestComplete(0x1e77, 2, 1);
-    TestComplete(0x1e79, 2, 1);
-    TestComplete(0x1ecc, 2, 1);
-    TestComplete(0x1ee9, 2, 1);
     xTestComplete(0x1f05, 2, 1);
-    TestComplete(0x1f9a, 2, 1);
-    TestComplete(0x1f9c, 2, 1);
     xTestComplete(0x1fbe, 2, 1);
-    TestComplete(0x1fc7, 2, 1);
     xTestComplete(0x2028, 2, 1);
     TestComplete(0x2040, 2, 1);
     xTestComplete(0x2059, 2, 1);
-    TestComplete(0x2062, 2, 1);
-    TestComplete(0x2097, 2, 1);
     xTestComplete(0x20ad, 2, 1);
-    TestComplete(0x20d4, 2, 1);
     TestComplete(0x2122, 2, 1);
-    TestComplete(0x2139, 2, 1);
-    xTestComplete(0x213d, 2, 1);
-    xTestComplete(0x2144, 2, 1);
     TestComplete(0x217c, 2, 1);
-    TestComplete(0x217f, 2, 1);
-    xTestComplete(0x21d7, 2, 1);
-    xTestComplete(0x21e9, 2, 1);
-    xTestComplete(0x21fd, 2, 1);
-    xTestComplete(0x2219, 2, 1);
-    TestComplete(0x2222, 2, 1);
-    TestComplete(0x2224, 2, 1);
     TestComplete(0x222f, 2, 1);
-    TestComplete(0x2250, 2, 1);
     TestComplete(0x2275, 2, 1);
     TestComplete(0x2296, 2, 1);
-    TestComplete(0x2297, 2, 1);
-    TestComplete(0x22cb, 2, 1);
-    xTestComplete(0x22cf, 2, 1);
-    TestComplete(0x22d8, 2, 1);
-    xTestComplete(0x22db, 2, 1);
-    xTestComplete(0x22e1, 2, 1);
-    xTestComplete(0x22ec, 2, 1);
-    xTestComplete(0x22f1, 2, 1);
-    xTestComplete(0x2357, 2, 1);
-    TestComplete(0x237b, 2, 1);
-    xTestComplete(0x23a2, 2, 1);
-    TestComplete(0x23ac, 2, 1);
-    xTestComplete(0x23c2, 2, 1);
-    xTestComplete(0x23C6, 2, 1);
     TestComplete(0x241c, 2, 1);
-    xTestComplete(0x2451, 2, 1);
-    TestComplete(0x245f, 2, 1);
-    xTestComplete(0x2475, 2, 1);
     xTestComplete(0x2476, 2, 1);
     xTestComplete(0x24b1, 2, 1);
     xTestComplete(0x24f3, 2, 1);
@@ -493,14 +566,7 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x2574, 2, 1);
     xTestComplete(0x2585, 2, 1);
     xTestComplete(0x2589, 2, 1);
-    TestComplete(0x2595, 2, 1);
-    TestComplete(0x25aa, 2, 1);
     xTestComplete(0x25fd, 2, 1);
-    TestComplete(0x25ff, 2, 1);
-    TestComplete(0x2623, 2, 1);
-    TestComplete(0x2641, 2, 1);
-    TestComplete(0x2646, 2, 1);
-    TestComplete(0x26c1, 2, 1);
     xTestComplete(0x2708, 2, 1);
     TestComplete(0x270e, 2, 1);
     xTestComplete(0x2729, 2, 1);
@@ -509,9 +575,7 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x2780, 2, 1);
     xTestComplete(0x2781, 2, 1);
     xTestComplete(0x2786, 2, 1);
-    TestComplete(0x278e, 2, 1);
     xTestComplete(0x278f, 2, 1);
-    TestComplete(0x27c4, 2, 1);
     xTestComplete(0x2829, 2, 1);
     xTestComplete(0x2844, 2, 1);
     xTestComplete(0x285f, 2, 1);
@@ -524,6 +588,16 @@ int TestSuite::runCompleteTets() {
     xTestComplete(0x29d3, 2, 1);
     xTestComplete(0x29f3, 2, 1);
     xTestComplete(0x29fb, 2, 1);
+    TestComplete(0x0007, 2, 1);
+    TestComplete(0x0002, 2, 1);
+    TestComplete(0x0003, 2, 1);
+    TestComplete(0x0004, 2, 1);
+    TestComplete(0x0005, 2, 1);
+    TestComplete(0x0026, 2, 1);
+    TestComplete(0x00c2, 2, 1);
+    TestComplete(0x0282, 2, 1);
+    TestComplete(0x0348, 2, 1);
+    //*/
     /*
     TestComplete(0x2a30, 2, 1);
     TestComplete(0x2a43, 2, 1);
@@ -1248,6 +1322,28 @@ int TestSuite::runCompleteTets() {
      TestComplete(0xFB81, 2, 1);
      TestComplete(0xFB82, 2, 1);
      TestComplete(0xffff, 2, 1);
+     xTestComplete(0x036d, 2, 1);
+     xTestComplete(0x0378, 2, 1);
+     xTestComplete(0x03a5, 2, 1);
+     xTestComplete(0x03d0, 2, 1);
+     xTestComplete(0x0425, 2, 1);
+     xTestComplete(0x213d, 2, 1);
+     xTestComplete(0x2144, 2, 1);
+     xTestComplete(0x21d7, 2, 1);
+     xTestComplete(0x21e9, 2, 1);
+     xTestComplete(0x21fd, 2, 1);
+     xTestComplete(0x2219, 2, 1);
+     xTestComplete(0x22cf, 2, 1);
+     xTestComplete(0x22db, 2, 1);
+     xTestComplete(0x22e1, 2, 1);
+     xTestComplete(0x22ec, 2, 1);
+     xTestComplete(0x22f1, 2, 1);
+     xTestComplete(0x2357, 2, 1);
+     xTestComplete(0x23a2, 2, 1);
+     xTestComplete(0x23c2, 2, 1);
+     xTestComplete(0x23C6, 2, 1);
+     xTestComplete(0x2451, 2, 1);
+     xTestComplete(0x2475, 2, 1);
      */
     
     return 1;
@@ -1310,19 +1406,44 @@ int TestSuite::testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uin
     
     WorldGenerator generator(doc);
     generator.generateWorld(seed, (WorldSize)size, planet);
-    /*
+ 
+    
     for(int i=0; i < 100; i++) {
-        if(!(doc->world_things[i].zone_type == sample[i*4+0])
-           || !(doc->world_things[i].zone_id == sample[i*4+1])
-           || !(doc->world_things[i].findItemID == sample[i*4+2])
-           || !(doc->world_things[i].requiredItemID == sample[i*4+3])) {
+        if(
+           !(doc->world_things[i].zone_id == sample[i*10]) ||
+           !(doc->world_things[i].zone_type == sample[i*10+1]) ||
+           !(doc->world_things[i].findItemID == sample[i*10+6]) ||
+           !(doc->world_things[i].requiredItemID == sample[i*10+4]) ||
+           !(doc->world_things[i].unknown606 == sample[i*10+5]) ||
+           !(doc->world_things[i].unknown612 == sample[i*10+7])
+           ) {
             success = 0;
             break;
         }
     }
-    */
     
-    if(success) ; // printf("[OK] 0x%04x %s\n", seed, size == 1 ? "small" : (size == 2 ? "medium" : "large"));
+    if(!success) {
+        FILE *real = fopen("/Users/chris/Desktop/r.txt", "w+");
+        FILE *sam = fopen("/Users/chris/Desktop/s.txt", "w+");
+        
+        for(int y=0; y < 10; y++){
+            for(int x=0; x < 10; x++){
+                int idx = x + y * 10;
+                fprintf(sam, "%4d ", (int16)sample[idx*10+2]);
+                fprintf(real, "%4d ", (int16)doc->world_things[idx].unknown606);
+            }
+        
+            fprintf(real, "\n");
+            fprintf(sam, "\n");
+        }
+        
+        fclose(real);
+        fclose(sam);
+        
+        printf("\nFAIL\n");
+    }
+    
+    if(success) printf("[OK] 0x%04x %s\n", seed, size == 1 ? "small" : (size == 2 ? "medium" : "large"));
     else printf("[FAIL] 0x%04x %s\n", seed, size == 1 ? "small" : (size == 2 ? "medium" : "large"));
     
     delete doc;

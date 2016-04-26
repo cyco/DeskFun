@@ -405,10 +405,9 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                     doc->world_things[idx_5].findItemID = doc->wg_last_added_item_id;
                     doc->world_things[idx_5].unknown606 = doc->field_3394;
                     doc->world_things[idx_5].requiredItemID = doc->wg_item_id;
-                    
+                    doc->world_things[idx_5].unknown612 = doc->wg_npc_id;
                     // v147 = (char *)doc + 52 * idx_5;
                     /*
-                     *((_WORD *)v147 + 612) = doc->wg_npc_id;
                      *((_WORD *)v147 + 624) = 0;
                      */
                     doc->worldZones[idx_5] = doc->zones[zone_id_5];
@@ -608,10 +607,11 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                         doc->world_things[world_idx_1].findItemID = doc->wg_last_added_item_id;
                         doc->world_things[world_idx_1].unknown606 = doc->field_3394;
                         doc->world_things[world_idx_1].requiredItemID = doc->wg_item_id;
+                        doc->world_things[world_idx_1].unknown612 = doc->wg_npc_id;
+                        
                         /*
                          *((_WORD *)v113 + 611) = doc->wg_item_id_unknown_2;
                          *((_WORD *)v113 + 609) = doc->wg_item_id_unknown_3;
-                         *((_WORD *)v113 + 612) = doc->wg_npc_id;
                          *((_WORD *)v113 + 607) = doc->field_3398;
                          *((_WORD *)v113 + 624) = 1;
                          */
