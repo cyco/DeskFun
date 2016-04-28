@@ -21,6 +21,16 @@ int TILE_SPEC_MAP    = 0x100000;
 
 WorldGenerator::WorldGenerator(YodaDocument *document) {
     doc = document;
+    
+    world_things.resize(100);
+    for(int i=0; i < 100; i++) {
+        world_things[i].zone_type = (ZONE_TYPE)0;
+        world_things[i].zone_id = -1;
+        world_things[i].findItemID = -1;
+        world_things[i].unknown606 = -1;
+        world_things[i].requiredItemID = -1;
+        world_things[i].unknown612 = -1;
+    }
 }
 
 WorldGenerator::~WorldGenerator(){
@@ -33,6 +43,8 @@ WorldGenerator::~WorldGenerator(){
         delete q;
     }
     this->requiredItems.clear();
+    
+    world_things.clear();
 }
 
 bool WorldGenerator::generateRandomWorld(WorldSize size) {
@@ -78,17 +90,17 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
         return 0;
     }
     
-    doc->puzzle_ids_1.clear();
-    doc->puzzle_ids_1.resize(puzzles1_count+1, -1);
+    this->puzzle_ids_1.clear();
+    this->puzzle_ids_1.resize(puzzles1_count+1, -1);
     
-    doc->puzzle_ids_2.clear();
-    doc->puzzle_ids_2.resize(puzzles2_count+1, -1);
+    this->puzzle_ids_2.clear();
+    this->puzzle_ids_2.resize(puzzles2_count+1, -1);
     
-    doc->worldZones.clear();
-    doc->worldZones.resize(100, 0);
-    doc->puzzle_ids.push_back(goalID);
-    doc->puzzle_ids_1[puzzles1_count] = goalID;
-    doc->puzzle_ids_2[puzzles2_count] = goalID;
+    this->worldZones.clear();
+    this->worldZones.resize(100, 0);
+    this->puzzle_ids.push_back(goalID);
+    this->puzzle_ids_1[puzzles1_count] = goalID;
+    this->puzzle_ids_2[puzzles2_count] = goalID;
     
     Puzzle *goalPuzzle = doc->puzzles[goalID];
     doc->goal_puzzle_id_again = goalID;
@@ -123,8 +135,8 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
     }
     
     for(int i=0; i < 100; i++) {
-        if(doc->world_things[i].zone_id >= 0) {
-            this->GetTileProvidedByZonesHotspots(doc->world_things[i].zone_id);
+        if(this->world_things[i].zone_id >= 0) {
+            this->GetTileProvidedByZonesHotspots(this->world_things[i].zone_id);
         }
     }
     
@@ -134,7 +146,7 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
     
     /*
      doc->contols_puzzle_reuse? = -1;
-     doc->world_generation_size = doc->puzzle_ids_2.count + doc->puzzle_ids_1.count + 2 * (y_2 + v204);
+     doc->world_generation_size = this->puzzle_ids_2.count + this->puzzle_ids_1.count + 2 * (y_2 + v204);
      doc->world_generation_time = time(0);
      this->field_7C = 0;
      */
@@ -163,9 +175,9 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             int zone_id_10 = -1;
             if ( zone_id_8 < 0 ) continue;
             
-            doc->world_things[idx].zone_id = zone_id_8;
-            doc->world_things[idx].zone_type = ZONETYPE_TravelStart;
-            doc->world_things[idx].requiredItemID = this->wg_item_id;
+            this->world_things[idx].zone_id = zone_id_8;
+            this->world_things[idx].zone_type = ZONETYPE_TravelStart;
+            this->world_things[idx].requiredItemID = this->wg_item_id;
             Zone* zone = doc->zones[zone_id_8];
             
             for(Hotspot *hotspot : zone->_hotspots) {
@@ -182,7 +194,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             int target_x = 0;
             int target_y = 0;
             for(int y=0; y < 10; y++) {
-                if(mapGenerator->map[target_x + y * 10] == MapType_TRAVEL_END && !doc->worldZones[target_x + y * 10]) {
+                if(mapGenerator->map[target_x + y * 10] == MapType_TRAVEL_END && !this->worldZones[target_x + y * 10]) {
                     target_y = y;
                     foundTravelTarget = true;
                     break;
@@ -193,7 +205,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                 target_x = 0;
                 target_y = 0;
                 for(int x=0; x < 10; x++) {
-                    if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                    if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !this->worldZones[x + target_y * 10]) {
                         target_x = x;
                         foundTravelTarget = true;
                         break;
@@ -203,7 +215,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                 if ( !foundTravelTarget ) {
                     target_x = 9;
                     for(int y=0; y < 10; y++) {
-                        if(mapGenerator->map[target_x+y*10] == 102 && !doc->worldZones[target_x+y*10]){
+                        if(mapGenerator->map[target_x+y*10] == 102 && !this->worldZones[target_x+y*10]){
                             foundTravelTarget = 1;
                             target_y = y;
                             break;
@@ -219,10 +231,10 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                     int idx_3 = target_x + 10 * target_y;
                     Message("transport loop: %dx%d\n", target_x, target_y);
                     Message("transport loop: %dx%d\n", target_x, target_y);
-                    doc->worldZones[idx_3] = doc->zones[zone_id_9];
-                    doc->world_things[idx_3].zone_id = zone_id_9;;
-                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                    doc->world_things[idx_3].requiredItemID = this->wg_item_id;
+                    this->worldZones[idx_3] = doc->zones[zone_id_9];
+                    this->world_things[idx_3].zone_id = zone_id_9;;
+                    this->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
+                    this->world_things[idx_3].requiredItemID = this->wg_item_id;
                     // v87 = zone_2;
                     // v88 = (char *)doc + 0x34 * idx_3;
                     /*
@@ -239,7 +251,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             target_y = 9;
             target_x = 0;
             for(int x=0; x < 10; x++) {
-                if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !doc->worldZones[x + target_y * 10]) {
+                if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !this->worldZones[x + target_y * 10]) {
                     target_x = x;
                     foundTravelTarget = true;
                 }
@@ -252,10 +264,10 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                 {
                     int idx_3 = target_x + 10 * target_y;
                     Message("transport loop: %dx%d\n", target_x, target_y);
-                    doc->worldZones[idx_3] = doc->zones[zone_id_10];
-                    doc->world_things[idx_3].zone_id = zone_id_9;
-                    doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                    doc->world_things[idx_3].requiredItemID = this->wg_item_id;
+                    this->worldZones[idx_3] = doc->zones[zone_id_10];
+                    this->world_things[idx_3].zone_id = zone_id_9;
+                    this->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
+                    this->world_things[idx_3].requiredItemID = this->wg_item_id;
                     // v87 = zone_2;
                     // v88 = (char *)doc + 0x34 * idx_3;
                     /*
@@ -297,10 +309,10 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
             this->wg_item_id = -1;
             this->wg_last_added_item_id = -1;
             
-            WorldThing *worldThing = &doc->world_things[idx];
+            WorldThing *worldThing = &this->world_things[idx];
             if ( zone_2 == MapType_NONE) continue;
             if(zone_2 == MapType_KEPT_FREE) continue;
-            if(doc->worldZones[idx] != NULL) continue;
+            if(this->worldZones[idx] != NULL) continue;
             
             int16 zone_id_1 = doPuzzle(doc, x, y, zone_2, &did_not_place_zone);
             if ( zone_id_1 < 0 ) {
@@ -363,7 +375,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
             }
             
             if (foundSomething) {
-                int zone_2 = doc->puzzle_ids_2[zone_type];
+                int zone_2 = this->puzzle_ids_2[zone_type];
                 
                 int16 item_1 = doc->puzzles[zone_2]->item_1;
                 
@@ -422,17 +434,17 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                     ++idx_6;
                     int idx_5 = x + 10 * y;
                     v195 = 1;
-                    doc->world_things[idx_5].zone_type = (ZONE_TYPE)this->wg_zone_type;
-                    doc->world_things[idx_5].zone_id = zone_id_5;
-                    doc->world_things[idx_5].findItemID = this->wg_last_added_item_id;
-                    doc->world_things[idx_5].unknown606 = this->field_3394;
-                    doc->world_things[idx_5].requiredItemID = this->wg_item_id;
-                    doc->world_things[idx_5].unknown612 = this->wg_npc_id;
+                    this->world_things[idx_5].zone_type = (ZONE_TYPE)this->wg_zone_type;
+                    this->world_things[idx_5].zone_id = zone_id_5;
+                    this->world_things[idx_5].findItemID = this->wg_last_added_item_id;
+                    this->world_things[idx_5].unknown606 = this->field_3394;
+                    this->world_things[idx_5].requiredItemID = this->wg_item_id;
+                    this->world_things[idx_5].unknown612 = this->wg_npc_id;
                     // v147 = (char *)doc + 52 * idx_5;
                     /*
                      *((_WORD *)v147 + 624) = 0;
                      */
-                    doc->worldZones[idx_5] = doc->zones[zone_id_5];
+                    this->worldZones[idx_5] = doc->zones[zone_id_5];
                     
                     if ( idx_6 > 200) { breakYLoop=1; break;};
                 }
@@ -444,9 +456,9 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
             int zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
             if ( zone_id >= 0 ) {
                 int world_idx_2 = x + 10 * y;
-                doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)this->wg_zone_type;
-                doc->worldZones[world_idx_2] = doc->zones[zone_id];
-                doc->world_things[world_idx_2].zone_id = zone_id;
+                this->world_things[world_idx_2].zone_type = (ZONE_TYPE)this->wg_zone_type;
+                this->worldZones[world_idx_2] = doc->zones[zone_id];
+                this->world_things[world_idx_2].zone_id = zone_id;
                 this->addZoneWithIdToWorld(zone_id);
             }
         }
@@ -456,9 +468,9 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
 
 int WorldGenerator::doCleanup(YodaDocument* doc)
 {
-    doc->puzzle_ids_1.clear();
-    doc->puzzle_ids_2.clear();
-    doc->item_ids.clear();
+    this->puzzle_ids_1.clear();
+    this->puzzle_ids_2.clear();
+    this->item_ids.clear();
     
     vector<uint16> *puzzle_array_1;
     switch (doc->planet) {
@@ -485,7 +497,7 @@ int WorldGenerator::doCleanup(YodaDocument* doc)
         delete quest;
     this->requiredItems.clear();
     
-    doc->puzzle_ids.clear();
+    this->puzzle_ids.clear();
     this->chosen_zone_ids.clear();
     Message("-= FAILURE 3 =-\n");
     
@@ -495,7 +507,7 @@ int WorldGenerator::doCleanup(YodaDocument* doc)
 int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, MapType zone_2, int* did_not_place_zone)
 {
     int distance = MapGenerator::GetDistanceToCenter(x, y);
-    WorldThing *worldThing = &doc->world_things[x+10*y];
+    WorldThing *worldThing = &this->world_things[x+10*y];
     ZONE_TYPE type = zoneTypeForWorldItem(zone_2);
     
     *did_not_place_zone = 0;
@@ -542,7 +554,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
     int v206 = 0; // [sp+8h] [bp-1E4h]@0
     
     int zone_id_10 = puzzle_count;
-    int zone_id_11 = (int)doc->puzzle_ids_1.size()-1;
+    int zone_id_11 = (int)this->puzzle_ids_1.size()-1;
     if ( puzzle_count > 0 ){
         do {
             this->wg_zone_type = -1;
@@ -556,7 +568,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
             
             y_1 = 0;
             int row = 0;
-            int zone_2 = doc->puzzle_ids_1[zone_id_11];
+            int zone_2 = this->puzzle_ids_1[zone_id_11];
             
             int x = 0, y = 0;
             do {
@@ -624,12 +636,12 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                         int world_idx_1 = x + 10 * y;
                         v204 = 1;
                         
-                        doc->world_things[world_idx_1].zone_type = (ZONE_TYPE)this->wg_zone_type;
-                        doc->world_things[world_idx_1].zone_id = zone_id_3;
-                        doc->world_things[world_idx_1].findItemID = this->wg_last_added_item_id;
-                        doc->world_things[world_idx_1].unknown606 = this->field_3394;
-                        doc->world_things[world_idx_1].requiredItemID = this->wg_item_id;
-                        doc->world_things[world_idx_1].unknown612 = this->wg_npc_id;
+                        this->world_things[world_idx_1].zone_type = (ZONE_TYPE)this->wg_zone_type;
+                        this->world_things[world_idx_1].zone_id = zone_id_3;
+                        this->world_things[world_idx_1].findItemID = this->wg_last_added_item_id;
+                        this->world_things[world_idx_1].unknown606 = this->field_3394;
+                        this->world_things[world_idx_1].requiredItemID = this->wg_item_id;
+                        this->world_things[world_idx_1].unknown612 = this->wg_npc_id;
                         
                         /*
                          *((_WORD *)v113 + 611) = this->wg_item_id_unknown_2;
@@ -637,7 +649,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                          *((_WORD *)v113 + 607) = this->field_3398;
                          *((_WORD *)v113 + 624) = 1;
                          */
-                        doc->worldZones[world_idx_1] = doc->zones[zone_id_3];
+                        this->worldZones[world_idx_1] = doc->zones[zone_id_3];
                         
                         Message("y_2 = %d\n", zone_id_11);
                         if ( zone_id_11 == 1) { // esp = 0007F51C, y_2 = esp+14 == 0x7F530
@@ -673,9 +685,9 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                 if ( zone_id_4 >= 0 )
                 {
                     int idx_4 = x + 10 * y;
-                    doc->world_things[idx_4].zone_type = (ZONE_TYPE)this->wg_zone_type;
-                    doc->worldZones[idx_4] = doc->zones[zone_id_4];
-                    doc->world_things[idx_4].zone_id = zone_id_4;
+                    this->world_things[idx_4].zone_type = (ZONE_TYPE)this->wg_zone_type;
+                    this->worldZones[idx_4] = doc->zones[zone_id_4];
+                    this->world_things[idx_4].zone_id = zone_id_4;
                     this->addZoneWithIdToWorld(zone_id_4);
                 }
             }
@@ -910,22 +922,22 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                     continue;
                 v21 = GetNewPuzzleId(item_id[0], item_id_1, ZONETYPE_Goal, !a3);
                 v22 = v21;
-                if ( v21 >= 0 ) this->doc->puzzle_ids.push_back(v21);
+                if ( v21 >= 0 ) this->puzzle_ids.push_back(v21);
                 puzzle_id = GetNewPuzzleId((int16)item_ids, item_id_2, ZONETYPE_Goal, !a3);
                 v38 = puzzle_id;
                 if ( puzzle_id >= 0 ) {
-                    this->doc->puzzle_ids.push_back(puzzle_id);
+                    this->puzzle_ids.push_back(puzzle_id);
                 }
                 if ( v22 < 0 || v38 < 0 )
                     continue;
                 
-                this->doc->puzzle_ids_1[(int16)a3] = v22;
+                this->puzzle_ids_1[(int16)a3] = v22;
                 v33 = 2 * (int16)a3;
                 v24 = (int16)a4;
-                this->doc->puzzle_ids_2[v24] = v38;
+                this->puzzle_ids_2[v24] = v38;
                 if ( this->Unknown_7(zone_id, a3, a4, item_id_3, a8) != 1 ) {
-                    this->doc->puzzle_ids_1[v33 / 2] = -1;
-                    this->doc->puzzle_ids_2[v24] = -1;
+                    this->puzzle_ids_1[v33 / 2] = -1;
+                    this->puzzle_ids_2[v24] = -1;
                     continue;
                 }
                 this->AddRequiredQuestWithItemID(item_id[0], item_id_3);
@@ -942,12 +954,12 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 v25 = GetNewPuzzleId(v38, item_id_1, ZONETYPE_Trade, !a3);
                 if ( v25 < 0 ) continue;
                 
-                if(a8) this->doc->puzzle_ids_1[a3] = v25;
-                else   this->doc->puzzle_ids_2[a3] = v25;
+                if(a8) this->puzzle_ids_1[a3] = v25;
+                else   this->puzzle_ids_2[a3] = v25;
                 
                 if (this->Unknown_1(zone_id, a3, item_id_3, a8) != 1) continue;
                 
-                this->doc->puzzle_ids.push_back(v25);
+                this->puzzle_ids.push_back(v25);
                 this->AddRequiredQuestWithItemID(v38, item_id_3);
                 
                 return zone_id;
@@ -963,11 +975,11 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 int16 puzzleID2 = this->GetNewPuzzleId(puzzleID1, item_id_1, ZONETYPE_Use, !a3);
                 if ( puzzleID2 < 0 ) continue;
                 
-                if(a8) this->doc->puzzle_ids_1[a3] = puzzleID2;
-                else this->doc->puzzle_ids_2[a3] = puzzleID2;
+                if(a8) this->puzzle_ids_1[a3] = puzzleID2;
+                else this->puzzle_ids_2[a3] = puzzleID2;
                 
                 if ( this->use_ids_from_array_1(zone_id, a3, item_id_3, a8) != 1 ) continue;
-                this->doc->puzzle_ids.push_back(puzzleID2);
+                this->puzzle_ids.push_back(puzzleID2);
                 
                 this->AddRequiredQuestWithItemID(puzzleID1, item_id_3);
                 return zone_id;
@@ -1017,10 +1029,10 @@ int WorldGenerator::Unknown_5(int16* world){
         }
         
         int idx = x + 10 * y;
-        this->doc->world_things[idx].zone_type = ZONETYPE_Find;
-        this->doc->world_things[idx].zone_id = zoneID;
-        this->doc->world_things[idx].findItemID = this->wg_last_added_item_id;
-        this->doc->worldZones[idx] = this->doc->zones[zoneID];
+        this->world_things[idx].zone_type = ZONETYPE_Find;
+        this->world_things[idx].zone_id = zoneID;
+        this->world_things[idx].findItemID = this->wg_last_added_item_id;
+        this->worldZones[idx] = this->doc->zones[zoneID];
         world[idx] = 306;
         
         this->addZoneWithIdToWorld(zoneID);
@@ -1032,7 +1044,7 @@ int WorldGenerator::Unknown_5(int16* world){
             delete quest;
         }
         this->providedItems.clear();
-        this->doc->item_ids.clear();
+        this->item_ids.clear();
         
         v38 = 0;
         zone_id_1 = -1;
@@ -1137,13 +1149,13 @@ int WorldGenerator::Unknown_5(int16* world){
                     }
                     
                     int idx = x + 10 * y;
-                    this->doc->worldZones[idx] = zone;
-                    this->doc->world_things[idx].zone_id = zone_id;
-                    this->doc->world_things[idx].zone_type = ZONETYPE_Empty;
-                    this->doc->world_things[idx].unknown606 = -1;
-                    this->doc->world_things[idx].requiredItemID = -1;
-                    this->doc->world_things[idx].unknown612 = -1;
-                    this->doc->world_things[idx].findItemID = -1;
+                    this->worldZones[idx] = zone;
+                    this->world_things[idx].zone_id = zone_id;
+                    this->world_things[idx].zone_type = ZONETYPE_Empty;
+                    this->world_things[idx].unknown606 = -1;
+                    this->world_things[idx].requiredItemID = -1;
+                    this->world_things[idx].unknown612 = -1;
+                    this->world_things[idx].findItemID = -1;
                     
                     this->addZoneWithIdToWorld(zone_id);
                     
@@ -1165,12 +1177,12 @@ int WorldGenerator::Unknown_5(int16* world){
             int zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, v27);
             if (zone_id != -1) {
                 int idx = x + 10 * y;
-                this->doc->world_things[idx].zone_type = (ZONE_TYPE)1;
-                this->doc->worldZones[idx] = this->doc->zones[zone_id];
-                this->doc->world_things[idx].zone_id = zone_id;
-                this->doc->world_things[idx].unknown606 = -1;
-                this->doc->world_things[idx].requiredItemID = -1;
-                this->doc->world_things[idx].findItemID = -1;
+                this->world_things[idx].zone_type = (ZONE_TYPE)1;
+                this->worldZones[idx] = this->doc->zones[zone_id];
+                this->world_things[idx].zone_id = zone_id;
+                this->world_things[idx].unknown606 = -1;
+                this->world_things[idx].requiredItemID = -1;
+                this->world_things[idx].findItemID = -1;
                 this->addZoneWithIdToWorld(zone_id);
             }
         }
@@ -1192,11 +1204,11 @@ signed int WorldGenerator::Unknown_1(int16 zone_id, int16 a3, int16 distance, in
     
     int puzzleID1, puzzleID2;
     if(a8) { // assumes a8 is 1
-        puzzleID1 = this->doc->puzzle_ids_1[a3];
-        puzzleID2 = this->doc->puzzle_ids_1[a3+1];
+        puzzleID1 = this->puzzle_ids_1[a3];
+        puzzleID2 = this->puzzle_ids_1[a3+1];
     } else {
-        puzzleID1 = this->doc->puzzle_ids_2[a3];
-        puzzleID2 = this->doc->puzzle_ids_2[a3+1];
+        puzzleID1 = this->puzzle_ids_2[a3];
+        puzzleID2 = this->puzzle_ids_2[a3+1];
     }
     
     Puzzle *p1, *p2;
@@ -1368,7 +1380,7 @@ void WorldGenerator::GetTileProvidedByZonesHotspots(int16 zone_id)
 #pragma mark - DONE -
 int WorldGenerator::ContainsPuzzleId(const uint16 puzzle_id)
 {
-    for(uint16 id : doc->puzzle_ids)
+    for(uint16 id : this->puzzle_ids)
         if(id == puzzle_id) return 1;
     
     return 0;
@@ -1508,13 +1520,13 @@ signed int WorldGenerator::ChooseItemIDFromZone(uint16 zoneID, uint16 itemID, in
 }
 
 uint16 WorldGenerator::getZoneIDAt(const int x,const  int y){
-    return doc->world_things[x + 10 * y].zone_id;
+    return this->world_things[x + 10 * y].zone_id;
 }
 
 int WorldGenerator::getLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut) {
     for(int y=0; y < 10; y++)
         for(int x=0; x < 10; x++)
-            if(doc->world_things[x + 10 * y].zone_id == zoneID) {
+            if(this->world_things[x + 10 * y].zone_id == zoneID) {
                 *xOut = x;
                 *yOut = y;
                 return 1;
@@ -1983,16 +1995,16 @@ signed int WorldGenerator::use_ids_from_array_1(int16 zone_id, int16 a3, int16 i
     if (!this->RequiredItemForZoneWasNotPlaced(zone_id)) return 0;
     
     if ( a5 ) {
-        if ( doc->puzzle_ids_1.size() - 1 > a3 ) {
-            v9 = &doc->puzzle_ids_1;
+        if ( this->puzzle_ids_1.size() - 1 > a3 ) {
+            v9 = &this->puzzle_ids_1;
             v10 = (*v9)[a3 + 1];
         } else { v10 = -1; }
-    } else if ( doc->puzzle_ids_2.size() - 1 > a3 ) {
-        v9 = &doc->puzzle_ids_2;
+    } else if ( this->puzzle_ids_2.size() - 1 > a3 ) {
+        v9 = &this->puzzle_ids_2;
         v10 = (*v9)[a3 + 1];
     } else v10 = -1;
     
-    int16 v8 = a5 ? doc->puzzle_ids_1[a3] : doc->puzzle_ids_2[a3];
+    int16 v8 = a5 ? this->puzzle_ids_1[a3] : this->puzzle_ids_2[a3];
     
     v11 = &doc->puzzles;
     v12 = (*v11)[v8];
@@ -2053,9 +2065,9 @@ int WorldGenerator::Unknown_7(int16 zone_id, int16 puzzle_idx, int16 a4, int unk
     if (!this->RequiredItemForZoneWasNotPlaced(zone_id) )
         return 0;
     
-    Puzzle *puzzle1 = doc->puzzles[doc->puzzle_ids_1[puzzle_idx]];
-    Puzzle *puzzle3 = doc->puzzles[doc->puzzle_ids_1[puzzle_idx+1]];
-    Puzzle *puzzle2 = doc->puzzles[doc->puzzle_ids_2[a4]];
+    Puzzle *puzzle1 = doc->puzzles[this->puzzle_ids_1[puzzle_idx]];
+    Puzzle *puzzle3 = doc->puzzles[this->puzzle_ids_1[puzzle_idx+1]];
+    Puzzle *puzzle2 = doc->puzzles[this->puzzle_ids_2[a4]];
     
     puzzle1->unknown_3 = 0;
     v14 = this->findUnusedNPCForZone(zone_id);
@@ -2185,11 +2197,11 @@ signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, 
     if ( zone->providedItemIDs.size() == 1 ) {
         int idx = 0;
         v14 = 0;
-        count_1 = (int)doc->item_ids.size();
+        count_1 = (int)this->item_ids.size();
         if ( count_1 > 0 ) {
             int documentItemIdx = 0;
             do {
-                if ( doc->item_ids[documentItemIdx] == zone->providedItemIDs[idx])
+                if ( this->item_ids[documentItemIdx] == zone->providedItemIDs[idx])
                     v14 = 1;
                 ++documentItemIdx;
                 --count_1;
@@ -2197,7 +2209,7 @@ signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, 
             while ( count_1 );
         }
         if ( !v14 ) {
-            doc->item_ids.push_back(zone->providedItemIDs[idx]);
+            this->item_ids.push_back(zone->providedItemIDs[idx]);
         } else return 0;
     }
     

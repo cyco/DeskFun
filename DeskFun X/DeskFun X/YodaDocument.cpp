@@ -40,22 +40,12 @@ YodaDocument::YodaDocument(const char* path) {
     }
     
     puzzles_can_be_reused = -1;
-    world_things.resize(100);
-    for(int i=0; i < 100; i++) {
-        world_things[i].zone_type = (ZONE_TYPE)0;
-        world_things[i].zone_id = -1;
-        world_things[i].findItemID = -1;
-        world_things[i].unknown606 = -1;
-        world_things[i].requiredItemID = -1;
-        world_things[i].unknown612 = -1;
-    }
 }
 
 YodaDocument::~YodaDocument() {
     zones.clear();
     puzzles.clear();
     tiles.clear();
-    world_things.clear();
         
     delete parser;
 }

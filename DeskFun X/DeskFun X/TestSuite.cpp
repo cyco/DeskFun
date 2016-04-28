@@ -1381,10 +1381,10 @@ int TestSuite::testWorld(uint16 seed, WorldSize size, uint32 *sample) {
     generator.generateWorld(seed, (WorldSize)size, HOTH);
 
     for(int i=0; i < 100; i++) {
-        if(!(doc->world_things[i].zone_type == sample[i*4+0])
-           || !(doc->world_things[i].zone_id == sample[i*4+1])
-           || !(doc->world_things[i].findItemID == sample[i*4+2])
-           || !(doc->world_things[i].requiredItemID == sample[i*4+3])) {
+        if(!(generator.world_things[i].zone_type == sample[i*4+0])
+           || !(generator.world_things[i].zone_id == sample[i*4+1])
+           || !(generator.world_things[i].findItemID == sample[i*4+2])
+           || !(generator.world_things[i].requiredItemID == sample[i*4+3])) {
             success = 0;
             break;
         }
@@ -1410,12 +1410,12 @@ int TestSuite::testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uin
     
     for(int i=0; i < 100; i++) {
         if(
-           !(doc->world_things[i].zone_id == sample[i*10]) ||
-           !(doc->world_things[i].zone_type == sample[i*10+1]) ||
-           !(doc->world_things[i].findItemID == sample[i*10+6]) ||
-           !(doc->world_things[i].requiredItemID == sample[i*10+4]) ||
-           !(doc->world_things[i].unknown606 == sample[i*10+5]) ||
-           !(doc->world_things[i].unknown612 == sample[i*10+7])
+           !(generator.world_things[i].zone_id == sample[i*10]) ||
+           !(generator.world_things[i].zone_type == sample[i*10+1]) ||
+           !(generator.world_things[i].findItemID == sample[i*10+6]) ||
+           !(generator.world_things[i].requiredItemID == sample[i*10+4]) ||
+           !(generator.world_things[i].unknown606 == sample[i*10+5]) ||
+           !(generator.world_things[i].unknown612 == sample[i*10+7])
            ) {
             success = 0;
             break;
@@ -1430,7 +1430,7 @@ int TestSuite::testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uin
             for(int x=0; x < 10; x++){
                 int idx = x + y * 10;
                 fprintf(sam, "%4d ", (int16)sample[idx*10+2]);
-                fprintf(real, "%4d ", (int16)doc->world_things[idx].unknown606);
+                fprintf(real, "%4d ", (int16)generator.world_things[idx].unknown606);
             }
         
             fprintf(real, "\n");

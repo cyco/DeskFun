@@ -18,20 +18,26 @@ private:
     YodaDocument *doc;
     MapGenerator *mapGenerator;
     
+    int field_68;
+    int wg_npc_id; // originally field_3390
+    int wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, wg_zone_type;
+    
     vector<uint16> chosen_zone_ids;
     vector<Quest*> providedItems;
     vector<Quest*> requiredItems;
     
-    int field_68;
-    int wg_npc_id; // originally field_3390
-    int wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, wg_zone_type;
-
+    vector<uint16> puzzle_ids;
+    vector<uint16> puzzle_ids_1;
+    vector<uint16> puzzle_ids_2;
+    vector<uint16> item_ids;
+    vector<Zone*> worldZones;
 public:
     WorldGenerator(YodaDocument *document);
     ~WorldGenerator();
     bool generateRandomWorld(WorldSize size);
     bool generateWorld(uint16 seed, WorldSize size, Planet planet);
     
+    vector<WorldThing> world_things;
 private:
     int doLoop0(YodaDocument *doc, const int puzzle_count, const int puzzles2_count, const uint16* puzzles);
     ZONE_TYPE zoneTypeForWorldItem(MapType item);

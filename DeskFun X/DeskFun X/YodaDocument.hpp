@@ -34,18 +34,10 @@ public:
     
     vector<int> some_array;
     
-    vector<WorldThing> world_things;
     vector<Zone*> zones;
     vector<Tile*> tiles;
     vector<Puzzle*> puzzles;
     
-    vector<uint16> puzzle_ids;
-    
-    vector<uint16> puzzle_ids_1;
-    vector<uint16> puzzle_ids_2;
-    vector<uint16> item_ids;
-    
-    vector<Zone*> worldZones;
     
     int logging;
     
