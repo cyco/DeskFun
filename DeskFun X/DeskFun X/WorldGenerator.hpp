@@ -20,7 +20,14 @@ private:
     
     int field_68;
     int wg_npc_id; // originally field_3390
-    int wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, wg_zone_type;
+    int wg_item_id;
+    int wg_last_added_item_id;
+    int field_2E64;
+    int wg_another_item_id; // originally field_3394
+    int field_3398;
+    int wg_item_id_unknown_3;
+    int wg_item_id_unknown_2;
+    int wg_zone_type;
     
     vector<uint16> chosen_zone_ids;
     vector<Quest*> providedItemQuests;
@@ -64,7 +71,7 @@ private:
     void RemoveQuestRequiringItem(uint16 itemID);
     int HasQuestRequiringItem(uint16 itemID);
     int getLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut);
-    void addrequiredItemQuestsFromHotspots(uint16 zoneID);
+    void addRequiredItemQuestsFromHotspots(uint16 zoneID);
     bool ZoneHasProvidedItem(uint16 zoneID, uint16 itemID);
     int GetItemIDThatsNotRequiredYet(uint16 zone_id, int unused, bool use_array_2_ids);
     signed int GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap);

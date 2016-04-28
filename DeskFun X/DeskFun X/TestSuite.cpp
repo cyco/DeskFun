@@ -204,7 +204,7 @@ int TestSuite::runWorldTests() {
 }
 
 int TestSuite::runCompleteTets() {
-    //*
+    /*
     TestComplete(0x0001, 2, 1);
     TestComplete(0x0008, 2, 1);
     TestComplete(0x0009, 2, 1);
@@ -239,9 +239,12 @@ int TestSuite::runCompleteTets() {
     TestComplete(0x20d4, 2, 1);
     TestComplete(0x22cb, 2, 1);
     TestComplete(0x25ff, 2, 1);
-    TestComplete(0x278e, 2, 1);
     TestComplete(0x000b, 2, 1);
+    //*/
+    TestComplete(0x278e, 2, 1);
+    /*/
     TestComplete(0x000a, 2, 1);
+    /*
     TestComplete(0x0000, 2, 1);
     TestComplete(0x0006, 2, 1);
     TestComplete(0x000c, 2, 1);
@@ -1402,7 +1405,7 @@ int TestSuite::testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uin
     int success = 1;
     
     YodaDocument *doc = new YodaDocument(DATA_PATH);
-    doc->logging = 0;
+    doc->logging = 1;
     
     WorldGenerator generator(doc);
     generator.generateWorld(seed, (WorldSize)size, planet);
@@ -1429,7 +1432,7 @@ int TestSuite::testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uin
         for(int y=0; y < 10; y++){
             for(int x=0; x < 10; x++){
                 int idx = x + y * 10;
-                fprintf(sam, "%4d ", (int16)sample[idx*10+2]);
+                fprintf(sam, "%4d ", (int16)sample[idx*10+5]);
                 fprintf(real, "%4d ", (int16)generator.worldThings[idx].unknown606);
             }
         

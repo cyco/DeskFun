@@ -7,7 +7,7 @@
 //
 
 #include "MapGenerator.hpp"
-#define Message(fmt, ...) if(0) printf(fmt, ##__VA_ARGS__);
+#define Message(fmt, ...) if(1) printf(fmt, ##__VA_ARGS__);
 
 // TODO: get rid of macros
 #define get(_x_,_y_) map[(_x_)+10*(_y_)]
@@ -16,7 +16,7 @@
 #define setPuzzle(_x_, _y_, _v_) puzzles[(_x_)+10*(_y_)] = _v_
 
 int MapGenerator::GetDistanceToCenter(int x, int y) {
-    Message("MapGenerator::GetDistanceToCenter %dx%d\n", x, y);
+    Message("Map::GetDistanceToCenter %dx%d\n", x, y);
     static int distances[] = {
         5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
         5, 4, 4, 4, 4, 4, 4, 4, 4, 5,
