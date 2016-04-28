@@ -14,8 +14,25 @@
 #define LOCATOR 0x1a5
 #define ADEGAN_CRYSTAL 0x0
 
+int TILE_SPEC_THE_FORCE  = 0x40;
+int TILE_SPEC_USEFUL  = 0x80;
+int TILE_SPEC_MAP    = 0x100000;
+
+
 WorldGenerator::WorldGenerator(YodaDocument *document) {
     doc = document;
+}
+
+WorldGenerator::~WorldGenerator(){
+    for(Quest *q : this->providedItems) {
+        delete q;
+    }
+    this->providedItems.clear();
+    
+    for(Quest *q : this->requiredItems) {
+        delete q;
+    }
+    this->requiredItems.clear();
 }
 
 bool WorldGenerator::generateRandomWorld(WorldSize size) {
@@ -44,7 +61,7 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
     
 #pragma mark -
     // view->field_4C = 1;
-    doc->field_68 = 0;
+    this->field_68 = 0;
     /*
      if ( doc->game_count < 1 )
      CWordArray::SetAtGrow(&doc->hoth_puzzle_ids, doc->hoth_puzzle_ids.count, 0xBDu);// add hoth puzzle
@@ -107,18 +124,19 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
     
     for(int i=0; i < 100; i++) {
         if(doc->world_things[i].zone_id >= 0) {
-            doc->GetTileProvidedByZonesHotspots(doc->world_things[i].zone_id);
+            this->GetTileProvidedByZonesHotspots(doc->world_things[i].zone_id);
         }
     }
-    doc->chosen_zone_ids.erase(doc->chosen_zone_ids.begin());
+    
+    this->chosen_zone_ids.erase(this->chosen_zone_ids.begin());
     this->RemoveEmptyZoneIdsFromWorld();
-    doc->WritePlanetValues();
+    this->WritePlanetValues();
     
     /*
      doc->contols_puzzle_reuse? = -1;
      doc->world_generation_size = doc->puzzle_ids_2.count + doc->puzzle_ids_1.count + 2 * (y_2 + v204);
      doc->world_generation_time = time(0);
-     doc->field_7C = 0;
+     this->field_7C = 0;
      */
     Message("End Generate New World\n");
     
@@ -132,9 +150,9 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
         for(int x=0; x < 10; x++) {
             int idx = x + y * 10;
             
-            doc->wg_npc_id = -1;
-            doc->wg_item_id = -1;
-            doc->wg_last_added_item_id = -1;
+            this->wg_npc_id = -1;
+            this->wg_item_id = -1;
+            this->wg_last_added_item_id = -1;
             
             if(mapGenerator->map[idx] != MapType_TRAVEL_START)
                 continue;
@@ -147,7 +165,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             
             doc->world_things[idx].zone_id = zone_id_8;
             doc->world_things[idx].zone_type = ZONETYPE_TravelStart;
-            doc->world_things[idx].requiredItemID = doc->wg_item_id;
+            doc->world_things[idx].requiredItemID = this->wg_item_id;
             Zone* zone = doc->zones[zone_id_8];
             
             for(Hotspot *hotspot : zone->_hotspots) {
@@ -196,7 +214,7 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             
             if ( foundTravelTarget ){
                 int16 zone_id_9 = zone_id_10;
-                if ( !doc->worldContainsZoneId(zone_id_10) )
+                if ( !this->worldContainsZoneId(zone_id_10) )
                 {
                     int idx_3 = target_x + 10 * target_y;
                     Message("transport loop: %dx%d\n", target_x, target_y);
@@ -204,15 +222,15 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                     doc->worldZones[idx_3] = doc->zones[zone_id_9];
                     doc->world_things[idx_3].zone_id = zone_id_9;;
                     doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
+                    doc->world_things[idx_3].requiredItemID = this->wg_item_id;
                     // v87 = zone_2;
                     // v88 = (char *)doc + 0x34 * idx_3;
                     /*
                      LOWORD(idx_3) = (_WORD)zone_id_8;
                      *(_DWORD *)transport_count = v87;
                      */
-                    doc->addZoneWithIdToWorld(zone_id_8);
-                    doc->addZoneWithIdToWorld(zone_id_9);
+                    this->addZoneWithIdToWorld(zone_id_8);
+                    this->addZoneWithIdToWorld(zone_id_9);
                 }
                 
                 continue;
@@ -230,27 +248,27 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             if ( foundTravelTarget )
             {
                 int16 zone_id_9 = zone_id_10;
-                if ( !doc->worldContainsZoneId(zone_id_10) )
+                if ( !this->worldContainsZoneId(zone_id_10) )
                 {
                     int idx_3 = target_x + 10 * target_y;
                     Message("transport loop: %dx%d\n", target_x, target_y);
                     doc->worldZones[idx_3] = doc->zones[zone_id_10];
                     doc->world_things[idx_3].zone_id = zone_id_9;
                     doc->world_things[idx_3].zone_type = ZONETYPE_TravelEnd;
-                    doc->world_things[idx_3].requiredItemID = doc->wg_item_id;
+                    doc->world_things[idx_3].requiredItemID = this->wg_item_id;
                     // v87 = zone_2;
                     // v88 = (char *)doc + 0x34 * idx_3;
                     /*
                      LOWORD(idx_3) = (_WORD)zone_id_8;
                      *(_DWORD *)transport_count = v87;
                      */
-                    doc->addZoneWithIdToWorld(zone_id_8);
-                    doc->addZoneWithIdToWorld(zone_id_9);
+                    this->addZoneWithIdToWorld(zone_id_8);
+                    this->addZoneWithIdToWorld(zone_id_9);
                 }
             }
             else
             {
-                doc->RemoveQuestProvidingItem(doc->wg_item_id);
+                this->RemoveQuestProvidingItem(this->wg_item_id);
                 /*
                  v89 = (_DWORD *)transport_count;
                  *(_WORD *)y_6 = 1;
@@ -274,10 +292,10 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
             int idx = x + 10 * y;
             MapType zone_2 = (MapType)map[idx];
             int did_not_place_zone = 0;
-            doc->field_3394 = -1;
-            doc->wg_npc_id = -1;
-            doc->wg_item_id = -1;
-            doc->wg_last_added_item_id = -1;
+            this->field_3394 = -1;
+            this->wg_npc_id = -1;
+            this->wg_item_id = -1;
+            this->wg_last_added_item_id = -1;
             
             WorldThing *worldThing = &doc->world_things[idx];
             if ( zone_2 == MapType_NONE) continue;
@@ -301,7 +319,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
                  LOWORD(worldThing->zone_type) = -1;
                  worldThing->required_item_id = -1;
                  */
-                doc->addZoneWithIdToWorld(zone_id_1);
+                this->addZoneWithIdToWorld(zone_id_1);
             } else {
                 worldThing->zone_id = zone_id_1;
                 /*
@@ -309,7 +327,7 @@ int WorldGenerator::loop2(YodaDocument* doc, uint16* map){
                  worldThing->field_C = -1;
                  */
                 if ( worldThing->zone_type != ZONETYPE_Town)
-                    doc->addZoneWithIdToWorld(zone_id_1);
+                    this->addZoneWithIdToWorld(zone_id_1);
                     }
         }
     }
@@ -321,14 +339,14 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
     int idx_6 = 0, v195 = 0;
     
     for(int zone_type = puzzleMapIdx; zone_type > 0; zone_type--) {
-        doc->wg_zone_type = -1;
-        doc->wg_last_added_item_id = -1;
-        doc->wg_item_id_unknown_2 = -1;
-        doc->wg_item_id = -1;
-        doc->wg_item_id_unknown_3 = -1;
-        doc->wg_npc_id = -1;
-        doc->field_3394 = -1;
-        doc->field_3398 = -1;
+        this->wg_zone_type = -1;
+        this->wg_last_added_item_id = -1;
+        this->wg_item_id_unknown_2 = -1;
+        this->wg_item_id = -1;
+        this->wg_item_id_unknown_3 = -1;
+        this->wg_npc_id = -1;
+        this->field_3394 = -1;
+        this->field_3398 = -1;
         idx_6 = 0;
         
         int x =0, y=0;
@@ -359,7 +377,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                             return doCleanup(doc);
                         }
                         
-                        doc->wg_zone_type = ZONETYPE_Goal;
+                        this->wg_zone_type = ZONETYPE_Goal;
                     } else {
                         int rand_2 = win_rand();
                         Message("random = %x\n", rand_2);
@@ -372,7 +390,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                         zone_id_5 = this->GetZoneIdWithType(type, zone_type-1, -1, item_1, -1, distance, 0);
                         int break_some_more = 0;
                         if ( zone_id_5 >= 0 ) {
-                            doc->wg_zone_type = type;
+                            this->wg_zone_type = type;
                             break_some_more = 1;
                         }
                         
@@ -383,7 +401,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                                 return doCleanup(doc);
                             }
                             
-                            doc->wg_zone_type = ZONETYPE_Trade;
+                            this->wg_zone_type = ZONETYPE_Trade;
                         } else if(!break_some_more) {
                             int distance = MapGenerator::GetDistanceToCenter(x, y);
                             zone_id_5 = this->GetZoneIdWithType(ZONETYPE_Use, v195, -1, 0, -1, distance, 0);
@@ -391,25 +409,25 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                                 return doCleanup(doc);
                             }
                             
-                            doc->wg_zone_type = ZONETYPE_Use;
+                            this->wg_zone_type = ZONETYPE_Use;
                         }
                     }
                     if ( zone_id_5 < 0 ) {
                         return doCleanup(doc);
                     }
                     
-                    doc->field_3394 = -1;
-                    doc->addZoneWithIdToWorld(zone_id_5);
+                    this->field_3394 = -1;
+                    this->addZoneWithIdToWorld(zone_id_5);
                     
                     ++idx_6;
                     int idx_5 = x + 10 * y;
                     v195 = 1;
-                    doc->world_things[idx_5].zone_type = (ZONE_TYPE)doc->wg_zone_type;
+                    doc->world_things[idx_5].zone_type = (ZONE_TYPE)this->wg_zone_type;
                     doc->world_things[idx_5].zone_id = zone_id_5;
-                    doc->world_things[idx_5].findItemID = doc->wg_last_added_item_id;
-                    doc->world_things[idx_5].unknown606 = doc->field_3394;
-                    doc->world_things[idx_5].requiredItemID = doc->wg_item_id;
-                    doc->world_things[idx_5].unknown612 = doc->wg_npc_id;
+                    doc->world_things[idx_5].findItemID = this->wg_last_added_item_id;
+                    doc->world_things[idx_5].unknown606 = this->field_3394;
+                    doc->world_things[idx_5].requiredItemID = this->wg_item_id;
+                    doc->world_things[idx_5].unknown612 = this->wg_npc_id;
                     // v147 = (char *)doc + 52 * idx_5;
                     /*
                      *((_WORD *)v147 + 624) = 0;
@@ -426,10 +444,10 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
             int zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
             if ( zone_id >= 0 ) {
                 int world_idx_2 = x + 10 * y;
-                doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)doc->wg_zone_type;
+                doc->world_things[world_idx_2].zone_type = (ZONE_TYPE)this->wg_zone_type;
                 doc->worldZones[world_idx_2] = doc->zones[zone_id];
                 doc->world_things[world_idx_2].zone_id = zone_id;
-                doc->addZoneWithIdToWorld(zone_id);
+                this->addZoneWithIdToWorld(zone_id);
             }
         }
     }
@@ -459,16 +477,16 @@ int WorldGenerator::doCleanup(YodaDocument* doc)
     }
     puzzle_array_1->clear();
     
-    for(Quest *quest : doc->providedItems)
+    for(Quest *quest : this->providedItems)
         delete quest;
-    doc->providedItems.clear();
+    this->providedItems.clear();
     
-    for(Quest *quest : doc->requiredItems)
+    for(Quest *quest : this->requiredItems)
         delete quest;
-    doc->requiredItems.clear();
+    this->requiredItems.clear();
     
     doc->puzzle_ids.clear();
-    doc->chosen_zone_ids.clear();
+    this->chosen_zone_ids.clear();
     Message("-= FAILURE 3 =-\n");
     
     return 0;
@@ -497,7 +515,7 @@ int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, MapType zone_2, in
             return -1;
         }
         worldThing->zone_type = type;
-        worldThing->requiredItemID = doc->wg_item_id;
+        worldThing->requiredItemID = this->wg_item_id;
         return result;
     }
     
@@ -527,14 +545,14 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
     int zone_id_11 = (int)doc->puzzle_ids_1.size()-1;
     if ( puzzle_count > 0 ){
         do {
-            doc->wg_zone_type = -1;
-            doc->wg_item_id = -1;
-            doc->wg_item_id_unknown_2 = -1;
-            doc->wg_item_id_unknown_3 = -1;
-            doc->wg_last_added_item_id = -1;
-            doc->wg_npc_id = -1;
-            doc->field_3394 = -1;
-            doc->field_3398 = -1;
+            this->wg_zone_type = -1;
+            this->wg_item_id = -1;
+            this->wg_item_id_unknown_2 = -1;
+            this->wg_item_id_unknown_3 = -1;
+            this->wg_last_added_item_id = -1;
+            this->wg_npc_id = -1;
+            this->field_3394 = -1;
+            this->field_3398 = -1;
             
             y_1 = 0;
             int row = 0;
@@ -568,9 +586,9 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                             zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Goal, zone_id_11 - 1, puzzles2_count-1, item_1, item_2, distance, 1);
                             if ( zone_id_3 < 0 ) break;
                             
-                            doc->wg_zone_type = ZONETYPE_Goal;
-                            doc->field_3394 = world_puz_idx - 1;
-                            // doc->field_3398 = (int)&x_2[-1].field_E + 1;
+                            this->wg_zone_type = ZONETYPE_Goal;
+                            this->field_3394 = world_puz_idx - 1;
+                            // this->field_3398 = (int)&x_2[-1].field_E + 1;
                         } else {
                             int random = win_rand();
                             Message("random = %x\n", random);
@@ -588,35 +606,35 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                                     int distance = MapGenerator::GetDistanceToCenter(x, y);
                                     zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Trade, v204, -1, ZONETYPE_Use, -1, distance, 0);
                                     if ( zone_id_3 < 0 ) break;
-                                    doc->wg_zone_type = ZONETYPE_Trade;
+                                    this->wg_zone_type = ZONETYPE_Trade;
                                 } else {
                                     int distance = MapGenerator::GetDistanceToCenter(x, y);
                                     zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Use, v204, -1, zone_id_10, -1, distance, 0);
                                     if ( zone_id_3 < 0 ) break;
-                                    doc->wg_zone_type = ZONETYPE_Use;
+                                    this->wg_zone_type = ZONETYPE_Use;
                                 }
-                                doc->field_3394 = world_puz_idx - 1;
+                                this->field_3394 = world_puz_idx - 1;
                             } else {
-                                doc->wg_zone_type = type;
-                                doc->field_3394 = world_puz_idx - 1;
+                                this->wg_zone_type = type;
+                                this->field_3394 = world_puz_idx - 1;
                             }
                         }
-                        doc->addZoneWithIdToWorld(zone_id_3);
+                        this->addZoneWithIdToWorld(zone_id_3);
                         if ( zone_id_3 < 0 ) break;
                         int world_idx_1 = x + 10 * y;
                         v204 = 1;
                         
-                        doc->world_things[world_idx_1].zone_type = (ZONE_TYPE)doc->wg_zone_type;
+                        doc->world_things[world_idx_1].zone_type = (ZONE_TYPE)this->wg_zone_type;
                         doc->world_things[world_idx_1].zone_id = zone_id_3;
-                        doc->world_things[world_idx_1].findItemID = doc->wg_last_added_item_id;
-                        doc->world_things[world_idx_1].unknown606 = doc->field_3394;
-                        doc->world_things[world_idx_1].requiredItemID = doc->wg_item_id;
-                        doc->world_things[world_idx_1].unknown612 = doc->wg_npc_id;
+                        doc->world_things[world_idx_1].findItemID = this->wg_last_added_item_id;
+                        doc->world_things[world_idx_1].unknown606 = this->field_3394;
+                        doc->world_things[world_idx_1].requiredItemID = this->wg_item_id;
+                        doc->world_things[world_idx_1].unknown612 = this->wg_npc_id;
                         
                         /*
-                         *((_WORD *)v113 + 611) = doc->wg_item_id_unknown_2;
-                         *((_WORD *)v113 + 609) = doc->wg_item_id_unknown_3;
-                         *((_WORD *)v113 + 607) = doc->field_3398;
+                         *((_WORD *)v113 + 611) = this->wg_item_id_unknown_2;
+                         *((_WORD *)v113 + 609) = this->wg_item_id_unknown_3;
+                         *((_WORD *)v113 + 607) = this->field_3398;
                          *((_WORD *)v113 + 624) = 1;
                          */
                         doc->worldZones[world_idx_1] = doc->zones[zone_id_3];
@@ -624,7 +642,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                         Message("y_2 = %d\n", zone_id_11);
                         if ( zone_id_11 == 1) { // esp = 0007F51C, y_2 = esp+14 == 0x7F530
                             int distance = MapGenerator::GetDistanceToCenter(x, y);
-                            doc->AddProvidedQuestWithItemID(doc->wg_item_id, distance);
+                            this->AddProvidedQuestWithItemID(this->wg_item_id, distance);
                             
                             Message("v206 = %d\n", x_4);
                             breakAgain = 1;
@@ -655,10 +673,10 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                 if ( zone_id_4 >= 0 )
                 {
                     int idx_4 = x + 10 * y;
-                    doc->world_things[idx_4].zone_type = (ZONE_TYPE)doc->wg_zone_type;
+                    doc->world_things[idx_4].zone_type = (ZONE_TYPE)this->wg_zone_type;
                     doc->worldZones[idx_4] = doc->zones[zone_id_4];
                     doc->world_things[idx_4].zone_id = zone_id_4;
-                    doc->addZoneWithIdToWorld(zone_id_4);
+                    this->addZoneWithIdToWorld(zone_id_4);
                 }
             }
             Message("v198 = %d\n", zone_id_11);
@@ -672,41 +690,41 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
 
 #pragma mark - from Document - 
 void WorldGenerator::RemoveEmptyZoneIdsFromWorld(){
-    Message("YodaDocument::RemoveEmptyZoneIdsFromWorld()\n");
+    Message("WorldGenerator::RemoveEmptyZoneIdsFromWorld()\n");
     vector<int16> non_empty_zone_ids;
-    for(uint16 zoneID : this->doc->chosen_zone_ids) {
+    for(uint16 zoneID : this->chosen_zone_ids) {
         if(this->doc->zones[zoneID]->getType() != ZONETYPE_Empty)
             non_empty_zone_ids.push_back(zoneID);
     }
     
-    this->doc->chosen_zone_ids.clear();
+    this->chosen_zone_ids.clear();
     
     for(uint16 zoneID : non_empty_zone_ids) {
-        this->doc->chosen_zone_ids.push_back(zoneID);
+        this->chosen_zone_ids.push_back(zoneID);
     }
 }
 
 int16 WorldGenerator::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5)
 {
-    Message("YodaDocument::GetNewPuzzleId(%d, %d, %d, %d)\n", item_id, (uint16)a3, zone_type, a5);
+    Message("WorldGenerator::GetNewPuzzleId(%d, %d, %d, %d)\n", item_id, (uint16)a3, zone_type, a5);
     int16 puzzle_id;
     Puzzle *puzzle_1;
     int break_from_loop = 0;
     
     vector<int16> puzzle_ids;
-    this->doc->GetPuzzleCandidates(puzzle_ids, item_id, a3, zone_type, a5);
+    this->GetPuzzleCandidates(puzzle_ids, item_id, a3, zone_type, a5);
     if (puzzle_ids.size() == 0 ) {
         return -1;
     }
     
-    this->doc->ShuffleVector(puzzle_ids);
+    this->ShuffleVector(puzzle_ids);
     
     size_t count = puzzle_ids.size();
     int16 puzzle_idx = 0;
     while (1) {
         puzzle_id = puzzle_ids[puzzle_idx];
         puzzle_1 = this->doc->puzzles[puzzle_id];
-        if ( this->doc->ContainsPuzzleId(puzzle_id) ) {
+        if ( this->ContainsPuzzleId(puzzle_id) ) {
             if ( !break_from_loop ) {
                 ++puzzle_idx;
                 if ( puzzle_idx >= count )
@@ -718,11 +736,11 @@ int16 WorldGenerator::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type
         if ( zone_type <= ZONETYPE_Trade ) {
             if ( zone_type == ZONETYPE_Trade ) {
                 if ( puzzle_1->type == PuzzleTypeTrade && puzzle_1->questItemIDs[0] == item_id ) {
-                    Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+                    Message("WorldGenerator::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
                     return puzzle_ids[puzzle_idx];
                 }
             } else if ( zone_type == ZONETYPE_Goal && puzzle_1->type == PuzzleTypeU3 && puzzle_1->questItemIDs[0] == item_id ) {
-                Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+                Message("WorldGenerator::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
                 return puzzle_ids[puzzle_idx];
             }
             if ( !break_from_loop ) {
@@ -737,7 +755,7 @@ int16 WorldGenerator::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type
             break;
         
         if ( puzzle_1->type == PuzzleTypeU1 && puzzle_1->questItemIDs[0] == item_id ) {
-            Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+            Message("WorldGenerator::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
             return puzzle_ids[puzzle_idx];
         }
         if ( !break_from_loop ) {
@@ -748,7 +766,7 @@ int16 WorldGenerator::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type
                 continue;
         } else return -1;
         
-        Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", -1, -1);
+        Message("WorldGenerator::GetNewPuzzleId => 0x%x (%d)\n", -1, -1);
         return -1;
     }
     
@@ -762,12 +780,12 @@ int16 WorldGenerator::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type
         } else return -1;
     }
     
-    Message("YodaDocument::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
+    Message("WorldGenerator::GetNewPuzzleId => 0x%x (%d)\n", puzzle_ids[puzzle_idx], puzzle_ids[puzzle_idx]);
     return puzzle_ids[puzzle_idx];
 }
 
 int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, int16 item_id_3, int a8) {
-    Message("YodaDocument::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, (uint16)a3, (uint16)a4, (uint16)item_id_1, (uint16)item_id_2, item_id_3, a8);
+    Message("WorldGenerator::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, (uint16)a3, (uint16)a4, (uint16)item_id_1, (uint16)item_id_2, item_id_3, a8);
     
     // item_id_1 = first required quest->itemID, last required quest->itemID
     vector<int16> usable_zone_ids;
@@ -807,7 +825,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
         return -1;
     }
     
-    this->doc->ShuffleVector(usable_zone_ids);
+    this->ShuffleVector(usable_zone_ids);
     
     for(int idx=0; idx < usable_zone_ids.size(); idx++) {
         Zone *zone_1; // esi@17
@@ -826,12 +844,12 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
         
         int zone_id = usable_zone_ids[idx];
         zone_1 = this->doc->zones[zone_id];
-        if (this->doc->worldContainsZoneId(zone_id) && (type_1 != ZONETYPE_Goal || this->doc->puzzles_can_be_reused <= 0) )
+        if (this->worldContainsZoneId(zone_id) && (type_1 != ZONETYPE_Goal || this->doc->puzzles_can_be_reused <= 0) )
             continue;
         
         switch (type_1) {
             case ZONETYPE_Empty:
-                if ( this->doc->field_2E64 ) {
+                if ( this->field_2E64 ) {
                     count_1 = (int)zone_1->_hotspots.size();
                     if ( count_1 <= 0 ) {
                         return zone_id;
@@ -851,42 +869,42 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 continue;
             case ZONETYPE_BlockadeNorth:
                 if ( zone_1->getType() != ZONETYPE_BlockadeNorth
-                    || this->doc->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
+                    || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
                     continue;
                 }
                 return zone_id;
             case ZONETYPE_BlockadeSouth:
                 if ( zone_1->getType() != ZONETYPE_BlockadeSouth
-                    || this->doc->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
+                    || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
                     continue;
                 }
                 return zone_id;
             case ZONETYPE_BlockadeEast:
-                if ( zone_1->getType() != ZONETYPE_BlockadeEast || this->doc->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                if ( zone_1->getType() != ZONETYPE_BlockadeEast || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
                 return zone_id;
             case ZONETYPE_BlockadeWest:
-                if ( zone_1->getType() != ZONETYPE_BlockadeWest || this->doc->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                if ( zone_1->getType() != ZONETYPE_BlockadeWest || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
                 return zone_id;
             case ZONETYPE_TravelStart:
-                if ( zone_1->getType() != ZONETYPE_TravelStart || this->doc->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                if ( zone_1->getType() != ZONETYPE_TravelStart || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
                 return zone_id;
             case ZONETYPE_TravelEnd:
-                if ( zone_1->getType() != ZONETYPE_TravelEnd || this->doc->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
+                if ( zone_1->getType() != ZONETYPE_TravelEnd || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
                 return zone_id;
             case ZONETYPE_Goal:
                 if ( zone_1->getType() != ZONETYPE_Goal )
                     continue;
-                if ( this->doc->ZoneHasProvidedItem(zone_id, item_id_1) != 1 )
+                if ( this->ZoneHasProvidedItem(zone_id, item_id_1) != 1 )
                     continue;
-                if ( this->doc->ZoneHasProvidedItem(zone_id, item_id_2) != 1 )
+                if ( this->ZoneHasProvidedItem(zone_id, item_id_2) != 1 )
                     continue;
                 
-                item_id[0] = this->doc->GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
-                v20 = this->doc->GetItemIDThatsNotRequiredYet(zone_id, a4, 1);
+                item_id[0] = this->GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
+                v20 = this->GetItemIDThatsNotRequiredYet(zone_id, a4, 1);
                 item_ids = v20;
                 if ( item_id[0] < 0 || (signed int)v20 < 0 )
                     continue;
@@ -905,21 +923,21 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 v33 = 2 * (int16)a3;
                 v24 = (int16)a4;
                 this->doc->puzzle_ids_2[v24] = v38;
-                if ( this->doc->Unknown_7(zone_id, a3, a4, item_id_3, a8) != 1 ) {
+                if ( this->Unknown_7(zone_id, a3, a4, item_id_3, a8) != 1 ) {
                     this->doc->puzzle_ids_1[v33 / 2] = -1;
                     this->doc->puzzle_ids_2[v24] = -1;
                     continue;
                 }
-                this->doc->AddRequiredQuestWithItemID(item_id[0], item_id_3);
-                this->doc->AddRequiredQuestWithItemID((int16)item_ids, item_id_3);
+                this->AddRequiredQuestWithItemID(item_id[0], item_id_3);
+                this->AddRequiredQuestWithItemID((int16)item_ids, item_id_3);
                 return zone_id;
             case ZONETYPE_Town:
                 if ( zone_1->getType() != 11 ) continue;
                 return zone_id;
             case ZONETYPE_Trade:
                 if ( zone_1->getType() != 15 ) continue;
-                if ( this->doc->ZoneHasProvidedItem(zone_id, item_id_1) != 1 ) continue;
-                v38 = this->doc->GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
+                if ( this->ZoneHasProvidedItem(zone_id, item_id_1) != 1 ) continue;
+                v38 = this->GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
                 if ( v38 < 0 ) continue;
                 v25 = GetNewPuzzleId(v38, item_id_1, ZONETYPE_Trade, !a3);
                 if ( v25 < 0 ) continue;
@@ -930,16 +948,16 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 if (this->Unknown_1(zone_id, a3, item_id_3, a8) != 1) continue;
                 
                 this->doc->puzzle_ids.push_back(v25);
-                this->doc->AddRequiredQuestWithItemID(v38, item_id_3);
+                this->AddRequiredQuestWithItemID(v38, item_id_3);
                 
                 return zone_id;
             case ZONETYPE_Use:
             {
                 if ( zone_1->getType() != 16 )
                     continue;
-                if ( this->doc->ZoneHasProvidedItem(zone_id, item_id_1) != 1 )
+                if ( this->ZoneHasProvidedItem(zone_id, item_id_1) != 1 )
                     continue;
-                int16 puzzleID1 = this->doc->GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
+                int16 puzzleID1 = this->GetItemIDThatsNotRequiredYet(zone_id, a3, 0);
                 if ( puzzleID1 < 0 ) continue;
                 
                 int16 puzzleID2 = this->GetNewPuzzleId(puzzleID1, item_id_1, ZONETYPE_Use, !a3);
@@ -948,16 +966,16 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 if(a8) this->doc->puzzle_ids_1[a3] = puzzleID2;
                 else this->doc->puzzle_ids_2[a3] = puzzleID2;
                 
-                if ( this->doc->use_ids_from_array_1(zone_id, a3, item_id_3, a8) != 1 ) continue;
+                if ( this->use_ids_from_array_1(zone_id, a3, item_id_3, a8) != 1 ) continue;
                 this->doc->puzzle_ids.push_back(puzzleID2);
                 
-                this->doc->AddRequiredQuestWithItemID(puzzleID1, item_id_3);
+                this->AddRequiredQuestWithItemID(puzzleID1, item_id_3);
                 return zone_id;
             }
             case ZONETYPE_Find:
                 zone_type = zone_1->getType();
                 if ( (zone_type != ZONETYPE_Find && zone_type != ZONETYPE_FindTheForce)
-                    || this->doc->AssociateItemWithZoneHotspot(zone_id, item_id_1, item_id_3) != 1 ) {
+                    || this->AssociateItemWithZoneHotspot(zone_id, item_id_1, item_id_3) != 1 ) {
                     continue;
                 }
                 return zone_id;
@@ -970,7 +988,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
 }
 
 int WorldGenerator::Unknown_5(int16* world){
-    Message("YodaDocument::Unknown_5(...)\n");
+    Message("WorldGenerator::Unknown_5(...)\n");
     signed int result = 0;
     int zone_id = 0;
     Zone *zone = NULL;
@@ -980,40 +998,40 @@ int WorldGenerator::Unknown_5(int16* world){
     int v38 = 0;
     int v39 = 0;
     
-    this->doc->AddProvidedQuestWithItemID(THE_FORCE, 2);
-    this->doc->AddProvidedQuestWithItemID(LOCATOR, 1);
+    this->AddProvidedQuestWithItemID(THE_FORCE, 2);
+    this->AddProvidedQuestWithItemID(LOCATOR, 1);
     
     int x_1 = 0, y_1 = 0;
     // int do_second_part = this->providedItems.size() == 0;
     int do_second_part = true;
     
-    for(Quest *quest : this->doc->providedItems) {
+    for(Quest *quest : this->providedItems) {
         int x = 0, y = 0;
-        if ( this->doc->findPlaceToPutPuzzle(quest->unknown, world, &x, &y) != 1 )
+        if ( this->findPlaceToPutPuzzle(quest->unknown, world, &x, &y) != 1 )
             return 0;
         
         int zoneID = this->GetZoneIdWithType(ZONETYPE_Find, -1, -1, quest->itemID, -1, quest->unknown, 0);
         if ( zoneID < 0 ) {
-            Message("YodaDocument::Unknown_5 => %d\n", 0);
+            Message("WorldGenerator::Unknown_5 => %d\n", 0);
             return 0;
         }
         
         int idx = x + 10 * y;
         this->doc->world_things[idx].zone_type = ZONETYPE_Find;
         this->doc->world_things[idx].zone_id = zoneID;
-        this->doc->world_things[idx].findItemID = this->doc->wg_last_added_item_id;
+        this->doc->world_things[idx].findItemID = this->wg_last_added_item_id;
         this->doc->worldZones[idx] = this->doc->zones[zoneID];
         world[idx] = 306;
         
-        this->doc->addZoneWithIdToWorld(zoneID);
+        this->addZoneWithIdToWorld(zoneID);
     }
     
     if(do_second_part){
-        Message("YodaDocument::Unknown_5 -> cleanup\n");
-        for(Quest *quest : this->doc->providedItems) {
+        Message("WorldGenerator::Unknown_5 -> cleanup\n");
+        for(Quest *quest : this->providedItems) {
             delete quest;
         }
-        this->doc->providedItems.clear();
+        this->providedItems.clear();
         this->doc->item_ids.clear();
         
         v38 = 0;
@@ -1025,9 +1043,9 @@ int WorldGenerator::Unknown_5(int16* world){
                 int intermediate_puzzle_item = world[x + 10 * y];
                 if ( intermediate_puzzle_item == 1 || intermediate_puzzle_item == 300 || intermediate_puzzle_item == 104 ) {
                     int distance = MapGenerator::GetDistanceToCenter(x, y);
-                    this->doc->field_2E64 = intermediate_puzzle_item == 104 || distance < 2;
+                    this->field_2E64 = intermediate_puzzle_item == 104 || distance < 2;
                     
-                    if ( this->doc->field_2E64 ) {
+                    if ( this->field_2E64 ) {
                         zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
                     } else if (x_1) { // used to be x
                         zone_id = zone_id_1;
@@ -1036,13 +1054,13 @@ int WorldGenerator::Unknown_5(int16* world){
                     }
                     
                     if ( zone_id < 0 ) {
-                        Message("YodaDocument::Unknown_5 => %d\n", 0);
+                        Message("WorldGenerator::Unknown_5 => %d\n", 0);
                         return 0;
                     }
                     
                     while(1) {
                         zone = this->doc->zones[zone_id];
-                        if ( this->doc->field_2E64 ) break;
+                        if ( this->field_2E64 ) break;
                         
                         int has_teleporter = 0;
                         for(Hotspot *hotspot : zone->_hotspots) {
@@ -1113,7 +1131,7 @@ int WorldGenerator::Unknown_5(int16* world){
                         x_1 = 1;
                         zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, 0);
                         if ( zone_id < 0 )  {
-                            Message("YodaDocument::Unknown_5 => %d\n", 0);
+                            Message("WorldGenerator::Unknown_5 => %d\n", 0);
                             return 0;
                         };
                     }
@@ -1127,7 +1145,7 @@ int WorldGenerator::Unknown_5(int16* world){
                     this->doc->world_things[idx].unknown612 = -1;
                     this->doc->world_things[idx].findItemID = -1;
                     
-                    this->doc->addZoneWithIdToWorld(zone_id);
+                    this->addZoneWithIdToWorld(zone_id);
                     
                     if ( zone_id == zone_id_1 ) {
                         zone_id_1 = -1;
@@ -1141,7 +1159,7 @@ int WorldGenerator::Unknown_5(int16* world){
         if ( y_1 == 1 ) {
             int y = v38;
             int x = v39;
-            this->doc->field_2E64 = 1;
+            this->field_2E64 = 1;
             
             int distance = MapGenerator::GetDistanceToCenter(x, y);
             int zone_id = this->GetZoneIdWithType(ZONETYPE_Empty, -1, -1, -1, -1, distance, v27);
@@ -1153,19 +1171,19 @@ int WorldGenerator::Unknown_5(int16* world){
                 this->doc->world_things[idx].unknown606 = -1;
                 this->doc->world_things[idx].requiredItemID = -1;
                 this->doc->world_things[idx].findItemID = -1;
-                this->doc->addZoneWithIdToWorld(zone_id);
+                this->addZoneWithIdToWorld(zone_id);
             }
         }
         return 1;
     }
     
-    Message("YodaDocument::Unknown_5 => %d\n", result);
+    Message("WorldGenerator::Unknown_5 => %d\n", result);
     return result;
 }
 
 
 signed int WorldGenerator::Unknown_1(int16 zone_id, int16 a3, int16 distance, int16 a8) {
-    Message("YodaDocument::Unknown_1(%d, %d, %d, %d)\n", zone_id, a3, distance, a8);
+    Message("WorldGenerator::Unknown_1(%d, %d, %d, %d)\n", zone_id, a3, distance, a8);
     if(false) return 0x10;
     if(false) return 0x10;
     
@@ -1185,31 +1203,31 @@ signed int WorldGenerator::Unknown_1(int16 zone_id, int16 a3, int16 distance, in
     p1 = this->doc->puzzles[puzzleID1];
     p2 = this->doc->puzzles[puzzleID2];
     
-    this->doc->AddRequiredQuestWithItemID(p1->item_1, distance);
-    this->doc->AddRequiredQuestWithItemID(p2->item_1, distance);
+    this->AddRequiredQuestWithItemID(p1->item_1, distance);
+    this->AddRequiredQuestWithItemID(p2->item_1, distance);
     
-    if(!this->doc->RequiredItemForZoneWasNotPlaced(zone_id)) {
-        this->doc->RemoveQuestRequiringItem(p1->item_1);
+    if(!this->RequiredItemForZoneWasNotPlaced(zone_id)) {
+        this->RemoveQuestRequiringItem(p1->item_1);
         // RemoveQuestRequiringItem(0);
         
-        Message("YodaDocument::Unknown_1 => 0\n");
+        Message("WorldGenerator::Unknown_1 => 0\n");
         return 0;
     }
     
-    if(this->doc->ChooseItemIDFromZone_1(zone_id, puzzleID1, distance, p1->item_1, 0) >= 0) {
-        Unknown_14(zone_id, puzzleID1, distance, p2->item_1);
+    if(this->ChooseItemIDFromZone_1(zone_id, puzzleID1, distance, p1->item_1, 0) >= 0) {
+        this->Unknown_14(zone_id, puzzleID1, distance, p2->item_1);
     }
     
-    this->doc->addRequiredItemsFromHotspots(zone_id);
+    this->addRequiredItemsFromHotspots(zone_id);
     
-    Message("YodaDocument::Unknown_1 => %d\n", 1);
+    Message("WorldGenerator::Unknown_1 => %d\n", 1);
     return 1;
 }
 
 
 int WorldGenerator::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID)
 {
-    Message("YodaDocument::Unknown_14(%d, %d, %d, %d)\n", zoneID, a3, distance, providedItemID);
+    Message("WorldGenerator::Unknown_14(%d, %d, %d, %d)\n", zoneID, a3, distance, providedItemID);
     if(zoneID < 0) return 0;
     
     Zone *zone = this->doc->zones[zoneID];
@@ -1224,14 +1242,14 @@ int WorldGenerator::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 p
             }
             
             if ( hotspots.size() ) {
-                this->doc->AddRequiredQuestWithItemID(itemID, distance);
-                this->doc->wg_last_added_item_id = providedItemID;
+                this->AddRequiredQuestWithItemID(itemID, distance);
+                this->wg_last_added_item_id = providedItemID;
                 
                 Hotspot *hotspot = hotspots[win_rand() % hotspots.size()];
                 hotspot->arg1 = providedItemID;
                 hotspot->enabled = 1;
                 
-                Message("YodaDocument::Unknown_14 => %d\n", 1);
+                Message("WorldGenerator::Unknown_14 => %d\n", 1);
                 return 1;
             }
             break;
@@ -1242,12 +1260,1055 @@ int WorldGenerator::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 p
         {
             int result = this->Unknown_14(hotspot->arg1, a3, distance, providedItemID);
             if(result) {
-                Message("YodaDocument::Unknown_14 => %d\n", result);
+                Message("WorldGenerator::Unknown_14 => %d\n", result);
                 return result;
             }
         }
     }
     
-    Message("YodaDocument::Unknown_14 => %d\n", 0);
+    Message("WorldGenerator::Unknown_14 => %d\n", 0);
+    return 0;
+}
+
+#pragma mark - Bached
+void WorldGenerator::WritePlanetValues() {
+    /*
+     switch (this->planet) {
+     case TATOOINE: doc->WriteTatooineValues(); break;
+     case HOTH: doc->WriteHothValues(); break;
+     case ENDOR: doc->WriteEndorValues(); break;
+     }
+     */
+}
+
+signed int WorldGenerator::GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap) {
+    return 0;
+}
+
+int WorldGenerator::PuzzleUsedInLastGame(uint16 puzzle_id, Planet planet) {
+    return 0;
+}
+
+void WorldGenerator::GetTileProvidedByZonesHotspots(int16 zone_id)
+{
+    /*
+     vector<Zone*> *tile_id; // eax@1
+     Zone *zone; // edi@2
+     int v4; // ebp@3
+     int index; // esi@4
+     Hotspot *hotspot; // ebx@5
+     int x; // [sp-10h] [bp-20h]@9
+     int y; // [sp-Ch] [bp-1Ch]@9
+     int16 tile_id_1; // [sp-4h] [bp-14h]@9
+     
+     if ( zone_id >= 0 )
+     {
+     tile_id = &this->zones;
+     zone = (*tile_id)[zone_id];
+     if ( zone )
+     {
+     v4 = (int)zone->_hotspots.size();
+     if ( v4 > 0 )
+     {
+     index = 0;
+     do
+     {
+     hotspot = zone->_hotspots[index];
+     tile_id = 0;
+     switch ( hotspot->type )
+     {
+     case TriggerLocation:
+     case SpawnLocation:
+     case ForceLocation:
+     case LocatorThingy:
+     case CrateItem:
+     case PuzzleNPC:
+     case CrateWeapon:
+     if ( hotspot->enabled == 1 && hotspot->arg1 >= 0 )
+     {
+     int id = zone->GetTileIdAt(zone, hotspot->x, hotspot->y, OBJECTS);
+     if ( id < 0 )
+     {
+     tile_id_1 = hotspot->arg1;
+     y = hotspot->y;
+     x = hotspot->x;
+     goto get_tile;
+     }
+     }
+     break;
+     case Unused:
+     if ( hotspot->enabled == 1 )
+     {
+     hotspot->arg1 = ADEGAN_CRYSTAL;
+     int tile_id = zone->GetTileIdAt(hotspot->x, hotspot->y, OBJECTS);
+     if ( tile_id < 0 )
+     {
+     tile_id_1 = ADEGAN_CRYSTAL;
+     y = hotspot->y;
+     x = hotspot->x;
+     get_tile:
+     tile_id = zone->SetTileAt(zone, x, y, 1, tile_id_1);
+     }
+     }
+     break;
+     default:
+     break;
+     }
+     ++index;
+     --v4;
+     }
+     while ( v4 );
+     }
+     }
+     }
+     //        return (unsigned int)tile_id;
+     */
+}
+
+#pragma mark - DONE -
+int WorldGenerator::ContainsPuzzleId(const uint16 puzzle_id)
+{
+    for(uint16 id : doc->puzzle_ids)
+        if(id == puzzle_id) return 1;
+    
+    return 0;
+}
+
+bool WorldGenerator::ZoneHasItem(uint16 zoneID, uint16 targetItemID, int a4)
+{
+    Message("WorldGenerator::ZoneHasItem(%d, %d, %d)\n", zoneID, targetItemID, a4);
+    Zone *zone = getZoneByID(zoneID);
+    if ( !zone ) return 0;
+    
+    vector<uint16> &itemIDs = a4 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : itemIDs)
+        if(itemID == targetItemID)
+            return 1;
+    
+    for(Hotspot *hotspot : zone->_hotspots)
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0)
+            if(ZoneHasItem(hotspot->arg1, targetItemID, a4))
+                return 1;
+    
+    return 0;
+}
+
+Zone* WorldGenerator::getZoneByID(const uint16 zoneID) {
+    return doc->zones[zoneID];
+}
+
+uint16 WorldGenerator::getZoneID(const Zone *zone){
+    for(int i=0; i < doc->zones.size(); i++)
+        if(doc->zones[i] == zone) return i;
+    
+    return -1;
+}
+
+int WorldGenerator::HasQuestRequiringItem(const uint16 itemID) {
+    Message("WorldGenerator::HasQuestRequiringItem(%d)\n", itemID);
+    for(Quest *quest : this->requiredItems)
+        if(quest->itemID == itemID) return 1;
+    
+    return 0;
+}
+
+Quest* WorldGenerator::AddProvidedQuestWithItemID(uint16 itemID, uint16 maximumDistance){
+    Message("WorldGenerator::AddProvidedQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
+    
+    for(Quest *quest : this->providedItems)
+        if(quest->itemID == itemID) return quest;
+    
+    Quest *quest = new Quest(itemID, maximumDistance);
+    this->providedItems.insert(this->providedItems.begin(), quest);
+    
+    return quest;
+}
+
+Quest* WorldGenerator::AddRequiredQuestWithItemID(uint16 itemID, uint16 maximumDistance){
+    Message("WorldGenerator::AddRequiredQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
+    
+    Quest *quest = new Quest(itemID, maximumDistance);
+    this->requiredItems.push_back(quest);
+    
+    return quest;
+}
+
+void WorldGenerator::RemoveQuestProvidingItem(uint16 itemID) {
+    Message("WorldGenerator::RemoveQuestProvidingItem(%d)\n", itemID);
+    
+    for(int i=0; i < this->providedItems.size(); i++)
+        if(this->providedItems[i]->itemID == itemID) {
+            this->providedItems.erase(this->providedItems.begin()+i);
+            return;
+        }
+}
+
+void WorldGenerator::RemoveQuestRequiringItem(uint16 itemID) {
+    Message("WorldGenerator::RemoveQuestRequiringItem(%d)\n", itemID);
+    
+    for(int i=0; i < this->requiredItems.size(); i++)
+        if(this->requiredItems[i]->itemID == itemID) {
+            this->requiredItems.erase(this->requiredItems.begin()+i);
+            return;
+        }
+}
+
+signed int WorldGenerator::RequiredItemForZoneWasNotPlaced(const uint16 zone_id)
+{
+    Message("WorldGenerator::RequiredItemForZoneWasNotPlaced(%d)\n", zone_id);
+    
+    Zone *zone = doc->zones[zone_id];
+    if ( !zone ) return 0;
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->arg1 <= 0) continue;
+        
+        switch (hotspot->type) {
+            case DoorIn:
+                if(!RequiredItemForZoneWasNotPlaced(hotspot->arg1))
+                    return 0;
+                break;
+                
+            case CrateItem:
+            case PuzzleNPC:
+            case CrateWeapon:
+                if(HasQuestRequiringItem(hotspot->arg1))
+                    return 0;
+                break;
+                
+            default: break;
+        }
+    }
+    
+    return 1;
+}
+
+
+signed int WorldGenerator::ChooseItemIDFromZone(uint16 zoneID, uint16 itemID, int fromAssignedItems)
+{
+    Message("WorldGenerator::ChooseItemIDFromZone(%d, %d, %d)\n", zoneID, itemID, fromAssignedItems);
+    Zone *zone = getZoneByID(zoneID);
+    if (!zone) return -1;
+    
+    vector<uint16> &itemIDs = fromAssignedItems ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 candidate : itemIDs) {
+        if(candidate == itemID) {
+            return candidate;
+        }
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseItemIDFromZone(hotspot->arg1, itemID, fromAssignedItems);
+            if(result >= 0) return result;
+        }
+    }
+    
+    return -1;
+}
+
+uint16 WorldGenerator::getZoneIDAt(const int x,const  int y){
+    return doc->world_things[x + 10 * y].zone_id;
+}
+
+int WorldGenerator::getLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut) {
+    for(int y=0; y < 10; y++)
+        for(int x=0; x < 10; x++)
+            if(doc->world_things[x + 10 * y].zone_id == zoneID) {
+                *xOut = x;
+                *yOut = y;
+                return 1;
+            }
+    
+    return 0;
+}
+
+int WorldGenerator::worldContainsZoneId(uint16 zoneID) {
+    Message("WorldGenerator::WorldContainsZoneId(%d)\n", zoneID);
+    for(uint16 chosenZoneID : this->chosen_zone_ids)
+        if(chosenZoneID == zoneID) {
+            Message("WorldGenerator::WorldContainsZoneId => 1\n");
+            return 1;
+        }
+    Message("WorldGenerator::WorldContainsZoneId => 0\n");
+    return 0;
+}
+
+void WorldGenerator::addZoneWithIdToWorld(const uint16 zoneID){
+    Message("WorldGenerator::addZoneWithIdToWorld(%d)\n", zoneID);
+    if(zoneID >= doc->zones.size()) {
+        printf("Invalid Zone ID\n");
+        return;
+    }
+    
+    this->chosen_zone_ids.insert(this->chosen_zone_ids.begin(), zoneID);
+}
+
+void WorldGenerator::addRequiredItemsFromHotspots(uint16 zoneID) {
+    Message("WorldGenerator::addRequiredItemsFromHotspots(%d)\n", zoneID);
+    Zone* zone = doc->zones[zoneID];
+    for (Hotspot* hotspot : zone->_hotspots) {
+        switch (hotspot->type) {
+            case CrateItem:
+            case PuzzleNPC:
+            case CrateWeapon:
+                if(hotspot->arg1 != -1)
+                    this->AddRequiredQuestWithItemID(hotspot->arg1, -1);
+                break;
+            case DoorIn:
+                if(hotspot->arg1 != -1)
+                    this->addRequiredItemsFromHotspots(hotspot->arg1);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+int16 WorldGenerator::findUnusedNPCForZone(uint16 zone_id)
+{
+    Message("WorldGenerator::findUnusedNPCForZone(%d)\n", zone_id);
+    Zone *zone = getZoneByID(zone_id);
+    if (!zone) return -1;
+    
+    vector<uint16> npcCandidates;
+    for(int16 npcTileID : zone->puzzleNPCTileIDs)
+        if(!HasQuestRequiringItem(npcTileID))
+            npcCandidates.push_back(npcTileID);
+    
+    if(npcCandidates.size()) {
+        int idx = win_rand() % npcCandidates.size();
+        return npcCandidates[idx];
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = findUnusedNPCForZone(hotspot->arg1);
+            if(result >= 0) return result;
+        }
+    }
+    
+    return -1;
+}
+
+bool WorldGenerator::hasPuzzleNPC(uint16 zoneID, int16 targetNPCID)
+{
+    Message("WorldGenerator::hasPuzzleNPC(%d, %d)\n", zoneID, targetNPCID);
+    
+    Zone *zone = getZoneByID(zoneID);
+    if (!zone ) return 0;
+    
+    if ( targetNPCID == -1 ) {
+        printf("Is this really a valid call?\n");
+        return zone->puzzleNPCTileIDs.size() != 0;
+    }
+    
+    for(uint16 npcID : zone->puzzleNPCTileIDs)
+        if(npcID == targetNPCID) return true;
+    
+    for(Hotspot *hotspot : zone->_hotspots)
+        if (hotspot->type == DoorIn && hotspot->arg1 != -1)
+            if(hasPuzzleNPC(hotspot->arg1, targetNPCID))
+                return true;
+    
+    return false;
+}
+
+bool WorldGenerator::ZoneHasProvidedItem(uint16 zoneID, uint16 itemID) {
+    Message("WorldGenerator::ZoneHasProvidedItem(%d, %d)\n", zoneID, itemID);
+    Zone *zone = getZoneByID(zoneID);
+    for(uint16 itemIDInZone : zone->providedItemIDs)
+        if(itemIDInZone == itemID) return true;
+    
+    for(Hotspot* hotspot : zone->_hotspots)
+        if(hotspot->type == DoorIn && hotspot->arg1 != -1 && ZoneHasProvidedItem(hotspot->arg1, itemID))
+            return true;
+    
+    return false;
+}
+
+
+signed int WorldGenerator::ChooseSpawnForPuzzleNPC(int16 zoneID, int npcID)
+{
+    Message("WorldGenerator::ChooseSpawnForPuzzleNPC(%d, %d)\n", zoneID, npcID);
+    Zone *zone = getZoneByID(zoneID);
+    if ( !zone ) return -1;
+    
+    vector<Hotspot*> hotspotCandidates;
+    for(uint16 npcTileID : zone->puzzleNPCTileIDs) {
+        if(npcTileID != npcID) continue;
+        
+        hotspotCandidates.clear();
+        for(Hotspot *hotspot : zone->_hotspots) {
+            if(hotspot->type == SpawnLocation && hotspot->arg1 == -1) {
+                hotspotCandidates.push_back(hotspot);
+            }
+        }
+        
+        if(hotspotCandidates.size()) {
+            int idx = win_rand() % hotspotCandidates.size();
+            Hotspot *hotspot = hotspotCandidates[idx];
+            
+            hotspot->arg1 = npcID;
+            hotspot->enabled = 1;
+            this->wg_npc_id = npcID;
+            
+            return npcID;
+        }
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = ChooseSpawnForPuzzleNPC(hotspot->arg1, npcID);
+            if(result != -1) return result;
+        }
+    }
+    
+    return -1;
+}
+
+
+int WorldGenerator::PuzzleIsGoal(uint16 puzzle_id, Planet planet){
+    if ( planet == TATOOINE ) {
+        switch ( puzzle_id ) {
+            case GOAL_FALCON:
+            case GOAL_HAN:
+            case GOAL_AMULET:
+            case GOAL_ADEGAN_CRYSTAL:
+            case GOAL_THREEPIOS_PARTS:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    
+    if ( planet == HOTH ) {
+        switch ( puzzle_id ) {
+            case GOAL_GENERAL_MARUTZ:
+            case GOAL_HIDDEN_FACTORY:
+            case GOAL_WARN_THE_REBELS:
+            case GOAL_RESCUE_YODA:
+            case GOAL_CAR:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    
+    if ( planet == ENDOR ) {
+        switch ( puzzle_id ) {
+            case GOAL_FIND_LEIA:
+            case GOAL_IMPERIAL_BATTLE_STATION:
+            case GOAL_LANTERN_OF_SACRED_LIGHT:
+            case GOAL_IMPERIAL_BATTLE_CODE:
+            case GOAL_RELAY_STATION:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+    
+    return 0;
+}
+
+int WorldGenerator::GetItemIDThatsNotRequiredYet(uint16 zoneID, int unused, bool use_array_2_ids)
+{
+    Message("WorldGenerator::GetItemIDThatsNotRequiredYet(%d, %d, %d)\n", zoneID, unused, use_array_2_ids);
+    vector<uint16> itemIDs;
+    Zone *zone = doc->zones[zoneID];
+    
+    vector<uint16> &zoneItemIds = use_array_2_ids ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : zoneItemIds)
+        if(!HasQuestRequiringItem(itemID))
+            itemIDs.push_back(itemID);
+    
+    if(itemIDs.size())
+        return itemIDs[win_rand() % itemIDs.size()];
+    
+    for(Hotspot *hotspot : zone->_hotspots){
+        if(hotspot->type == DoorIn && hotspot->arg1 != -1) {
+            int16 itemID = GetItemIDThatsNotRequiredYet(hotspot->arg1, unused, use_array_2_ids);
+            if(itemID != -1) return itemID;
+        }
+    }
+    
+    return -1;
+}
+
+bool WorldGenerator::findPlaceToPutPuzzle(int maxDistance, int16 *world, int* xref, int* yref) {
+    Message("WorldGenerator::findPlaceToPutPuzzle(%d, .., .., ..)\n", maxDistance);
+    vector<MapPoint*> farPoints;
+    vector<MapPoint*> bestPoints;
+    vector<MapPoint*> pointsCloseToPuzzles;
+    
+    for(int y=0; y < 10; y++) {
+        for(int x=0; x < 10; x++) {
+            int idx = x + 10 * y;
+            int item = world[idx];
+            MapPoint *point = new MapPoint(x, y);
+            if ( MapGenerator::GetDistanceToCenter(x, y) > maxDistance )  {
+                if ( item == 1 ) {
+                    Message("1) %dx%d\n", x, y);
+                    farPoints.push_back(point);
+                } else delete point;
+            } else if ( item == 1 || item == 300 ) {
+                Message("2) %dx%d\n", x, y);
+                if (( x < 1 || world[idx-1] != 306 )
+                    && ( x > 8 || world[idx+1] != 306 )
+                    && ( y < 1 || world[idx-10] != 306 )
+                    && ( y > 8 || world[idx+10] != 306 ))
+                    bestPoints.push_back(point);
+                else
+                    pointsCloseToPuzzles.push_back(point);
+            } else delete point;
+        }
+    }
+    
+    int idx = 0;
+    vector<MapPoint*>*array = NULL;
+    if(bestPoints.size()){
+        idx = win_rand() % bestPoints.size();
+        array = &bestPoints;
+    } else if(pointsCloseToPuzzles.size()) {
+        idx = win_rand() % pointsCloseToPuzzles.size();
+        array = &pointsCloseToPuzzles;
+    } else if(farPoints.size()){
+        idx = win_rand() % farPoints.size();
+        array = &farPoints;
+    } else {
+        Message("No Place to put puzzle!\n");
+        return false;
+    }
+    
+    if(array) {
+        MapPoint *chosenPoint = (*array)[idx];
+        *xref = chosenPoint->x;
+        *yref = chosenPoint->y;
+        Message("WorldGenerator::findPlaceToPutPuzzle: %dx%d\n", chosenPoint->x, chosenPoint->y);
+    }
+    
+    for(MapPoint *point : farPoints) {
+        delete point;
+    }
+    farPoints.clear();
+    for(MapPoint *point : bestPoints) {
+        delete point;
+    }
+    bestPoints.clear();
+    for(MapPoint *point : pointsCloseToPuzzles) {
+        delete point;
+    }
+    pointsCloseToPuzzles.clear();
+    
+    return true;
+}
+
+#pragma mark - TODO -
+void WorldGenerator::ShuffleVector(vector<int16> &array) {
+    size_t count = array.size();
+    if ( count == 0 ) return;
+    
+    vector<int16> temp_array(count, -1);
+    
+    for(int i=0; i < count; i++) {
+        int idx = win_rand() % count;
+        if ( temp_array[idx] == -1 ) {
+            temp_array[idx] = array[i];
+            array[i] = -1;
+        }
+    }
+    
+    for(size_t i = count-1; i != 0; i--) {
+        int did_find_free_spot = 0;
+        while(true) {
+            for(int i=0; i < count; i++)
+                if ( temp_array[i] == -1 )
+                    did_find_free_spot = 1;
+            
+            if ( !did_find_free_spot ) break;
+            
+            int idx = win_rand() % count;
+            if ( temp_array[idx] == -1 ) {
+                temp_array[idx] = array[i];
+                array[i] = -1;
+                break;
+            }
+        }
+    }
+    
+    for(int i=0; i < count; i++) {
+        array[i] = temp_array[i];
+    }
+}
+
+void WorldGenerator::GetPuzzleCandidates(vector<int16> &result, uint16 item_id, int a3, ZONE_TYPE zone_type, int a5)
+{
+    result.clear();
+    
+    for(int16 puzzle_idx = 0; puzzle_idx < doc->puzzles.size(); puzzle_idx++) {
+        Puzzle * puzzle = doc->puzzles[puzzle_idx];
+        if ( (int16)zone_type <= (signed int)ZONETYPE_Trade ) {
+            if ( zone_type == ZONETYPE_Trade ) {
+                if ( puzzle->type != PuzzleTypeTrade || this->ContainsPuzzleId(puzzle_idx) )
+                    continue;
+            } else if ( zone_type != ZONETYPE_Goal
+                       || puzzle->type != PuzzleTypeU3
+                       || this->ContainsPuzzleId(puzzle_idx) ) {
+                continue;
+            }
+            
+            result.insert(result.end(), puzzle_idx);
+            continue;
+        }
+        
+        if ( zone_type == ZONETYPE_Use )
+        {
+            if (!puzzle->type && !this->ContainsPuzzleId(puzzle_idx) )
+                result.insert(result.end(), puzzle_idx);
+            
+            continue;
+        }
+        
+        if ( zone_type != 9999 || puzzle->type != PuzzleTypeEnd )
+            continue;
+        
+        if ( this->PuzzleUsedInLastGame(puzzle_idx, doc->planet) && doc->puzzles_can_be_reused < 0 )
+            continue;
+        
+        if(this->PuzzleIsGoal(puzzle_idx, doc->planet)) {
+            result.insert(result.end(), puzzle_idx);
+        }
+    }
+}
+
+
+signed int WorldGenerator::ChooseItemIDFromZone_0(int16 zone_id, int itemID)
+{
+    Message("WorldGenerator::ChooseItemIDFromZone_0(%d, %d)\n", zone_id, itemID);
+    vector<Hotspot*> hotspotCandidates;
+    Zone *zone = getZoneByID(zone_id);
+    if(!zone) return -1;
+    
+    Message("v16 = %d\n", 0);
+    for(int providedItemID : zone->providedItemIDs) {
+        if ( itemID == providedItemID ) {
+            hotspotCandidates.clear();
+            
+            for(Hotspot *hotspot : zone->_hotspots)
+                if(hotspot->type == TriggerLocation)
+                    hotspotCandidates.insert(hotspotCandidates.begin(), hotspot);
+            
+            if ( hotspotCandidates.size() > 0 ) {
+                int idx = win_rand() % hotspotCandidates.size();
+                Hotspot *hotspot = hotspotCandidates[idx];
+                if (hotspot->type == TriggerLocation ) {
+                    hotspot->arg1 = providedItemID;
+                    hotspot->enabled = 1;
+                    return providedItemID;
+                }
+            }
+        }
+    }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
+            int result = this->ChooseItemIDFromZone_0(hotspot->arg1, itemID);
+            if(result >= 0) return result;
+        }
+    }
+    
+    return -1;
+}
+
+signed int WorldGenerator::ChooseItemIDFromZone_1(int16 zoneID, int a3, int a4, int16 item_id, int a6)
+{
+    Message("WorldGenerator::ChooseItemIDFromZone_1(%d, %d, %d, %d, %d)\n", zoneID, a3, a4, item_id, a6);
+    
+    if ( zoneID < 0 ) {
+        Message("WorldGenerator::ChooseItemIDFromZone_1() => %d\n", 0);
+        return 0;
+    }
+    
+    Zone *zone = doc->zones[zoneID];
+    vector<uint16> &itemIDs = a6 ? zone->assignedItemIDs : zone->requiredItemIDs;
+    for(uint16 itemID : itemIDs) {
+        if(itemID != item_id) continue;
+        
+        for(Hotspot *hotspot : zone->_hotspots) {
+            if(hotspot->type == Lock) {
+                AddRequiredQuestWithItemID(item_id, a4);
+                
+                if ( a6 ) this->wg_item_id_unknown_3 = item_id;
+                else this->wg_item_id = item_id;
+                
+                hotspot->arg1 = item_id;
+                hotspot->enabled = 1;
+                
+                Message("WorldGenerator::ChooseItemIDFromZone_1() => %d\n", 1);
+                return 1;
+            }
+        }
+    }
+    
+    for(Hotspot* hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn) {
+            int result = ChooseItemIDFromZone_1(hotspot->arg1, a3, a4, item_id, a6);
+            if(result) return result;
+        }
+    }
+    
+    Message("WorldGenerator::ChooseItemIDFromZone_1() => %d\n", 0);
+    return 0;
+}
+
+signed int WorldGenerator::use_ids_from_array_1(int16 zone_id, int16 a3, int16 item_id_1, int16 a5)
+{
+    Message("WorldGenerator::use_ids_from_array_1(%d, %d, %d, %d)\n", zone_id, a3, item_id_1, a5);
+    Zone *zone = NULL; // eax@3
+    vector<uint16> *v9 = NULL; // eax@14
+    int16 v10 = 0; // dx@17
+    vector<Puzzle*>* v11 = NULL; // ebx@19
+    Puzzle *v12 = NULL; // ecx@19
+    Puzzle *v13 = NULL; // eax@22
+    int16 item_id = 0; // bp@25
+    int16 a3a = 0; // [sp+12h] [bp-Ah]@25
+    Puzzle *a3_2 = NULL; // [sp+14h] [bp-8h]@0
+    
+    if ( zone_id < 0 ) return 0;
+    zone = doc->zones[zone_id];
+    
+    if ( !zone ) return 0;
+    
+    if (zone->getType() != ZONETYPE_Use) return 0;
+    if (!this->RequiredItemForZoneWasNotPlaced(zone_id)) return 0;
+    
+    if ( a5 ) {
+        if ( doc->puzzle_ids_1.size() - 1 > a3 ) {
+            v9 = &doc->puzzle_ids_1;
+            v10 = (*v9)[a3 + 1];
+        } else { v10 = -1; }
+    } else if ( doc->puzzle_ids_2.size() - 1 > a3 ) {
+        v9 = &doc->puzzle_ids_2;
+        v10 = (*v9)[a3 + 1];
+    } else v10 = -1;
+    
+    int16 v8 = a5 ? doc->puzzle_ids_1[a3] : doc->puzzle_ids_2[a3];
+    
+    v11 = &doc->puzzles;
+    v12 = (*v11)[v8];
+    if ( !v12 )  return 0;
+    if ( v10 < 0 ) {
+        v13 = a3_2;
+    } else {
+        v13 = (*v11)[v10];
+        if ( !v13 )  return 0;
+    }
+    item_id = -1;
+    a3a = v12->item_1;
+    if ( v10 >= 0 ) item_id = v13->item_1;
+    int16 npcID = this->findUnusedNPCForZone(zone_id);
+    if ( npcID < 0 ) return 0;
+    
+    int v19 = 1;
+    int a3_2a = this->ZoneHasItem(zone_id, a3a, 0);
+    if ( item_id >= 0 )
+        v19 = this->ZoneHasProvidedItem(zone_id, item_id);
+    
+    if ( !a3_2a || !v19 ) return 0;
+    
+    if ( this->ChooseSpawnForPuzzleNPC(zone_id, npcID) < 0 ) return 0;
+    
+    this->wg_npc_id = npcID;
+    this->wg_last_added_item_id = item_id;
+    this->wg_item_id = a3a;
+    this->field_3394 = a3;
+    
+    this->AddRequiredQuestWithItemID(npcID, item_id_1);
+    this->addRequiredItemsFromHotspots(zone_id);
+    
+    return 1;
+}
+
+int WorldGenerator::Unknown_7(int16 zone_id, int16 puzzle_idx, int16 a4, int unknown, int a6)
+{
+    Message("WorldGenerator::Unknown_7(%d, %d, %d, %d, %d)\n", zone_id, puzzle_idx, a4, unknown, a6);
+    Zone *zone = NULL;
+    signed int result = 0;
+    uint16 item = 0;
+    signed int v14 = 0;
+    int v15 = 0;
+    signed int v16 = 0;
+    signed int v17 = 0;
+    signed int v19 = 0;
+    signed int v21 = 0;
+    signed int v22 = 0;
+    signed int v23 = 0;
+    signed int v24 = 0;
+    
+    zone = doc->zones[zone_id];
+    if (!zone) return 0;
+    
+    if ( zone->getType() != ZONETYPE_Goal ) return 0;
+    
+    if (!this->RequiredItemForZoneWasNotPlaced(zone_id) )
+        return 0;
+    
+    Puzzle *puzzle1 = doc->puzzles[doc->puzzle_ids_1[puzzle_idx]];
+    Puzzle *puzzle3 = doc->puzzles[doc->puzzle_ids_1[puzzle_idx+1]];
+    Puzzle *puzzle2 = doc->puzzles[doc->puzzle_ids_2[a4]];
+    
+    puzzle1->unknown_3 = 0;
+    v14 = this->findUnusedNPCForZone(zone_id);
+    v15 = v14;
+    if ( v14 >= 0 )
+        puzzle1->unknown_3 = hasPuzzleNPC(zone_id, v14);
+    
+    v16 = this->ZoneHasItem(zone_id, puzzle1->item_1, 0);
+    this->ZoneHasItem(zone_id, puzzle2->item_1, 1);
+    v23 = this->ZoneHasProvidedItem(zone_id, puzzle3->item_1);
+    this->ZoneHasProvidedItem(zone_id, puzzle3->item_2);
+    if ( !v16 || !v23 )
+        return 0;
+    
+    if ( puzzle1->unknown_3 ) {
+        this->addRequiredItemsFromHotspots(zone_id);
+        
+        this->wg_npc_id = v15;
+        this->wg_last_added_item_id = item;
+        this->wg_item_id_unknown_2 = puzzle1->item_1;
+        this->wg_item_id = puzzle1->item_1;
+        this->field_3394 = puzzle_idx;
+        this->field_3398 = a4;
+        this->wg_item_id_unknown_3 = puzzle1->item_1;
+        this->addRequiredItemsFromHotspots(zone_id);
+        result = 1;
+    } else {
+        v17 = this->ChooseItemIDFromZone(zone_id, puzzle1->item_1, 0);
+        v22 = this->ChooseItemIDFromZone_0(zone_id, puzzle3->item_1);
+        if ( v17 >= 0 && v22 >= 0 ) {
+            this->AddRequiredQuestWithItemID(puzzle1->item_1, unknown);
+            this->AddRequiredQuestWithItemID(puzzle3->item_1, unknown);
+        }
+        v24 = this->ChooseItemIDFromZone(zone_id, puzzle2->item_1, 1);
+        v19 = this->ChooseItemIDFromZone_0(zone_id, puzzle3->item_2);
+        v21 = v19;
+        if ( v24 >= 0 && v19 >= 0 ) {
+            this->AddRequiredQuestWithItemID(puzzle2->item_1, unknown);
+            this->AddRequiredQuestWithItemID(puzzle3->item_2, unknown);
+        }
+        if ( v17 < 0 || v22 < 0 || v24 < 0 || v21 < 0 ) {
+            this->RemoveQuestRequiringItem(puzzle1->item_1);
+            this->RemoveQuestRequiringItem(item);
+            this->RemoveQuestRequiringItem(puzzle1->item_1);
+            this->RemoveQuestRequiringItem(puzzle1->item_1);
+            result = 0;
+        } else {
+            this->wg_npc_id = -1;
+            this->wg_last_added_item_id = puzzle3->item_1;
+            this->wg_item_id = puzzle1->item_1;
+            this->field_3394 = puzzle_idx;
+            this->wg_item_id_unknown_2 = puzzle1->item_1;
+            this->wg_item_id_unknown_3 = puzzle1->item_1;
+            this->field_3398 = a4;
+            addRequiredItemsFromHotspots(zone_id);
+            result = 1;
+        }
+    }
+    
+    return result;
+}
+
+signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, int use_required_items_array)
+{
+    Message("WorldGenerator::SetupRequiredItemForZone_(%d, %d, %d)\n", zone_id, arg2, use_required_items_array);
+    int count; // esi@6
+    int idx; // edi@12
+    uint16 item_id; // bx@13
+    int idx_1; // edi@18
+    uint16 v10; // bx@19
+    int count_2; // esi@23
+    int random_item_id; // esi@23
+    signed int v14; // ebx@24
+    int count_1; // ecx@24
+    int16 zone_id_1; // di@32
+    vector<uint16> item_ids_1; // [sp+Ch] [bp-28h]@1
+    Zone *zone; // [sp+20h] [bp-14h]@4
+    
+    item_ids_1.clear();
+    
+    if ( zone_id < 0 ){
+        return 0;
+    }
+    
+    zone = doc->zones[zone_id];
+    if ( !zone ) {
+        return 0;
+    }
+    
+    count = use_required_items_array ? (int)zone->assignedItemIDs.size() : (int)zone->requiredItemIDs.size();
+    if ( !count || !RequiredItemForZoneWasNotPlaced(zone_id)) {
+        return 0;
+    }
+    
+    if ( use_required_items_array ) {
+        if ( count > 0 ) {
+            idx = 0;
+            do {
+                item_id = zone->assignedItemIDs[idx];
+                if ( !HasQuestRequiringItem(zone->assignedItemIDs[idx]) ) {
+                    item_ids_1.push_back(item_id);
+                }
+                ++idx;
+                --count;
+            }
+            while ( count );
+        }
+    }
+    else if ( count > 0 ) {
+        idx_1 = 0;
+        do {
+            v10 = zone->requiredItemIDs[idx_1];
+            if ( !HasQuestRequiringItem(zone->requiredItemIDs[idx_1]) )
+                item_ids_1.push_back(v10);
+            ++idx_1;
+            --count;
+        }
+        while ( count );
+    }
+    
+    if ( !item_ids_1.size() ) {
+        return 0;
+    }
+    
+    count_2 = (int)item_ids_1.size();
+    random_item_id = item_ids_1[win_rand() % count_2];
+    if ( zone->providedItemIDs.size() == 1 ) {
+        int idx = 0;
+        v14 = 0;
+        count_1 = (int)doc->item_ids.size();
+        if ( count_1 > 0 ) {
+            int documentItemIdx = 0;
+            do {
+                if ( doc->item_ids[documentItemIdx] == zone->providedItemIDs[idx])
+                    v14 = 1;
+                ++documentItemIdx;
+                --count_1;
+            }
+            while ( count_1 );
+        }
+        if ( !v14 ) {
+            doc->item_ids.push_back(zone->providedItemIDs[idx]);
+        } else return 0;
+    }
+    
+    if ( zone->getType() == ZONETYPE_TravelStart ) {
+        AddProvidedQuestWithItemID(random_item_id, 5);
+        zone_id_1 = arg2;
+    } else {
+        zone_id_1 = arg2;
+        AddProvidedQuestWithItemID(random_item_id, arg2);
+    }
+    AddRequiredQuestWithItemID(random_item_id, zone_id_1);
+    
+    this->wg_item_id = random_item_id;
+    addRequiredItemsFromHotspots(zone_id);
+    
+    return 1;
+}
+
+int WorldGenerator::AssociateItemWithZoneHotspot(int16 zone_id, int item_id, int a4)
+{
+    Message("WorldGenerator::AssociateItemWithZoneHotspot(%d, %d, %d)\n", zone_id, item_id, a4);
+    signed int found_item_id_in_zone_items; // esi@1
+    Zone *zone; // edi@3
+    int hotspot_type; // ebx@12
+    int tile_specs; // eax@13
+    int idx; // esi@19
+    Hotspot *hotspot; // eax@24
+    int idx_1; // esi@26
+    int v16; // ebx@26
+    Hotspot *hotspot_1; // eax@27
+    int zone_id_1; // edx@28
+    vector<uint16> v20; // [sp+Ch] [bp-30h]@13
+    int v24; // [sp+24h] [bp-18h]@19
+    int didFindSuitableHotspot; // [sp+28h] [bp-14h]@1
+    
+    found_item_id_in_zone_items = 0;
+    didFindSuitableHotspot = 0;
+    if ( zone_id >= 0 ) {
+        if ( RequiredItemForZoneWasNotPlaced(zone_id) ) {
+            zone = doc->zones[zone_id];
+            if ( zone ) {
+                if ( zone->requiredItemIDs.size() <= 0 && zone->puzzleNPCTileIDs.size() <= 0 ) {
+                    for(uint16 itemID : zone->providedItemIDs) {
+                        if(itemID == item_id) {
+                            found_item_id_in_zone_items = 1;
+                            break;
+                        }
+                    }
+                    hotspot_type = 0;
+                    if ( found_item_id_in_zone_items ) {
+                        v20.clear();
+                        v20.resize(0);
+                        tile_specs = doc->tiles[item_id]->_specs;
+                        if ( tile_specs & TILE_SPEC_THE_FORCE ) {
+                            hotspot_type = ForceLocation;
+                        } else if ( tile_specs & TILE_SPEC_MAP ) {
+                            hotspot_type = LocatorThingy;
+                        } else if ( (uint8_t)tile_specs & (uint8_t)TILE_SPEC_USEFUL ) {
+                            hotspot_type = TriggerLocation;
+                        }
+                        idx = 0;
+                        v24 = (int)zone->_hotspots.size();
+                        if ( v24 > 0 ) {
+                            do {
+                                if ( zone->_hotspots[idx]->type == hotspot_type ) {
+                                    v20.push_back(idx);
+                                    didFindSuitableHotspot = 1;
+                                }
+                                ++idx;
+                            }
+                            while ( v24 > idx );
+                        }
+                        
+                        if ( didFindSuitableHotspot == 1 ) {
+                            hotspot = zone->_hotspots[v20[win_rand() % v20.size()]];
+                            hotspot->arg1 = item_id;
+                            hotspot->enabled = 1;
+                            this->AddRequiredQuestWithItemID(item_id, a4);
+                            this->wg_last_added_item_id = item_id;
+                        }
+                    } else {
+                        idx_1 = 0;
+                        v16 = 0;
+                        v24 = (int)zone->_hotspots.size();
+                        if ( v24 > 0 ) {
+                            do
+                            {
+                                hotspot_1 = zone->_hotspots[idx_1];
+                                if ( hotspot_1->type == DoorIn )
+                                {
+                                    zone_id_1 = hotspot_1->arg1;
+                                    if ( zone_id_1 >= 0 )
+                                        didFindSuitableHotspot = this->AssociateItemWithZoneHotspot(zone_id_1, item_id, a4);
+                                    if ( didFindSuitableHotspot == 1 ) {
+                                        this->addRequiredItemsFromHotspots(zone_id);
+                                        return didFindSuitableHotspot;
+                                    }
+                                }
+                                ++idx_1;
+                            }
+                            while ( v24 > ++v16 );
+                        }
+                    }
+                    if ( didFindSuitableHotspot != 1 )
+                        return didFindSuitableHotspot;
+                    
+                    this->addRequiredItemsFromHotspots(zone_id);
+                    return didFindSuitableHotspot;
+                }
+            }
+        }
+    }
     return 0;
 }
