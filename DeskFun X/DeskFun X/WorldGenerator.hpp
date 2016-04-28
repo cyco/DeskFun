@@ -34,7 +34,10 @@ private:
     void RemoveEmptyZoneIdsFromWorld();
     int16 GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
     int16 GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, int16 item_id_3, int a8);
+    signed int Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8);
     int Unknown_5(int16* unknown);
+    int Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID);
+
 };
 
 #endif /* WorldGenerator_hpp */

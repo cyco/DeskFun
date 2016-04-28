@@ -927,7 +927,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 if(a8) this->doc->puzzle_ids_1[a3] = v25;
                 else   this->doc->puzzle_ids_2[a3] = v25;
                 
-                if (this->doc->Unknown_1(zone_id, a3, item_id_3, a8) != 1) continue;
+                if (this->Unknown_1(zone_id, a3, item_id_3, a8) != 1) continue;
                 
                 this->doc->puzzle_ids.push_back(v25);
                 this->doc->AddRequiredQuestWithItemID(v38, item_id_3);
@@ -1161,4 +1161,93 @@ int WorldGenerator::Unknown_5(int16* world){
     
     Message("YodaDocument::Unknown_5 => %d\n", result);
     return result;
+}
+
+
+signed int WorldGenerator::Unknown_1(int16 zone_id, int16 a3, int16 distance, int16 a8) {
+    Message("YodaDocument::Unknown_1(%d, %d, %d, %d)\n", zone_id, a3, distance, a8);
+    if(false) return 0x10;
+    if(false) return 0x10;
+    
+    if(false == 0xF) return 0x10;
+    if(false > 0) return 0x10;
+    
+    int puzzleID1, puzzleID2;
+    if(a8) { // assumes a8 is 1
+        puzzleID1 = this->doc->puzzle_ids_1[a3];
+        puzzleID2 = this->doc->puzzle_ids_1[a3+1];
+    } else {
+        puzzleID1 = this->doc->puzzle_ids_2[a3];
+        puzzleID2 = this->doc->puzzle_ids_2[a3+1];
+    }
+    
+    Puzzle *p1, *p2;
+    p1 = this->doc->puzzles[puzzleID1];
+    p2 = this->doc->puzzles[puzzleID2];
+    
+    this->doc->AddRequiredQuestWithItemID(p1->item_1, distance);
+    this->doc->AddRequiredQuestWithItemID(p2->item_1, distance);
+    
+    if(!this->doc->RequiredItemForZoneWasNotPlaced(zone_id)) {
+        this->doc->RemoveQuestRequiringItem(p1->item_1);
+        // RemoveQuestRequiringItem(0);
+        
+        Message("YodaDocument::Unknown_1 => 0\n");
+        return 0;
+    }
+    
+    if(this->doc->ChooseItemIDFromZone_1(zone_id, puzzleID1, distance, p1->item_1, 0) >= 0) {
+        Unknown_14(zone_id, puzzleID1, distance, p2->item_1);
+    }
+    
+    this->doc->addRequiredItemsFromHotspots(zone_id);
+    
+    Message("YodaDocument::Unknown_1 => %d\n", 1);
+    return 1;
+}
+
+
+int WorldGenerator::Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID)
+{
+    Message("YodaDocument::Unknown_14(%d, %d, %d, %d)\n", zoneID, a3, distance, providedItemID);
+    if(zoneID < 0) return 0;
+    
+    Zone *zone = this->doc->zones[zoneID];
+    
+    for(uint16 itemID : zone->providedItemIDs)
+        if(itemID == providedItemID) {
+            vector<Hotspot*> hotspots;
+            for(Hotspot* hotspot : zone->_hotspots) {
+                if(hotspot->type == TriggerLocation) {
+                    hotspots.push_back(hotspot);
+                }
+            }
+            
+            if ( hotspots.size() ) {
+                this->doc->AddRequiredQuestWithItemID(itemID, distance);
+                this->doc->wg_last_added_item_id = providedItemID;
+                
+                Hotspot *hotspot = hotspots[win_rand() % hotspots.size()];
+                hotspot->arg1 = providedItemID;
+                hotspot->enabled = 1;
+                
+                Message("YodaDocument::Unknown_14 => %d\n", 1);
+                return 1;
+            }
+            break;
+        }
+    
+    for(Hotspot *hotspot : zone->_hotspots) {
+        if(hotspot->type == DoorIn)
+        {
+            int result = this->Unknown_14(hotspot->arg1, a3, distance, providedItemID);
+            if(result) {
+                Message("YodaDocument::Unknown_14 => %d\n", result);
+                return result;
+            }
+        }
+    }
+    
+    Message("YodaDocument::Unknown_14 => %d\n", 0);
+    return 0;
 }

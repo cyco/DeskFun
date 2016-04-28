@@ -97,12 +97,10 @@ public:
     signed int ChooseSpawnForPuzzleNPC(int16 a2, int a3);
     int16 findUnusedNPCForZone(uint16 zone_id);
     bool hasPuzzleNPC(uint16 zoneID, int16 targetNPCID);
-    signed int Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8);
     
     
     bool findPlaceToPutPuzzle(int maxDistance, int16* world, int* xref, int* yref);
     void GetTileProvidedByZonesHotspots(int16 zone_id);
-    int Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID);
     void WritePlanetValues();
 };
 
