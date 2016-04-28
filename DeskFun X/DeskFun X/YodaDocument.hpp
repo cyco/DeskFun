@@ -64,7 +64,6 @@ public:
     ~YodaDocument();
     GameDataParser *parser;
     
-    int16 GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
     void GetPuzzleCandidates(vector<int16> &result, uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
     int ContainsPuzzleId(uint16 puzzle_id);
     int PuzzleUsedInLastGame(uint16 puzzle_id, Planet lastPlanet);
@@ -88,7 +87,6 @@ public:
     signed int GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap);
     int SetupRequiredItemForZone_(int16 zone_id, int16 arg2, int use_required_items_array);
     signed int RequiredItemForZoneWasNotPlaced(const uint16 zone_id);
-    int16 GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, int16 item_id_3, int a8);
     int AssociateItemWithZoneHotspot(int16 zone_id, int item_id, int a4);
     int Unknown_7(int16 zone_id, int16 puzzle_idx, int16 a4, int unknown, int a6);
     signed int ChooseItemIDFromZone(uint16 zoneID, uint16 itemID, int a4);
@@ -101,8 +99,7 @@ public:
     bool hasPuzzleNPC(uint16 zoneID, int16 targetNPCID);
     signed int Unknown_1(int16 zone_id, int16 a3, int16 zone_index, int16 a8);
     
-    void RemoveEmptyZoneIdsFromWorld();
-    int Unknown_5(int16* unknown);
+    
     bool findPlaceToPutPuzzle(int maxDistance, int16* world, int* xref, int* yref);
     void GetTileProvidedByZonesHotspots(int16 zone_id);
     int Unknown_14(int16 zoneID, int16 a3, uint16 distance, uint16 providedItemID);

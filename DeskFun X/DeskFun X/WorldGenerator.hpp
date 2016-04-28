@@ -31,6 +31,10 @@ private:
     int loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, int v199, int x_8);
     int loop2(YodaDocument* doc, uint16* map);
     int placeTransport(YodaDocument *doc, uint16* map);
+    void RemoveEmptyZoneIdsFromWorld();
+    int16 GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type, int a5);
+    int16 GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, int16 item_id_3, int a8);
+    int Unknown_5(int16* unknown);
 };
 
 #endif /* WorldGenerator_hpp */
