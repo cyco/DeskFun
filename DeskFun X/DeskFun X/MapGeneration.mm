@@ -139,15 +139,15 @@ static int logging;
     int success = true;
     /*
     for(int i=0; i < 100; i++) {
-        if(!(doc->world_things[i].zone_type == sample[i*4+0])
-           || !(doc->world_things[i].zone_id == sample[i*4+1])
-           || !(doc->world_things[i].findItemID == sample[i*4+2])
-           || !(doc->world_things[i].requiredItemID == sample[i*4+3])) {
+        if(!(doc->worldThings[i].zone_type == sample[i*4+0])
+           || !(doc->worldThings[i].zone_id == sample[i*4+1])
+           || !(doc->worldThings[i].findItemID == sample[i*4+2])
+           || !(doc->worldThings[i].requiredItemID == sample[i*4+3])) {
             printf("%dx%d\n", i%10, i/10);
-            printf("zone_type %d should be %d\n", doc->world_things[i].zone_type, sample[i*4+0]);
-            printf("zone_id %d should be %d\n", doc->world_things[i].zone_id, sample[i*4+1]);
-            printf("findItemID %d should be %d\n", doc->world_things[i].findItemID, sample[i*4+2]);
-            printf("requiredItemID %d should be %d\n", doc->world_things[i].requiredItemID, sample[i*4+3]);
+            printf("zone_type %d should be %d\n", doc->worldThings[i].zone_type, sample[i*4+0]);
+            printf("zone_id %d should be %d\n", doc->worldThings[i].zone_id, sample[i*4+1]);
+            printf("findItemID %d should be %d\n", doc->worldThings[i].findItemID, sample[i*4+2]);
+            printf("requiredItemID %d should be %d\n", doc->worldThings[i].requiredItemID, sample[i*4+3]);
             success = false;
             break;
         }
@@ -164,9 +164,9 @@ static int logging;
 
 - (void)_dumpCompleteWorldWithDoc:(YodaDocument*)doc {
     /*
-    Message("uint32_t world_things_%x_%d[] = { ", doc->seed, doc->size);
+    Message("uint32_t worldThings_%x_%d[] = { ", doc->seed, doc->size);
     for(int i=0; i < 100; i++) {
-        WorldThing &thing = doc->world_things[i];
+        WorldThing &thing = doc->worldThings[i];
         Message("0x%x, 0x%x, 0x%x, 0x%x, ", thing.zone_type, thing.zone_id, thing.findItemID, thing.requiredItemID);
     }
     Message("};\n");

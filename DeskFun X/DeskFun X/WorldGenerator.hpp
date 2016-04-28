@@ -23,21 +23,21 @@ private:
     int wg_item_id, wg_last_added_item_id, field_2E64, field_3394, field_3398, wg_item_id_unknown_3, wg_item_id_unknown_2, wg_zone_type;
     
     vector<uint16> chosen_zone_ids;
-    vector<Quest*> providedItems;
-    vector<Quest*> requiredItems;
+    vector<Quest*> providedItemQuests;
+    vector<Quest*> requiredItemQuests;
     
     vector<uint16> puzzle_ids;
     vector<uint16> puzzle_ids_1;
     vector<uint16> puzzle_ids_2;
     vector<uint16> item_ids;
-    vector<Zone*> worldZones;
 public:
     WorldGenerator(YodaDocument *document);
     ~WorldGenerator();
     bool generateRandomWorld(WorldSize size);
     bool generateWorld(uint16 seed, WorldSize size, Planet planet);
     
-    vector<WorldThing> world_things;
+    vector<WorldThing> worldThings;
+    vector<Zone*> worldZones;
 private:
     int doLoop0(YodaDocument *doc, const int puzzle_count, const int puzzles2_count, const uint16* puzzles);
     ZONE_TYPE zoneTypeForWorldItem(MapType item);
@@ -64,7 +64,7 @@ private:
     void RemoveQuestRequiringItem(uint16 itemID);
     int HasQuestRequiringItem(uint16 itemID);
     int getLocationOfZoneWithID(uint16 zoneID, int *xOut, int *yOut);
-    void addRequiredItemsFromHotspots(uint16 zoneID);
+    void addrequiredItemQuestsFromHotspots(uint16 zoneID);
     bool ZoneHasProvidedItem(uint16 zoneID, uint16 itemID);
     int GetItemIDThatsNotRequiredYet(uint16 zone_id, int unused, bool use_array_2_ids);
     signed int GenerateWorld(int seed, int puzzle_count, int16* map, int16 *puzzleMap);
