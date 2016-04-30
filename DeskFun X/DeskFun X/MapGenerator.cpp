@@ -7,13 +7,12 @@
 //
 
 #include "MapGenerator.hpp"
-#define Message(fmt, ...) if(1) printf(fmt, ##__VA_ARGS__);
 
 // TODO: get rid of macros
-#define get(_x_,_y_) map[(_x_)+10*(_y_)]
-#define set(_x_,_y_,_v_) map[(_x_)+10*(_y_)] = _v_
-#define getPuzzle(_x_,_y_) puzzles[(_x_)+10*(_y_)]
-#define setPuzzle(_x_, _y_, _v_) puzzles[(_x_)+10*(_y_)] = _v_
+#define get(_x_,_y_) getFrom((_x_), (_y_), (int16*)map)
+#define set(_x_,_y_,_v_) setTo(_x_,_y_,_v_,(int16*)map)
+#define getPuzzle(_x_,_y_) getFrom((_x_), (_y_), (int16*)puzzles)
+#define setPuzzle(_x_, _y_, _v_) setTo(_x_,_y_,_v_,(int16*)puzzles)
 
 int MapGenerator::GetDistanceToCenter(int x, int y) {
     Message("Map::GetDistanceToCenter %dx%d\n", x, y);
@@ -101,7 +100,8 @@ bool MapGenerator::generate() {
     int rand = win_rand();
     int items_to_place = transport_count + blockade_count + base1 + rand % (max1 - base1 + 1);
     if (items_to_place > 12) items_to_place = 12;
-    
+    FILE *real;
+
     determinePuzzleLocations(2,
                              items_to_place,
                              transport_count,
@@ -109,7 +109,7 @@ bool MapGenerator::generate() {
                              blockade_count,
                              &placed_blockade_count,
                              &placed_puzzle_count);
-    
+
     determinePuzzleLocations(3,
                              base2 + win_rand() % (max2 - base2 + 1),
                              transport_count,
@@ -117,7 +117,7 @@ bool MapGenerator::generate() {
                              blockade_count,
                              &placed_blockade_count,
                              &placed_puzzle_count);
-    
+
     determinePuzzleLocations(4,
                              base3 + win_rand() % (max3 - base3 + 1),
                              transport_count,
@@ -125,10 +125,10 @@ bool MapGenerator::generate() {
                              blockade_count,
                              &placed_blockade_count,
                              &placed_puzzle_count);
-    
+
+
     additionalPuzzleLocations(win_rand() % (max4 - base4 + 1) + base4, &placed_puzzle_count);
     placeTransports(placed_transport_count);
-    
     placeSomethingOnTheMap();
 
     puzzleCount = _countPuzzles();
@@ -224,7 +224,7 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
                 continue;
             }
             
-            if ( item_before != MapType_TRAVEL_START
+            if (   item_before != MapType_TRAVEL_START
                 && item_before != MapType_EMPTY
                 && item_before != MapType_SPACEPORT
                 && item_before != MapType_PUZZLE)
@@ -457,6 +457,7 @@ int MapGenerator::tryPlacingTransport(int item_idx, int transport_count, int *pl
 
 #pragma mark -
 int MapGenerator::additionalPuzzleLocations(int travels_to_place, int* placed_puzzles_count_ref){
+    Message("AdditionalPuzzleLocations(%d)\n", travels_to_place);
     for(int i=0; i <= 400 && travels_to_place > 0; i++) {
         int x,y;
         int is_vertical = win_rand() % 2;
@@ -472,16 +473,16 @@ int MapGenerator::additionalPuzzleLocations(int travels_to_place, int* placed_pu
         if (map[world_idx] != 0)
             continue;
         
-        int16 item_before = get(x-1, y);
-        int16 item_after = get(x-1, y);
-        int16 item_above = get(x, y-1);
-        int16 item_below = get(x, y+1);
+        int16 item_before = getFromIgnoringBounds(x-1, y, (int16*)map);
+        int16 item_after = getFromIgnoringBounds(x+1, y, (int16*)map);
+        int16 item_above = getFromIgnoringBounds(x, y-1, (int16*)map);
+        int16 item_below = getFromIgnoringBounds(x, y+1, (int16*)map);
         
         int y_diff = 0, x_diff = 0;
         if (is_vertical && x == 9 && item_before != MapType_KEPT_FREE) {
             x_diff = 1;
             y_diff = 0;
-        } else if(is_vertical && x==0 && item_after != MapType_KEPT_FREE) {
+        } else if(is_vertical && x == 0 && item_after != MapType_KEPT_FREE) {
             x_diff = -1;
             y_diff = 0;
         } else if(!is_vertical && y == 9 && item_above != MapType_KEPT_FREE) {
@@ -554,12 +555,12 @@ int MapGenerator::additionalPuzzleLocations(int travels_to_place, int* placed_pu
                 
                 map[world_idx] = 300;
                 
-                if ( x > 0) map[world_idx-1] = MapType_KEPT_FREE;
+                if ( x > 0)  map[world_idx-1] = MapType_KEPT_FREE;
                 if ( x < 9 ) map[world_idx + 1] = MapType_KEPT_FREE;
                 break;
             default: continue;
         }
-        
+
         ++*placed_puzzles_count_ref;
         --travels_to_place;
     }
@@ -571,12 +572,12 @@ int MapGenerator::additionalPuzzleLocations(int travels_to_place, int* placed_pu
 
 int MapGenerator::getIslandOrientation(int x, int y)
 {
-    if(get(x-1, y) == 104) return 1;
-    if(get(x+1, y) == 104) return 3;
-    if(get(x, y-1) == 104) return 2;
-    if(get(x, y+1) == 104) return 4;
+    if(x!=0 && get(x-1, y) == 104) { return 1; }
+    if(x!=9 && get(x+1, y) == 104) { return 3; }
+    if(y!=0 && get(x, y-1) == 104) { return 2; }
+    if(y!=9 && get(x, y+1) == 104) { return 4; }
     
-    return 0;
+    return -1;
 }
 
 int MapGenerator::choosePuzzlesBehindBlockades() {
@@ -642,6 +643,7 @@ int MapGenerator::choosePuzzlesBehindBlockades() {
 }
 
 int MapGenerator::choosePuzzlesOnIslands(int count) {
+    Message("choose_puzzles_on_islands(%d)\n", count);
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
             if (get(x, y) == 102 ) {
@@ -732,7 +734,8 @@ int MapGenerator::choosePuzzlesOnIslands(int count) {
                         setPuzzle(x, puzzle_y, count++);
                         break;
                     }
-                    default: break;
+                    default:
+                        break;
                 }
             }
         }
@@ -741,12 +744,25 @@ int MapGenerator::choosePuzzlesOnIslands(int count) {
 }
 
 int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_count) {
+    Message("choose_additional_puzzles(%d, %d)\n", placed_puzzles, total_puzzle_count);
     int i;
     int do_break = 0;
+    int j=0;
     for(i=0; i <= 200; i++) {
+        j++;
+        Message("%d >= %d\n", placed_puzzles, total_puzzle_count);
+        if(placed_puzzles >= total_puzzle_count) {
+            Message("inc something 1\n");
+            do_break = 1;
+        }
+
+        Message("%d > 200\n", i);
         int x,y;
         
-        if(i > 200) do_break = 1;
+        if(i > 200) {
+            Message("inc something 2\n");
+            do_break = 1;
+        }
         if(placed_puzzles >= total_puzzle_count) do_break = 1;
         
         x = win_rand() % 10;
@@ -761,6 +777,7 @@ int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_c
             break;
         
         int distance = MapGenerator::GetDistanceToCenter(x, y);
+        int didPlace = false;
         if (distance >= 3 || i >= 150)
         {
             uint16_t item = get(x, y);
@@ -772,14 +789,18 @@ int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_c
                 
                 set(x, y, 306);
                 setPuzzle(x, y, placed_puzzles++);
+                Message("did_place %d => %d\n", placed_puzzles-1, placed_puzzles);
+                didPlace = true;
             }
             
             if (placed_puzzles >= total_puzzle_count)
                 break;
         }
-        
-        if(distance < 3 && i >= 50) i--;
-        
+
+        if(distance < 3 && i < 150) i--;
+        else {
+            Message("%d => %d\n", i, i+1);
+        }
         if(do_break) break;
     }
     
@@ -811,6 +832,7 @@ int MapGenerator::countStuff(int* travels, int* blockades, int *puzzles){
 }
 
 int MapGenerator::makeSureLastPuzzleIsNotTooCloseToCenter(int placed_puzzles) {
+    // Message("make_sure_last_puzzle_is_not_too_close_to_center(%d)\n", placed_puzzles);
     int max_puzzle_x = 0, max_puzzle_y = 0;
     findPuzzle(placed_puzzles-1, &max_puzzle_x, &max_puzzle_y);
     
@@ -846,6 +868,7 @@ int MapGenerator::findPuzzle(int count, int *x, int *y){
 }
 
 int MapGenerator::placeSomethingOnTheMap() {
+    Message("place_intermediate_world_thing()\n");
     int placed_puzzles = 0;
     int travel_count = 0, puzzles_count = 0, blockades_count = 0;;
     countStuff(&travel_count, &blockades_count, &puzzles_count);
@@ -865,6 +888,7 @@ int MapGenerator::placeSomethingOnTheMap() {
 #pragma mark - Transports
 void MapGenerator::placeTransports(int number_of_transports)
 {
+    Message("MapGenerator::PlaceTransports(%d)\n", number_of_transports);
     if(number_of_transports <= 0) return;
     
     for(int i=0; i < number_of_transports; i++) {
@@ -873,7 +897,7 @@ void MapGenerator::placeTransports(int number_of_transports)
 }
 
 void MapGenerator::placeTransport() {
-    for(int i=0; i < 200; i++) {
+    for(int i=0; i <= 200; i++) {
         switch (win_rand() % 4) {
             case 0: if(placeTransportLeft()) return; break;
             case 1: if(placeTransportTop()) return; break;
@@ -1046,16 +1070,8 @@ int MapGenerator::placeTransportBottom()
     if ( win_rand() % 2 )
     {
         map[v28 + 90] = 102;
-        if ( v28 + 1 < v28 + v53 )
-        {
-            int another_idx =v28 + 91;
-            v33 = (v53 - 1) >> 1;
-            
-            if(v33) map[another_idx] = 0x68;
-            // TODO: rewrite loop
-            for(int j=v28 + 91; j < v28 + 91 + v53-1; j++) {
-                map[j] = 104;
-            }
+        for(int i=v28 + 91; i < v28 + 90 + v53; i++){
+            map[i] = 104;
         }
     }
     else
@@ -1116,28 +1132,47 @@ int MapGenerator::placeTransportRight()
     if ( v41 >= 4 ) v54 = v41 - 2;
     if ( v54 > 4 ) v54 = 4;
     if ( y > 0 && y + v54 <= 9 ) ++y;
-    int another_idx = -1;
+
     if ( win_rand() % 2 ) {
         map[10 * y + 9] = 102;
-        v46 = y + 1;
-        if ( y + 1 < y + v54 ) {
-            
-            v2 = y + v54 - v46;
-            another_idx = 10 * v46 + 9;
+        for(int i=1; i < v54; i++) {
+            map[10 * (y + i) + 9] = 104;
         }
+        return 1;
     } else {
+        // up
         v2 = y + v54 - 1;
-        map[5 * (2 * v2 + 2) - 1] = 102;
-        if ( v2 > y ) {
-            v2 = v54 - 1;
-            another_idx = 10 * y + 9;
+        map[10 * (y+v54-1) + 9] = 102;
+        for(int i=1; i < v54; i++) {
+            map[10 * (y+v54-1-i) + 9] = 104;
         }
+        return 1;
     }
-    
-    if(another_idx != -1) for(int i=0; i < v2; i++) {
-        map[another_idx] = 104;
-        another_idx += 10;
-    }
-    
+
     return 1;
+}
+
+int16 MapGenerator::getFrom(int x, int y, int16 *map) {
+    if(x < 0 || y < 0 || x >= 10 || y >= 10) {
+        printf("out of bounds\n");
+        return -1;
+    }
+
+    return map[x+10*y];
+}
+
+int16 MapGenerator::getFromIgnoringBounds(int x, int y, int16 *map) {
+    if(x < 0 || y < 0 || x >= 10 || y >= 10) {
+        return -1;
+    }
+
+    return map[x+10*y];
+}
+
+void MapGenerator::setTo(int x, int y, int16 value, int16 *map) {
+    if(x < 0 || y < 0 || x >= 10 || y >= 10) {
+        printf("out of bounds\n");
+    }
+
+    map[x+10*y] = value;
 }

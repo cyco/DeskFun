@@ -67,5 +67,10 @@ private:
     int placeTransportTop();
     int placeTransportBottom();
     int placeTransportRight();
+
+
+    void setTo(int,int,int16, int16*);
+    int16 getFrom(int,int,int16*);
+    int16 getFromIgnoringBounds(int,int,int16*);
 };
 #endif /* MapGenerator_hpp */

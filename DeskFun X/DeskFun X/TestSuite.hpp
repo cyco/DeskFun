@@ -15,6 +15,15 @@
 #include "YodaDocument.hpp"
 
 class TestSuite {
+    typedef struct {
+        uint16 seed;
+        uint16 size;
+        uint16 planet;
+
+
+        uint16 data[100];
+    } MapSample;
+
 public:
     TestSuite();
     
@@ -24,10 +33,12 @@ public:
     int runCompleteTets();
     
 private:
-    
     dispatch_queue_t queue;
     int testMap(uint16 seed, WorldSize size, uint16 *expected_map, int16 *expected_puzzles);
     int testWorld(uint16 seed, WorldSize size, uint32 *expected_result);
     int testCompleteWorld(uint16 seed, WorldSize size, Planet planet, uint16* sample);
+    int parseLine(FILE *mapFile, MapSample &sample);
+    uint16 parseToken(FILE* file, bool* stop);
+
 };
 #endif /* TestSuite_hpp */

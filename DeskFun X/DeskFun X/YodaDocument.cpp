@@ -10,8 +10,6 @@
 #include "GameDataParser.hpp"
 #include "MapGenerator.hpp"
 
-#define Message(fmt, ...) if(this->logging) printf(fmt, ##__VA_ARGS__);
-
 #define PRINT_ARRAY_SHUFFLE_RANDS 0
 YodaDocument::YodaDocument(const char* path) {
     parser = new GameDataParser(path);

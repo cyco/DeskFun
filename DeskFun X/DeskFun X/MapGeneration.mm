@@ -14,8 +14,6 @@
 #include "WorldGenerator.hpp"
 #include "win_rand.h"
 
-#define Message(fmt, ...) if(logging) printf(fmt, ##__VA_ARGS__);
-
 static int logging;
 
 @interface MapGeneration ()
@@ -198,7 +196,7 @@ static int logging;
     
     WorldGenerator generator(doc);
     generator.generateWorld(seed, (WorldSize)size, HOTH);
-    Message("Generate New World (calc)\n");
+    Message("Generate New World (c++)\n");
     
     uint16 puzzles[100];
     for(int i=0; i < 100; i++) {
