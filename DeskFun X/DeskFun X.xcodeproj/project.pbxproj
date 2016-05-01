@@ -191,8 +191,6 @@
 		835E17AF1B1B9D2F004A981E /* DirectionTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DirectionTest.mm; sourceTree = "<group>"; };
 		835E17B21B1BB7A1004A981E /* CocoaInputManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaInputManager.mm; sourceTree = "<group>"; };
 		835E17B31B1BB7A1004A981E /* CocoaInputManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CocoaInputManager.hpp; sourceTree = "<group>"; };
-		835EAA101CCE7C1900228113 /* full_samples.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = full_samples.c; sourceTree = "<group>"; };
-		835EAA111CCE7C1900228113 /* full_samples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = full_samples.h; sourceTree = "<group>"; };
 		83645C061CB106FE00845F16 /* MapGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapGeneration.h; sourceTree = "<group>"; };
 		83645C071CB106FE00845F16 /* MapGeneration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MapGeneration.mm; sourceTree = "<group>"; };
 		83645C081CB106FE00845F16 /* MapGeneration.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapGeneration.xib; sourceTree = "<group>"; };
@@ -416,8 +414,6 @@
 				83645C1E1CB120E700845F16 /* types.h */,
 				83645C1F1CB120E700845F16 /* win_rand.c */,
 				83645C201CB120E700845F16 /* win_rand.h */,
-				835EAA101CCE7C1900228113 /* full_samples.c */,
-				835EAA111CCE7C1900228113 /* full_samples.h */,
 			);
 			name = Generation;
 			sourceTree = "<group>";

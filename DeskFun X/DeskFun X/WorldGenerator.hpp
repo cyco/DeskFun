@@ -46,7 +46,7 @@ public:
     vector<WorldThing> worldThings;
     vector<Zone*> worldZones;
 private:
-    int doLoop0(YodaDocument *doc, const int puzzle_count, const int puzzles2_count, const uint16* puzzles);
+    int doLoop0(YodaDocument *doc, const int puzzle_count, const int puzzles2_count, const uint16* puzzles,  uint16* map);
     ZONE_TYPE zoneTypeForWorldItem(MapType item);
     int doPuzzle(YodaDocument *doc, int x, int y, MapType zone_2, int* did_not_place_zone);
     int doCleanup(YodaDocument* doc);

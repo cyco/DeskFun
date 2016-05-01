@@ -16,6 +16,6 @@ void win_srand(int seed) {
 
 int win_rand(void){
     int result =  (((current_rand = (int)(current_rand * 214013L) + 2531011L) >> 16) & 0x7fff );
-    Message("rand: %x\n", result);
+    // Message("rand: %x\n", result);
     return result;
 }

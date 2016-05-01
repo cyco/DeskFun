@@ -58,7 +58,9 @@ bool MapGenerator::generate() {
     int placed_transport_count = 0;
     int blockade_count = win_rand() % 4;
     int placed_blockade_count = 0;
-    
+
+    // Message("travels: %d, blockades: %d\n", transport_count, blockade_count);
+
     win_rand(); // waste a random number
     
     int spaceport_x_rand = win_rand();
@@ -100,7 +102,6 @@ bool MapGenerator::generate() {
     int rand = win_rand();
     int items_to_place = transport_count + blockade_count + base1 + rand % (max1 - base1 + 1);
     if (items_to_place > 12) items_to_place = 12;
-    FILE *real;
 
     determinePuzzleLocations(2,
                              items_to_place,
@@ -125,7 +126,6 @@ bool MapGenerator::generate() {
                              blockade_count,
                              &placed_blockade_count,
                              &placed_puzzle_count);
-
 
     additionalPuzzleLocations(win_rand() % (max4 - base4 + 1) + base4, &placed_puzzle_count);
     placeTransports(placed_transport_count);
@@ -445,11 +445,13 @@ int MapGenerator::determinePuzzleLocations(signed int iteration, int puzzle_coun
 }
 
 int MapGenerator::tryPlacingTransport(int item_idx, int transport_count, int *placed_transport_count_ref, int iteration, int threshold_2, int v36) {
-    
+    // Message("try_placing_transport\n");
+
     if (map[item_idx] == MapType_EMPTY && transport_count > *placed_transport_count_ref
         && ((win_rand()) & 7) < threshold_2 && v36 != MapType_TRAVEL_START && iteration > 2 )
     {
         map[item_idx] = MapType_TRAVEL_START;
+        // Message("yep\n");
         ++*placed_transport_count_ref;
     }
     return 0;
@@ -643,7 +645,7 @@ int MapGenerator::choosePuzzlesBehindBlockades() {
 }
 
 int MapGenerator::choosePuzzlesOnIslands(int count) {
-    Message("choose_puzzles_on_islands(%d)\n", count);
+    // Message("choose_puzzles_on_islands(%d)\n", count);
     for(int y=0; y < 10; y++) {
         for(int x=0; x < 10; x++) {
             if (get(x, y) == 102 ) {
@@ -744,23 +746,23 @@ int MapGenerator::choosePuzzlesOnIslands(int count) {
 }
 
 int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_count) {
-    Message("choose_additional_puzzles(%d, %d)\n", placed_puzzles, total_puzzle_count);
+    // Message("choose_additional_puzzles(%d, %d)\n", placed_puzzles, total_puzzle_count);
     int i;
     int do_break = 0;
     int j=0;
     for(i=0; i <= 200; i++) {
         j++;
-        Message("%d >= %d\n", placed_puzzles, total_puzzle_count);
+        // Message("%d >= %d\n", placed_puzzles, total_puzzle_count);
         if(placed_puzzles >= total_puzzle_count) {
-            Message("inc something 1\n");
+            // Message("inc something 1\n");
             do_break = 1;
         }
 
-        Message("%d > 200\n", i);
+        // Message("%d > 200\n", i);
         int x,y;
         
         if(i > 200) {
-            Message("inc something 2\n");
+            // Message("inc something 2\n");
             do_break = 1;
         }
         if(placed_puzzles >= total_puzzle_count) do_break = 1;
@@ -789,7 +791,7 @@ int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_c
                 
                 set(x, y, 306);
                 setPuzzle(x, y, placed_puzzles++);
-                Message("did_place %d => %d\n", placed_puzzles-1, placed_puzzles);
+                // Message("did_place %d => %d\n", placed_puzzles-1, placed_puzzles);
                 didPlace = true;
             }
             
@@ -799,7 +801,7 @@ int MapGenerator::chooseAdditionalPuzzles(int placed_puzzles, int total_puzzle_c
 
         if(distance < 3 && i < 150) i--;
         else {
-            Message("%d => %d\n", i, i+1);
+            // Message("%d => %d\n", i, i+1);
         }
         if(do_break) break;
     }
@@ -1032,7 +1034,6 @@ int MapGenerator::placeTransportTop(){
 
 int MapGenerator::placeTransportBottom()
 {
-    unsigned int v33;
     int v2;
     int v53 = 0;
     int v26 = 0;
@@ -1083,14 +1084,6 @@ int MapGenerator::placeTransportBottom()
             for(int i=v28 + 90; i < v28 + 89+v53; i++) {
                 map[i] = 104;
             }
-            /*
-             v38 = &v36[2 * v37];
-             // TODO: rewrite loop
-             for (int l = ((0xFF&v53) - 1) & 1; l; --l) {
-             *v38 = 104;
-             ++v38;
-             }
-             */
         }
     }
     return 1;
@@ -1100,7 +1093,6 @@ int MapGenerator::placeTransportRight()
 {
     int v54 = 0;
     int y;
-    int v46;
     int v2 = 0;
     
     int v40 = 0;

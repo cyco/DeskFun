@@ -22,6 +22,6 @@ FILE* f = fopen("/Users/chris/Desktop/LogC++.txt", "a+"); \
 fprintf(f, fmt, ##__VA_ARGS__);\
 fclose(f);\
 }
-//*/
-//#define Message(fmt, ...) do {} while(false);
+//*/#define Message(fmt, ...) do {} while(false);
+
 #endif /* DeskFunX_pch */
