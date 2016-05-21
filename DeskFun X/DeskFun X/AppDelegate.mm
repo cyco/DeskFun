@@ -44,14 +44,14 @@ static NSString *gameName;
     NSURL *dataURL;
 
     gameName = @"yoda";
-    dataURL = [NSURL fileURLWithPath:@"/Users/chris/Desktop/Debugging/ mixed/Yoda Stories/yodesk.dta"];
+    dataURL = [NSURL fileURLWithPath:@"/Users/chris/Shared/Development/WebFun (github)/build/rsrc/yoda-new.data"];
     data = new GameDataParser([[dataURL path] cStringUsingEncoding:NSUTF8StringEncoding]);
 
     NSURL *directoryURL = [NSURL fileURLWithPath:@"/Users/chris/Desktop/Debugging/ mixed/Yoda Stories/sfx/"];
     [self setDataDirectoryURL:directoryURL];
 
-    // self.gameWindowController = [[DAGameWindowController alloc] initWithURL:nil];
-    // [self.gameWindowController showWindow:self];
+  //  self.gameWindowController = [[DAGameWindowController alloc] initWithURL:nil];
+//    [self.gameWindowController showWindow:self];
     // [self saveData:nil];
 
     // NSURL *url = [NSURL fileURLWithPath:[@"~/Desktop/savegame.wld" stringByExpandingTildeInPath]];
@@ -59,11 +59,11 @@ static NSString *gameName;
     // self.saveGameController.fileURL = url;
     // self.saveGameController.data = data;
 
-    self.generationController = [[MapGeneration alloc] initWithWindowNibName:@""];
-    self.generationController.data = data;
-    [self.generationController showWindow:nil];
+    // self.generationController = [[MapGeneration alloc] initWithWindowNibName:@""];
+    // self.generationController.data = data;
+    // [self.generationController showWindow:nil];
     
-    [self writeHeaders];
+    // [self writeHeaders];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -135,9 +135,12 @@ static NSString *gameName;
 
     NSData *fileContents = [NSData dataWithBytesNoCopy:bytes length:size];
     NSString *filePath = @"something/Yodesk.dta";
-    filePath = @"~/Desktop/yoda.rewritten";
-
+    filePath = @"/Users/chris/Shared/Development/WebFun (github)/build/rsrc/yoda-new.data";
     NSURL *fileURL = [NSURL fileURLWithPath:[filePath stringByExpandingTildeInPath]];
+    [fileContents writeToURL:fileURL atomically:YES];
+
+    filePath = [NSString stringWithFormat:@"/Users/chris/Desktop/data/yoda-%ld.data", time(NULL)];
+    fileURL = [NSURL fileURLWithPath:[filePath stringByExpandingTildeInPath]];
     [fileContents writeToURL:fileURL atomically:YES];
 }
 

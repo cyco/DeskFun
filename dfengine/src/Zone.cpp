@@ -103,7 +103,9 @@ Zone::Zone(FILE* file)
 
     if(context->getGameStyle() != GameStyleYoda) return;
 
+    this->_readRawHotspotData(file);
     this->_readHotspots(file);
+    this->_readRawAuxiliaryData(file);
     this->_readAuxiliaryData(file);
     this->_readActions(file);
 
@@ -375,28 +377,90 @@ size_t Zone::_writeHotspots(char *buffer)
 
     for(int i=0; i < _hotspots.size(); i++)
     {
-        Hotspot* tile = _hotspots[i];
-        uint32_t_pack(buffer+bytesWritten, tile->type);
+        Hotspot* hotspot = _rawHotspots[i];
+        uint32_t_pack(buffer+bytesWritten, hotspot->type);
         bytesWritten += sizeof(uint32_t);
-        uint16_t_pack(buffer+bytesWritten, tile->x);
+        uint16_t_pack(buffer+bytesWritten, hotspot->x);
         bytesWritten += sizeof(uint16_t);
-        uint16_t_pack(buffer+bytesWritten, tile->y);
+        uint16_t_pack(buffer+bytesWritten, hotspot->y);
         bytesWritten += sizeof(uint16_t);
-        uint16_t_pack(buffer+bytesWritten, tile->arg1);
+        uint16_t_pack(buffer+bytesWritten, hotspot->enabled);
         bytesWritten += sizeof(uint16_t);
-        uint16_t_pack(buffer+bytesWritten, tile->arg2);
+        uint16_t_pack(buffer+bytesWritten, hotspot->arg1);
         bytesWritten += sizeof(uint16_t);
     }
 
     return bytesWritten;
 }
 
+void Zone::_readRawHotspotData(FILE* file) {
+
+    if(context->getGameStyle() != GameStyleYoda)
+        return;
+
+
+    size_t pos = ftell(file);
+
+    // Parse script tiles
+    uint16_t hotspot_count;
+    fread(&hotspot_count, sizeof(hotspot_count), 1, file);
+    this->_rawHotspots = new Hotspot*[hotspot_count];
+    for(int i=0; i < hotspot_count; i++) {
+        Hotspot *hotspot = new Hotspot();
+
+        uint32_t type;
+        fread(&type, sizeof(uint32_t), 1, file);
+        uint16_t data[4];
+        fread(data, sizeof(uint16_t), 4, file);
+
+        hotspot->type = (HotspotType)type;
+        hotspot->x = data[0];
+        hotspot->y = data[1];
+        hotspot->enabled = data[2];
+        hotspot->arg1   = data[3];
+
+        this->_rawHotspots[i] = hotspot;
+    }
+    fseek(file, pos, SEEK_SET);
+}
+
+void Zone::_readRawAuxiliaryData(FILE* file)
+{
+    if(context->getGameStyle() != GameStyleYoda)
+        return;
+
+    size_t pos = ftell(file);
+    for(int i=0; i<4; i++)
+    {
+        char identifier[4];
+        fread(identifier, 4, 1, file);
+        if(memcmp(identifier, AUXILIARY_MAKRS+i*5, 4) != 0)
+            printf("Did not find identifier '%s' at 0x%4lx\n", AUXILIARY_MAKRS+i*5, ftell(file)-4);
+
+        uint32_t size;
+        fread(&size, sizeof(size), 1, file);
+
+        // IZX4 is different from all the others :/
+        if(size > 8) size -= 8;
+
+        auxiliaryDataLengths[i] = size;
+
+        uint8_t *buffer = new uint8_t[size];
+        fread(buffer, sizeof(uint8_t), size, file);
+
+        auxiliaryData[i] = (char*)malloc(size);
+        memcpy(auxiliaryData[i], buffer, size);
+    }
+    fseek(file, pos, SEEK_SET);
+}
+
+
 size_t Zone::_writeAuxiliaryData(char *buffer)
 {
     size_t bytesWritten = 0;
     if(context->getGameStyle() != GameStyleYoda) return bytesWritten;
 
-    for(int i=0; i<4; i++)
+    for(int i=0; i < 4; i++)
     {
         if(buffer) memcpy(buffer+bytesWritten, AUXILIARY_MAKRS+i*5, MARKER_LENGTH);
         bytesWritten += CATEGORY_LENGTH;

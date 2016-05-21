@@ -8,12 +8,20 @@
             <connections>
                 <outlet property="actionController" destination="TZo-Gw-A7a" id="uSA-5O-ufY"/>
                 <outlet property="actionsView" destination="of9-3D-25o" id="rcC-Vw-giM"/>
+                <outlet property="floorActive" destination="1HO-xg-ydc" id="cmP-ai-VZo"/>
+                <outlet property="floorVisible" destination="ABl-st-j7N" id="l7Y-Q2-MRG"/>
                 <outlet property="itemsTableView1" destination="SiY-re-oxU" id="Xz6-x5-Uv5"/>
                 <outlet property="itemsTableView2" destination="HUk-jM-x0D" id="HdM-UG-iDf"/>
                 <outlet property="itemsTableView3" destination="4ve-3p-Ol0" id="fcc-QQ-ico"/>
                 <outlet property="itemsTableView4" destination="xVx-1e-bzO" id="mON-Tq-cSR"/>
+                <outlet property="objectActive" destination="qgw-Uv-VbH" id="gGU-u0-mt8"/>
+                <outlet property="objectVisible" destination="gQ0-fh-t6G" id="KtA-CI-NP1"/>
                 <outlet property="puzzleFilterButton" destination="f71-me-Rkg" id="hkr-x1-9Mx"/>
+                <outlet property="roofActive" destination="d2F-Fc-Opn" id="J2U-QN-HMb"/>
+                <outlet property="roofVisible" destination="H7Q-fD-iSI" id="kQK-el-SAO"/>
                 <outlet property="tableView" destination="Xjt-XT-h5W" id="xhs-Cn-Gbg"/>
+                <outlet property="tileInput" destination="KUw-wz-c3h" id="ao0-vL-MC3"/>
+                <outlet property="tilePickerView" destination="sbr-K8-c5Y" id="dXM-DA-1hn"/>
                 <outlet property="window" destination="wKg-41-Tjx" id="uCp-hx-jEz"/>
                 <outlet property="zoneView" destination="foA-ih-08P" id="UGR-jk-bc7"/>
             </connections>
@@ -227,7 +235,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="48" viewBased="YES" id="SiY-re-oxU">
-                                    <rect key="frame" x="0.0" y="0.0" width="49" height="312"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="49" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -284,7 +292,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="48" viewBased="YES" id="HUk-jM-x0D">
-                                    <rect key="frame" x="0.0" y="0.0" width="49" height="312"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="49" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -341,7 +349,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="48" viewBased="YES" id="4ve-3p-Ol0">
-                                    <rect key="frame" x="0.0" y="0.0" width="49" height="312"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="49" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -398,7 +406,7 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="48" viewBased="YES" id="xVx-1e-bzO">
-                                    <rect key="frame" x="0.0" y="0.0" width="49" height="312"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="49" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -452,6 +460,101 @@
             <point key="canvasLocation" x="851" y="23.5"/>
         </window>
         <customObject id="TZo-Gw-A7a" customClass="ActionWindowController"/>
+        <window title="Tools" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="WZJ-mY-Hep" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="120" y="64" width="276" height="199"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <view key="contentView" id="3r3-Ku-qkv">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="199"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button id="H7Q-fD-iSI">
+                        <rect key="frame" x="18" y="162" width="22" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="4VA-Qs-uXG">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleLayerVisibility:" target="-2" id="d7n-Ve-Hu3"/>
+                        </connections>
+                    </button>
+                    <button tag="1" id="d2F-Fc-Opn">
+                        <rect key="frame" x="37" y="162" width="51" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="radio" title="Roof" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="cHf-Sa-b0W">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="pickEditingLayer:" target="-2" id="tao-sI-m2b"/>
+                        </connections>
+                    </button>
+                    <button id="gQ0-fh-t6G">
+                        <rect key="frame" x="18" y="138" width="22" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Fzz-VM-81d">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleLayerVisibility:" target="-2" id="AGn-qv-9Ln"/>
+                        </connections>
+                    </button>
+                    <button tag="1" id="qgw-Uv-VbH">
+                        <rect key="frame" x="37" y="138" width="63" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="radio" title="Object" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="Ho8-7i-0Sf">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="pickEditingLayer:" target="-2" id="LWR-F6-IhH"/>
+                        </connections>
+                    </button>
+                    <button id="ABl-st-j7N">
+                        <rect key="frame" x="18" y="114" width="22" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ilt-Qu-oqf">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleLayerVisibility:" target="-2" id="EBo-1c-LV2"/>
+                        </connections>
+                    </button>
+                    <button tag="1" id="1HO-xg-ydc">
+                        <rect key="frame" x="37" y="114" width="53" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="radio" title="Floor" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Iaa-Sh-FPk">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="pickEditingLayer:" target="-2" id="5Hg-YK-ZAN"/>
+                        </connections>
+                    </button>
+                    <searchField wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" id="KUw-wz-c3h">
+                        <rect key="frame" x="125" y="157" width="131" height="22"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" borderStyle="bezel" focusRingType="none" placeholderString="Tile ID" usesSingleLineMode="YES" bezelStyle="round" id="dQw-EP-Ck1">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </searchFieldCell>
+                        <connections>
+                            <action selector="pickTile:" target="-2" id="qKm-VH-fio"/>
+                        </connections>
+                    </searchField>
+                    <customView id="sbr-K8-c5Y" customClass="TileView">
+                        <rect key="frame" x="125" y="20" width="131" height="129"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </customView>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="29" y="-5.5"/>
+        </window>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>

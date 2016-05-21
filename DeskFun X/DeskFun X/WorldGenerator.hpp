@@ -38,6 +38,8 @@ private:
     vector<uint16> puzzle_ids_2;
     vector<uint16> item_ids;
 public:
+    uint16_t map[100];
+
     WorldGenerator(YodaDocument *document);
     ~WorldGenerator();
     bool generateRandomWorld(WorldSize size);

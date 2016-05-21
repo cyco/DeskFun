@@ -143,7 +143,7 @@ void Tile::setupTextures(Renderer *r)
     _textures = (GLuint*)calloc(sizeof(GLuint), animation.length);
     glGenTextures(animation.length, _textures);
     _textureCount = animation.length;
-
+ 
     const unsigned char *palette = this->context->getPalette();
 
     for(int animID=0; animID < animation.length; animID++)
@@ -169,7 +169,6 @@ void Tile::setupTextures(Renderer *r)
             }
         }
 
-
         GLuint &currentTexture = *(_textures+animation.length - animID -1);
         currentTexture = r->createTexture(animationTile, Tile::SIZE);
 
@@ -186,7 +185,7 @@ GLuint Tile::getTexture(unsigned ticks)
 
 void Tile::teardownTextures()
 {
-
+    printf("test\n");
 }
 #pragma mark -
 PalletteAnimation Tile::animationLengthForIndex(int index)

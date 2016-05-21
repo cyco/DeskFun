@@ -67,6 +67,9 @@
 
     planetFilter = 0, puzzleFilter = 0;
     [self filterZones];
+
+    self.zoneView.useCache = false;
+    self.zoneView.editable = true;
 }
 #pragma mark -
 - (IBAction)addAction:(id)sender
@@ -457,5 +460,49 @@
         printf("Tile: %s\n", item->name.c_str());
     }
 }
+#pragma mark - Editing
+- (IBAction)toggleLayerVisibility:(id)sender {
+    [self zoneView].drawsFloor = self.floorVisible.state == NSOnState;
+    [self zoneView].drawsObject = self.objectVisible.state == NSOnState;
+    [self zoneView].drawsRoof = self.roofVisible.state == NSOnState;
+}
+
+- (IBAction)pickEditingLayer:(id)sender {
+    if(self.floorActive.state == NSOnState) self.zoneView.currentLayer = 0;
+    if(self.objectActive.state == NSOnState) self.zoneView.currentLayer = 1;
+    if(self.roofActive.state == NSOnState) self.zoneView.currentLayer = 2;
+}
+
+
+- (IBAction)pickTile:(id)sender {
+    if(self.tileInput.stringValue.length == 0) {
+        self.zoneView.currentTile = nil;
+        self.tilePickerView.tile = nil;
+        return;
+    }
+    NSString *string = [sender stringValue];
+    unsigned int index  = 0;
+
+    BOOL isHex = NO;
+    if([string rangeOfString:@"0x"].location == 0) {
+        isHex = YES;
+        NSScanner *scanner = [NSScanner scannerWithString:string];
+        [scanner setScanLocation:2];
+        [scanner scanHexInt:&index];
+    } else {
+        index = [string intValue];
+    }
+
+    if(index >= GameContext::CurrentContext()->getTileCount()){
+        self.zoneView.currentTile = nil;
+        self.tilePickerView.tile = nil;
+        return;
+    }
+
+    Tile *t = GameContext::CurrentContext()->getTile(index);
+    self.tilePickerView.tile = t;
+    self.zoneView.currentTile = t;
+}
 
 @end
+

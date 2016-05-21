@@ -95,6 +95,9 @@ private:
 
     void _readHotspots(FILE *file);
     void _readAuxiliaryData(FILE* file);
+    void _readRawAuxiliaryData(FILE* file);
+    void _readRawHotspotData(FILE* file);
+
     void _readIZAX(FILE* file);
     void _readIZX2(FILE* file);
     void _readIZX3(FILE* file);
@@ -111,6 +114,7 @@ public:
     vector<Action*> _actions;
     Tile **_tile_ptrs;
     std::vector<Hotspot*> _hotspots;
+    Hotspot ** _rawHotspots;
     bool _visited;
 
     void setTile(Tile *t, int x, int y, int l) {
@@ -118,6 +122,9 @@ public:
     }
 
     void setTile(Tile *t, GamePoint p){
+        if(p.x < 0 || p.y < 0 || p.l < 0) return;
+        if(p.x >= _size.width || p.y >= _size.height || p.l >= 3) return;
+
         _tile_ptrs[GamePointToIndex(p, _size.width, _size.height)] = t;
     }
 

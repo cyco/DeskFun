@@ -33,12 +33,7 @@ static int logging;
     [self _initializeMap];
     
     self.mapView.map = _map;
-    
-    generationLock = [[NSLock alloc] init];
-    [generationLock lock];
-    [self _testSamples];
-    [generationLock unlock];
-    
+
     document = new YodaDocument("/Users/chris/Desktop/Debugging/ mixed/Yoda Stories/yodesk.dta");
     
     [self generateWorld:nil];
@@ -125,68 +120,23 @@ static int logging;
     return seed;
 }
 
-- (void)_testSamples {}
-
-- (void)testSample:(uint32_t*)sample seed:(uint16)seed size:(WorldSize)size {
-    YodaDocument *doc = [self makeNewDocument];
-    doc->logging = logging;
-    
-    uint16 map[100] = {0};
-    [self _generateWorld:seed withSize:size document:doc map:map];
-    
-    int success = true;
-    /*
-    for(int i=0; i < 100; i++) {
-        if(!(doc->worldThings[i].zone_type == sample[i*4+0])
-           || !(doc->worldThings[i].zone_id == sample[i*4+1])
-           || !(doc->worldThings[i].findItemID == sample[i*4+2])
-           || !(doc->worldThings[i].requiredItemID == sample[i*4+3])) {
-            printf("%dx%d\n", i%10, i/10);
-            printf("zone_type %d should be %d\n", doc->worldThings[i].zone_type, sample[i*4+0]);
-            printf("zone_id %d should be %d\n", doc->worldThings[i].zone_id, sample[i*4+1]);
-            printf("findItemID %d should be %d\n", doc->worldThings[i].findItemID, sample[i*4+2]);
-            printf("requiredItemID %d should be %d\n", doc->worldThings[i].requiredItemID, sample[i*4+3]);
-            success = false;
-            break;
-        }
-    }
-     */
-    
-    if(success) printf("[OK] %04X %d\n", seed, size);
-    else        printf("[  ] %04X %d\n", seed, size);
-}
-
-- (void)_dumpCompleteWorld {
-    // [self _dumpCompleteWorldWithDoc:document];
-}
-
-- (void)_dumpCompleteWorldWithDoc:(YodaDocument*)doc {
-    /*
-    Message("uint32_t worldThings_%x_%d[] = { ", doc->seed, doc->size);
-    for(int i=0; i < 100; i++) {
-        WorldThing &thing = doc->worldThings[i];
-        Message("0x%x, 0x%x, 0x%x, 0x%x, ", thing.zone_type, thing.zone_id, thing.findItemID, thing.requiredItemID);
-    }
-    Message("};\n");
-*/
-}
-
 - (YodaDocument*)makeNewDocument {
     YodaDocument *doc = new YodaDocument("/Users/chris/Desktop/Debugging/ mixed/Yoda Stories/yodesk.dta");
     return doc;
 }
 
 - (void)_generateWorld:(uint16_t)seed withSize:(int)size  {
+
     if(!document) return;
     
     [generationLock lock];
     logging = 0;
     
     [self _generateWorld:seed withSize:size document:document map:_map];
-    [self _dumpCompleteWorld];
     self.seedField.stringValue = [NSString stringWithFormat:@"0x%04X", seed];
     self.sizeSlider.doubleValue = size;
-    
+
+
     [_mapView setNeedsDisplay:true];
     [generationLock unlock];
 }
@@ -197,12 +147,17 @@ static int logging;
     WorldGenerator generator(doc);
     generator.generateWorld(seed, (WorldSize)size, HOTH);
     Message("Generate New World (c++)\n");
-    
+
+    win_srand(seed);
+    MapGenerator mapGenerator = MapGenerator((WorldSize)size);
+    mapGenerator.generate();
+
     uint16 puzzles[100];
     for(int i=0; i < 100; i++) {
-        map[i] = 0;
+        map[i] = generator.map[i];
         puzzles[i] = -1;
     }
+    [_mapView setMap:map];
 
     return 1;
 }

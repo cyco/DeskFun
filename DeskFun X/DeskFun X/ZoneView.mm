@@ -14,6 +14,7 @@
 #include "Palette.h"
 
 static NSCache *cache = nil;
+static NSCache *tileCache = nil;
 
 @interface ZoneView ()
 {
@@ -31,12 +32,30 @@ static NSCache *cache = nil;
     if (self == [ZoneView class]) {
         cache = [[NSCache alloc] init];
         [cache setTotalCostLimit:300];
+
+        tileCache = [[NSCache alloc] init];
+        [tileCache setTotalCostLimit:1000];
     }
 }
 
 - (void)awakeFromNib
 {
     tileHighlight = NSMakePoint(-1, -1);
+    [self addObserver:self forKeyPath:@"drawsRoof" options:0 context:nil];
+    [self addObserver:self forKeyPath:@"drawsObject" options:0 context:nil];
+    [self addObserver:self forKeyPath:@"drawsFloor" options:0 context:nil];
+    [self addObserver:self forKeyPath:@"backgroundColor" options:0 context:nil];
+    [self addObserver:self forKeyPath:@"useCache" options:0 context:nil];
+
+    self.drawsRoof = true;
+    self.drawsObject = true;
+    self.drawsFloor = true;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    self.image = nil;
+    [self setNeedsDisplay:true];
 }
 
 - (void)viewDidMoveToSuperview
@@ -44,7 +63,7 @@ static NSCache *cache = nil;
     NSView *superview = [self superview];
     if(superview)
     {
-        _eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSMouseMovedMask|NSTrackingActiveWhenFirstResponder handler:^NSEvent *(NSEvent *e) {
+        _eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSMouseMovedMask|NSLeftMouseDraggedMask|NSTrackingActiveWhenFirstResponder handler:^NSEvent *(NSEvent *e) {
             if([e window] != [self window]) return e;
 
             NSRect locationInEventWindow = (NSRect){.origin = [e locationInWindow], .size = NSMakeSize(0, 0)};
@@ -82,6 +101,9 @@ static NSCache *cache = nil;
                 .y = floorf((NSHeight(bounds)-locationOnZone.y) / tileSize.height),
             };
 
+            if(_isPlacing){
+                [self placeTile:self.currentTile at:tileHighlight layer:self.currentLayer];
+            }
             [self setNeedsDisplay:YES];
             return e;
         }];
@@ -99,16 +121,18 @@ static NSCache *cache = nil;
 
     if(!zone) return;
 
-
     if(bounds.size.width > bounds.size.height)
         bounds.size.width = bounds.size.height;
     else bounds.size.height = bounds.size.width;
 
     bounds.origin.x = (self.bounds.size.width - bounds.size.width)/2;
     bounds.origin.y = (self.bounds.size.height - bounds.size.height)/2;
+    if(![self image]) {
+        NSImage *image = [self imageForZone:zone];
+        [self setImage:image];
+    }
 
     [[self image] drawInRect:bounds fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
-
 
     Sizei zoneSize = zone->getSize();
     if(tileHighlight.x < 0 || tileHighlight.y < 0 || tileHighlight.x >= zoneSize.width || tileHighlight.y >= zoneSize.height) return;
@@ -215,7 +239,6 @@ static NSCache *cache = nil;
     zone = z;
 
     NSImage *image = [self imageForZone:zone];
-
     [self setImage:image];
     [self setNeedsDisplay:YES];
 }
@@ -229,7 +252,7 @@ static NSCache *cache = nil;
     NSNumber *zoneID = @(z->index+1);
 
     NSImage *image = [cache objectForKey:zoneID];
-    if(image) return image;
+    if(_useCache && image) return image;
 
     CGFloat imageHeight = tileSize.height * zoneSize.height;
     image = [[NSImage alloc] initWithSize:NSMakeSize(tileSize.width * zoneSize.width, imageHeight)];
@@ -241,6 +264,10 @@ static NSCache *cache = nil;
         {
             for(int l=0; l < 3; l++)
             {
+                if(!_drawsFloor && l==0) continue;
+                if(!_drawsObject && l==1) continue;
+                if(!_drawsRoof && l==2) continue;
+
                 Tile *t = zone->getTile(x, y, l);
                 if(t)
                 {
@@ -274,6 +301,11 @@ static NSCache *cache = nil;
 
 - (NSImage*)imageForTile:(Tile&)t
 {
+    id cachedImage =[tileCache objectForKey:@(t.index+1)];
+    if(cachedImage) {
+        return cachedImage;
+    }
+
     AppDelegate *dele = (AppDelegate *)[NSApp delegate];
     GameDataParser* data = [dele GameDataParser];
     const unsigned char * palette = indys_pallette;
@@ -299,6 +331,9 @@ static NSCache *cache = nil;
         }
 
     [image unlockFocus];
+
+    [tileCache setObject:image forKey:@(t.index+1) cost:1];
+
     return image;
 }
 
@@ -308,4 +343,68 @@ static NSCache *cache = nil;
     [self setNeedsDisplay:YES];
 }
 
+- (BOOL)canBecomeKeyView {
+    return true;
+}
+- (BOOL)becomeFirstResponder {
+    return true;
+}
+#pragma mark - Editing
+- (void)mouseDown:(NSEvent *)theEvent
+{
+    if(!self.editable) return;
+    self.isPlacing = true;
+    [self placeTile:self.currentTile at:[self convertPoint:theEvent] layer:self.currentLayer];
+}
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+    if(!self.editable) return;
+    self.isPlacing = false;
+}
+
+- (void)placeTile:(Tile*)tile at:(NSPoint)p layer:(int)l {
+    if(!zone) return;
+
+    zone->setTile(tile, p.x, p.y, l);
+    self.image = nil;
+    [self setNeedsDisplay:true];
+}
+
+- (NSPoint)convertPoint:(NSEvent*)event {
+    NSRect locationInEventWindow = (NSRect){.origin = [event locationInWindow], .size = NSMakeSize(0, 0)};
+
+    NSRect  locationOnScreen = [[event window] convertRectToScreen:locationInEventWindow];
+    NSPoint locationInWindow = [[self window] convertRectFromScreen:locationOnScreen].origin;
+
+    NSPoint locationInView = [self convertPoint:locationInWindow fromView:nil];
+
+    NSRect bounds = [self bounds];
+    if(bounds.size.width > bounds.size.height)
+        bounds.size.width = bounds.size.height;
+    else bounds.size.height = bounds.size.width;
+
+    bounds.origin.x = (self.bounds.size.width - bounds.size.width)/2;
+    bounds.origin.y = (self.bounds.size.height - bounds.size.height)/2;
+
+    NSPoint locationOnZone = (NSPoint){
+        .x = locationInView.x - NSMinX(bounds),
+        .y = locationInView.y - NSMinY(bounds)
+    };
+
+    if(!zone)
+        return NSMakePoint(-1, -1);
+
+    Sizei zoneSize = zone->getSize();
+
+    NSSize tileSize = (NSSize){
+        .width = NSWidth(bounds) / (CGFloat)zoneSize.width,
+        .height = NSHeight(bounds) / (CGFloat)zoneSize.height
+    };
+
+    return (NSPoint){
+        .x = floorf(locationOnZone.x / tileSize.width),
+        .y = floorf((NSHeight(bounds)-locationOnZone.y) / tileSize.height)
+    };
+}
 @end

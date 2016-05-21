@@ -29,4 +29,17 @@
 - (IBAction)switchActionTextView:(id)sender;
 - (IBAction)planetTypeFilterChanged:(id)sender;
 
+#pragma mark -
+@property (assign) IBOutlet NSButton *roofVisible;
+@property (assign) IBOutlet NSButton *objectVisible;
+@property (assign) IBOutlet NSButton *floorVisible;
+@property (assign) IBOutlet NSButton *roofActive;
+@property (assign) IBOutlet NSButton *objectActive;
+@property (assign) IBOutlet NSButton *floorActive;
+@property (assign) IBOutlet NSSearchField *tileInput;
+@property (assign) IBOutlet TileView *tilePickerView;
+
+- (IBAction)toggleLayerVisibility:(id)sender;
+- (IBAction)pickEditingLayer:(id)sender;
+
 @end

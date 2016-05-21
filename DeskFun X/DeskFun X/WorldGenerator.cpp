@@ -16,7 +16,6 @@ int TILE_SPEC_THE_FORCE  = 0x40;
 int TILE_SPEC_USEFUL  = 0x80;
 int TILE_SPEC_MAP    = 0x100000;
 
-
 WorldGenerator::WorldGenerator(YodaDocument *document) {
     doc = document;
 
@@ -109,6 +108,9 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
 
     // TODO: add goal puzzle to planet puzzle ids
     if(!placeTransport(doc, mapGenerator->map)) {
+        for(int i=0; i < 100; i++) {
+            map[i] = mapGenerator->map[i];
+        }
         delete mapGenerator;
         Message("Generate new world => %x\n", 0);
         return 0;
@@ -119,6 +121,9 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
     Message("After Loop 1\n");
     Message("After Loop 1\n");
     if(!loop1(doc, puzzles2_count-1, (uint16*)mapGenerator->puzzles, puzzles1_count - 1, puzzles1_count)){
+        for(int i=0; i < 100; i++) {
+            map[i] = mapGenerator->map[i];
+        }
         delete mapGenerator;
         Message("Generate new world => %x\n", 0);
         return 0;
@@ -157,8 +162,11 @@ bool WorldGenerator::generateWorld(uint16 seed, WorldSize size, Planet planet) {
      */
     Message("End Generate New World\n\n");
 
-    delete mapGenerator;
     Message("Generate new world => %x\n", 1);
+    for(int i=0; i < 100; i++) {
+        map[i] = mapGenerator->map[i];
+    }
+    delete mapGenerator;
     return 1;
 }
 
@@ -198,14 +206,15 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             int foundTravelTarget = false;
             int target_x = 0, target_y = 0;
 
-            // islands on the bottom
-            if(!foundTravelTarget) {
-                target_y = 9;
+
+            // islands on the left
+            if ( !foundTravelTarget ) {
                 target_x = 0;
-                for(int x=0; x < 10; x++) {
-                    if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !this->worldZones[x + target_y * 10]) {
-                        target_x = x;
-                        foundTravelTarget = true;
+                target_y = 0;
+                for(int y=0; y < 10; y++) {
+                    if(mapGenerator->map[target_x + y * 10] == MapType_TRAVEL_END && !this->worldZones[target_x+y*10]){
+                        foundTravelTarget = 1;
+                        target_y = y;
                         break;
                     }
                 }
@@ -215,6 +224,19 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             if ( !foundTravelTarget ) {
                 target_x = 0;
                 target_y = 0;
+                for(int x=0; x < 10; x++) {
+                    if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !this->worldZones[x + target_y * 10]) {
+                        target_x = x;
+                        foundTravelTarget = true;
+                        break;
+                    }
+                }
+            }
+
+            // islands on the bottom
+            if(!foundTravelTarget) {
+                target_y = 9;
+                target_x = 0;
                 for(int x=0; x < 10; x++) {
                     if(mapGenerator->map[x + target_y * 10] == MapType_TRAVEL_END && !this->worldZones[x + target_y * 10]) {
                         target_x = x;
@@ -237,18 +259,6 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
                 }
             }
 
-            // islands on the left
-            if ( !foundTravelTarget ) {
-                target_x = 0;
-                target_y = 0;
-                for(int y=0; y < 10; y++) {
-                    if(mapGenerator->map[target_x + y * 10] == MapType_TRAVEL_END && !this->worldZones[target_x+y*10]){
-                        foundTravelTarget = 1;
-                        target_y = y;
-                        break;
-                    }
-                }
-            }
 
             if ( foundTravelTarget ) {
                 if ( !this->worldContainsZoneId(zone_id_10) )
@@ -366,7 +376,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
 
                 int16 item_1 = doc->puzzles[zone_2]->item_1;
 
-                int zone_id_5 = -1;
+                int16 zone_id_5 = -1;
                 while ( 1 ) {
                     if ( zone_id_5 >= 0 ) { breakYLoop=1; break;}
                     if ( v199 == x_8 ) {
@@ -395,7 +405,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
 
                         if (!break_some_more && zone_type == ZONETYPE_Use ) {
                             int distance = MapGenerator::GetDistanceToCenter(x, y);
-                            zone_id_5 = this->GetZoneIdWithType(ZONETYPE_Trade, v195, -1, 0, -1, distance, 0);
+                            zone_id_5 = this->GetZoneIdWithType(ZONETYPE_Trade, zone_type-1, -1, item_1, -1, distance, 0);
                             if ( zone_id_5 < 0 ) {
                                 return doCleanup(doc);
                             }
@@ -403,7 +413,8 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                             this->wg_zone_type = ZONETYPE_Trade;
                         } else if(!break_some_more) {
                             int distance = MapGenerator::GetDistanceToCenter(x, y);
-                            zone_id_5 = this->GetZoneIdWithType(ZONETYPE_Use, v195, -1, 0, -1, distance, 0);
+                            // last changed ZONETYPE_Use to ZONETYPE_Trade
+                            zone_id_5 = this->GetZoneIdWithType(ZONETYPE_Use, zone_type-1, -1, item_1, -1, distance, 0);
                             if ( zone_id_5 < 0 ) {
                                 return doCleanup(doc);
                             }
@@ -493,6 +504,7 @@ int WorldGenerator::doCleanup(YodaDocument* doc)
 
 int WorldGenerator::doPuzzle(YodaDocument *doc, int x, int y, MapType zone_2, int* did_not_place_zone)
 {
+    //Message("doPuzzle\n");
     int distance = MapGenerator::GetDistanceToCenter(x, y);
     WorldThing *worldThing = &this->worldThings[x+10*y];
     ZONE_TYPE type = zoneTypeForWorldItem(zone_2);
@@ -609,7 +621,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                             if ( zone_id_3 < 0) {
                                 if ( type == ZONETYPE_Use ) {
                                     int distance = MapGenerator::GetDistanceToCenter(x, y);
-                                    zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Trade, v204, -1, item_1, -1, distance, 1);
+                                    zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Trade, zone_id_11 - 1, -1, item_1, -1, distance, 1);
                                     if ( zone_id_3 < 0 ){
                                         return this->doCleanup(doc);
                                     }
@@ -798,6 +810,10 @@ int16 WorldGenerator::GetNewPuzzleId(uint16 item_id, int a3, ZONE_TYPE zone_type
 int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int item_id_1, int item_id_2, int16 item_id_3, int a8) {
     Message("YodaDocument::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, (uint16)a3, (uint16)a4, (uint16)item_id_1, (uint16)item_id_2, item_id_3, a8);
 
+    if(type_1 == 15 && a3==2/* && (int16)a4==-1 && item_id_1==1215 && (int16)item_id_2==-1 && item_id_3==5 && a8==0*/){
+        printf("break");
+    }
+
     // item_id_1 = first required quest->itemID, last required quest->itemID
     vector<int16> usable_zone_ids;
     for(int zone_index=0; zone_index < this->doc->zones.size(); zone_index++) {
@@ -833,6 +849,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
     }
 
     if (usable_zone_ids.size() == 0) {
+        Message("YodaDocument::GetZoneIdWithType => %d\n", -1);
         return -1;
     }
 
@@ -863,6 +880,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 if ( this->field_2E64 ) {
                     count_1 = (int)zone_1->_hotspots.size();
                     if ( count_1 <= 0 ) {
+                        Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                         return zone_id;
                     }
                     int idx_1 = 0;
@@ -875,36 +893,44 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                     }
                     while ( idx_1 < count_1 );
                 } else if ( zone_1->getType() == ZONETYPE_Empty ) {
+                    Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                     return zone_id;
                 }
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 continue;
             case ZONETYPE_BlockadeNorth:
                 if ( zone_1->getType() != ZONETYPE_BlockadeNorth
                     || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
                     continue;
                 }
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_BlockadeSouth:
                 if ( zone_1->getType() != ZONETYPE_BlockadeSouth
                     || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 ) {
                     continue;
                 }
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_BlockadeEast:
                 if ( zone_1->getType() != ZONETYPE_BlockadeEast || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_BlockadeWest:
                 if ( zone_1->getType() != ZONETYPE_BlockadeWest || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_TravelStart:
                 if ( zone_1->getType() != ZONETYPE_TravelStart || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_TravelEnd:
                 if ( zone_1->getType() != ZONETYPE_TravelEnd || this->SetupRequiredItemForZone_(zone_id, item_id_3, 0) != 1 )
                     continue;
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_Goal:
                 if ( zone_1->getType() != ZONETYPE_Goal )
@@ -941,9 +967,11 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 }
                 this->AddRequiredQuestWithItemID(item_id[0], item_id_3);
                 this->AddRequiredQuestWithItemID((int16)item_ids, item_id_3);
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_Town:
                 if ( zone_1->getType() != 11 ) continue;
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_Trade:
                 if ( zone_1->getType() != 15 ) continue;
@@ -961,6 +989,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 this->puzzle_ids.push_back(v25);
                 this->AddRequiredQuestWithItemID(v38, item_id_3);
 
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             case ZONETYPE_Use:
             {
@@ -981,6 +1010,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                 this->puzzle_ids.push_back(puzzleID2);
 
                 this->AddRequiredQuestWithItemID(puzzleID1, item_id_3);
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             }
             case ZONETYPE_Find:
@@ -989,12 +1019,14 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
                     || this->AssociateItemWithZoneHotspot(zone_id, item_id_1, item_id_3) != 1 ) {
                     continue;
                 }
+                Message("YodaDocument::GetZoneIdWithType => %d\n", zone_id);
                 return zone_id;
             default:
                 continue;
         }
     }
 
+    Message("YodaDocument::GetZoneIdWithType => %d\n", -1);
     return -1;
 }
 
@@ -1117,7 +1149,6 @@ int WorldGenerator::Unknown_5(int16* world){
                                 y_1++;
                                 v39 = x;
                                 v38 = y;
-                                Message("x_1 = %d\n", x_1);
                                 if ( !x_1 )
                                     break;
 
@@ -1214,11 +1245,11 @@ signed int WorldGenerator::Unknown_1(int16 zone_id, int16 a3, int16 distance, in
     }
 
     Puzzle *p1, *p2;
-    p1 = puzzleID1 >= 0 && puzzleID1 >= 0 ? this->doc->puzzles[puzzleID1] : NULL;
-    p2 = puzzleID2 >= 0 && puzzleID1 >= 0 ? this->doc->puzzles[puzzleID2] : NULL;
+    p1 = puzzleID1 >= 0 ? this->doc->puzzles[puzzleID1] : NULL;
+    p2 = puzzleID2 >= 0 ? this->doc->puzzles[puzzleID2] : NULL;
 
-    if(p1) this->AddRequiredQuestWithItemID(p1->item_1, distance);
-    if(p2) this->AddRequiredQuestWithItemID(p2->item_1, distance);
+    this->AddRequiredQuestWithItemID(p1->item_1, distance);
+    this->AddRequiredQuestWithItemID(p2->item_1, distance);
 
     if(!this->RequiredItemForZoneWasNotPlaced(zone_id)) {
         this->RemoveQuestRequiringItem(p1->item_1);
@@ -1229,7 +1260,7 @@ signed int WorldGenerator::Unknown_1(int16 zone_id, int16 a3, int16 distance, in
     }
 
     if(this->ChooseItemIDFromZone_1(zone_id, puzzleID1, distance, p1->item_1, 0) >= 0) {
-        if(p2) this->Unknown_14(zone_id, puzzleID1, distance, p2->item_1);
+        this->Unknown_14(zone_id, puzzleID1, distance, p2->item_1);
     }
 
     this->addRequiredItemQuestsFromHotspots(zone_id);
@@ -1421,8 +1452,12 @@ uint16 WorldGenerator::getZoneID(const Zone *zone){
 int WorldGenerator::HasQuestRequiringItem(const uint16 itemID) {
     Message("YodaDocument::HasQuestRequiringItem(%d)\n", itemID);
     for(Quest *quest : this->requiredItemQuests)
-        if(quest->itemID == itemID) return 1;
+        if(quest->itemID == itemID) {
+            Message("YodaDocument::HasQuestRequiringItem => %d\n", 1);
+            return 1;
+        }
 
+    Message("YodaDocument::HasQuestRequiringItem => %d\n", 0);
     return 0;
 }
 
@@ -1440,7 +1475,12 @@ Quest* WorldGenerator::AddProvidedQuestWithItemID(uint16 itemID, uint16 maximumD
 
 Quest* WorldGenerator::AddRequiredQuestWithItemID(uint16 itemID, uint16 maximumDistance){
     Message("YodaDocument::AddRequiredQuestWithItemID(%d, %d)\n", itemID, maximumDistance);
+
     Quest *quest = new Quest(itemID, maximumDistance);
+    /*
+     for(Quest *quest : this->requiredItemQuests)
+        if(quest->itemID == itemID) return quest;
+     */
     this->requiredItemQuests.push_back(quest);
 
     return quest;
@@ -1597,7 +1637,7 @@ int16 WorldGenerator::findUnusedNPCForZone(uint16 zone_id)
     Message("YodaDocument::ChoosePuzzleNPCForZone(%d)\n", zone_id);
     Zone *zone = getZoneByID(zone_id);
     if (!zone) {
-        Message("YodaDocument::ChoosePuzzleNPCForZone => %x\n", (int16)-1);
+        Message("YodaDocument::ChoosePuzzleNPCForZone => %d\n", -1);
         return -1;
     }
 
@@ -1608,7 +1648,7 @@ int16 WorldGenerator::findUnusedNPCForZone(uint16 zone_id)
 
     if(npcCandidates.size()) {
         int idx = win_rand() % npcCandidates.size();
-        Message("YodaDocument::ChoosePuzzleNPCForZone => %x\n", (int16)npcCandidates[idx]);
+        Message("YodaDocument::ChoosePuzzleNPCForZone => %d\n", npcCandidates[idx]);
         return npcCandidates[idx];
     }
 
@@ -1616,13 +1656,13 @@ int16 WorldGenerator::findUnusedNPCForZone(uint16 zone_id)
         if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
             int result = findUnusedNPCForZone(hotspot->arg1);
             if(result >= 0) {
-                Message("YodaDocument::ChoosePuzzleNPCForZone => %x\n", (int16)result);
+                Message("YodaDocument::ChoosePuzzleNPCForZone => %d\n", result);
                 return result;
             }
         }
     }
 
-    Message("YodaDocument::ChoosePuzzleNPCForZone => %x\n", (int16)-1);
+    Message("YodaDocument::ChoosePuzzleNPCForZone => %d\n", -1);
     return -1;
 }
 
@@ -1679,7 +1719,10 @@ signed int WorldGenerator::ChooseSpawnForPuzzleNPC(int16 zoneID, int npcID)
 {
     Message("YodaDocument::ChooseSpawnForPuzzleNPC(%d, %d)\n", zoneID, npcID);
     Zone *zone = getZoneByID(zoneID);
-    if ( !zone ) return -1;
+    if ( !zone ) {
+        Message("YodaDocument::ChooseSpawnForPuzzleNPC => %d\n", -1);
+        return -1;
+    }
 
     vector<Hotspot*> hotspotCandidates;
     for(uint16 npcTileID : zone->puzzleNPCTileIDs) {
@@ -1699,7 +1742,7 @@ signed int WorldGenerator::ChooseSpawnForPuzzleNPC(int16 zoneID, int npcID)
             hotspot->arg1 = npcID;
             hotspot->enabled = 1;
             this->wg_npc_id = npcID;
-
+            Message("YodaDocument::ChooseSpawnForPuzzleNPC => %d\n", npcID);
             return npcID;
         }
     }
@@ -1707,10 +1750,13 @@ signed int WorldGenerator::ChooseSpawnForPuzzleNPC(int16 zoneID, int npcID)
     for(Hotspot *hotspot : zone->_hotspots) {
         if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
             int result = ChooseSpawnForPuzzleNPC(hotspot->arg1, npcID);
-            if(result != -1) return result;
+            if(result != -1) {
+                Message("YodaDocument::ChooseSpawnForPuzzleNPC => %d\n", result);
+                return result;
+            }
         }
     }
-
+    Message("YodaDocument::ChooseSpawnForPuzzleNPC => %d\n", -1);
     return -1;
 }
 
@@ -2190,15 +2236,27 @@ signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, 
 {
     Message("YodaDocument::SetupRequiredItemForZone_(%d, %d, %d)\n", zone_id, arg2, use_required_items_array);
 
-    if ( zone_id < 0 ) return false;
+    if ( zone_id < 0 ) {
+        Message("YodaDocument::SetupRequiredItemForZone => %d\n", 0);
+        return false;
+    }
 
     Zone *zone = doc->zones[zone_id];
-    if ( zone == NULL ) return false;
+    if ( zone == NULL ) {
+        Message("YodaDocument::SetupRequiredItemForZone => %d\n", 0);
+        return false;
+    }
 
     size_t count = use_required_items_array ? zone->assignedItemIDs.size() : zone->requiredItemIDs.size();
-    if (count == 0) return false;
+    if (count == 0) {
+        Message("YodaDocument::SetupRequiredItemForZone => %d\n", 0);
+        return false;
+    }
 
-    if(!RequiredItemForZoneWasNotPlaced(zone_id)) return false;
+    if(!RequiredItemForZoneWasNotPlaced(zone_id)) {
+        Message("YodaDocument::SetupRequiredItemForZone => %d\n", 0);
+        return false;
+    }
 
     vector<uint16> &itemArray = use_required_items_array ? zone->assignedItemIDs : zone->requiredItemIDs;
     vector<uint16> itemCandidates;
@@ -2207,7 +2265,10 @@ signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, 
             itemCandidates.push_back(itemID);
 
     count = itemCandidates.size();
-    if ( count == 0 ) return false;
+    if ( count == 0 ) {
+        Message("YodaDocument::SetupRequiredItemForZone => %d\n", 0);
+        return false;
+    }
 
     int random_item_id = itemCandidates[win_rand() % count];
     if ( zone->providedItemIDs.size() == 1 ) {
@@ -2217,8 +2278,10 @@ signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, 
             if(itemID == zone->providedItemIDs[0])
                 foundItem = 1;
 
-        if ( foundItem )
+        if ( foundItem ){
+            Message("YodaDocument::SetupRequiredItemForZone => %d\n", 0);
             return false;
+        }
 
         this->item_ids.push_back(zone->providedItemIDs[0]);
     }
@@ -2235,6 +2298,7 @@ signed int WorldGenerator::SetupRequiredItemForZone_(int16 zone_id, int16 arg2, 
     this->wg_item_id = random_item_id;
     this->addRequiredItemQuestsFromHotspots(zone_id);
 
+    Message("YodaDocument::SetupRequiredItemForZone => %d\n", 1);
     return true;
 }
 
@@ -2246,21 +2310,24 @@ int WorldGenerator::AssociateItemWithZoneHotspot(int16 zone_id, int item_id, int
         Message("YodaDocument::AssociateItemWithZoneHotspot => 0\n");
         return false;
     }
-    if(!this->RequiredItemForZoneWasNotPlaced(zone_id)) return false;
+    if(!this->RequiredItemForZoneWasNotPlaced(zone_id)) {
+        Message("YodaDocument::AssociateItemWithZoneHotspot => 0\n");
+        return false;
+    }
     int hotspot_type;
     int tile_specs;
-
+    
     Zone *zone = doc->zones[zone_id];
     if(!zone) {
         Message("YodaDocument::AssociateItemWithZoneHotspot => 0\n");
         return false;
     }
-
+    
     if(zone->requiredItemIDs.size() > 0 || zone->puzzleNPCTileIDs.size() > 0){
         Message("YodaDocument::AssociateItemWithZoneHotspot => 0\n");
         return false;
     }
-
+    
     int found_item_id_in_zone_items = 0;
     for(uint16 itemID : zone->providedItemIDs) {
         if(itemID == item_id) {
@@ -2268,11 +2335,11 @@ int WorldGenerator::AssociateItemWithZoneHotspot(int16 zone_id, int item_id, int
             break;
         }
     }
-
+    
     hotspot_type = 0;
     if ( found_item_id_in_zone_items ) {
         vector<Hotspot*> hotspotCandidates;
-
+        
         tile_specs = doc->tiles[item_id]->_specs;
         if ( tile_specs & TILE_SPEC_THE_FORCE ) {
             hotspot_type = ForceLocation;
@@ -2281,12 +2348,12 @@ int WorldGenerator::AssociateItemWithZoneHotspot(int16 zone_id, int item_id, int
         } else if ( (uint8_t)tile_specs & (uint8_t)TILE_SPEC_USEFUL ) {
             hotspot_type = TriggerLocation;
         }
-
+        
         for(Hotspot *hotspot : zone->_hotspots) {
             if(hotspot->type == hotspot_type)
                 hotspotCandidates.push_back(hotspot);
         }
-
+        
         if ( hotspotCandidates.size() ) {
             Hotspot *hotspot = hotspotCandidates[win_rand() % hotspotCandidates.size()];
             hotspot->arg1 = item_id;
@@ -2297,23 +2364,23 @@ int WorldGenerator::AssociateItemWithZoneHotspot(int16 zone_id, int item_id, int
             Message("YodaDocument::AssociateItemWithZoneHotspot => 1\n");
             return true;
         }
-
+        
         Message("YodaDocument::AssociateItemWithZoneHotspot => 0\n");
         return false;
     }
-
+    
     for(Hotspot *hotspot : zone->_hotspots) {
         if(hotspot->type == DoorIn && hotspot->arg1 >= 0) {
             int result = this->AssociateItemWithZoneHotspot(hotspot->arg1, item_id, a4);
             if(result) {
                 this->addRequiredItemQuestsFromHotspots(zone_id);
-
+                
                 Message("YodaDocument::AssociateItemWithZoneHotspot => 1\n");
                 return true;
             }
         }
     }
-
+    
     Message("YodaDocument::AssociateItemWithZoneHotspot => 0\n");
     return false;
 }
