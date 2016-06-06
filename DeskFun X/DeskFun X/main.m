@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]) {
      }
      */
     TestSuite suite;
-    return suite.runTests();
+    // return suite.runTests();
 
     return NSApplicationMain(argc, argv);
 }

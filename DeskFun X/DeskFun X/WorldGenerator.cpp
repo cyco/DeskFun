@@ -206,7 +206,6 @@ int WorldGenerator::placeTransport(YodaDocument *doc, uint16* map) {
             int foundTravelTarget = false;
             int target_x = 0, target_y = 0;
 
-
             // islands on the left
             if ( !foundTravelTarget ) {
                 target_x = 0;
@@ -403,7 +402,7 @@ int WorldGenerator::loop1(YodaDocument* doc, int puzzleMapIdx, uint16* puzzles, 
                             break_some_more = 1;
                         }
 
-                        if (!break_some_more && zone_type == ZONETYPE_Use ) {
+                        if (!break_some_more && type == ZONETYPE_Use ) {
                             int distance = MapGenerator::GetDistanceToCenter(x, y);
                             zone_id_5 = this->GetZoneIdWithType(ZONETYPE_Trade, zone_type-1, -1, item_1, -1, distance, 0);
                             if ( zone_id_5 < 0 ) {
@@ -628,7 +627,7 @@ int WorldGenerator::doLoop0(YodaDocument *doc, const int puzzle_count, const int
                                     this->wg_zone_type = ZONETYPE_Trade;
                                 } else {
                                     int distance = MapGenerator::GetDistanceToCenter(x, y);
-                                    zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Use, v204, -1, zone_id_10, -1, distance, 0);
+                                    zone_id_3 = this->GetZoneIdWithType(ZONETYPE_Use, zone_id_11 - 1, -1, item_1, -1, distance, 0);
                                     if ( zone_id_3 < 0 ){
                                         return this->doCleanup(doc);
                                     }
@@ -811,7 +810,7 @@ int16 WorldGenerator::GetZoneIdWithType(ZONE_TYPE type_1, int a3, int a4, int it
     Message("YodaDocument::GetZoneIdWithType(%d, %d, %d, %d, %d, %d, %d)\n", type_1, (uint16)a3, (uint16)a4, (uint16)item_id_1, (uint16)item_id_2, item_id_3, a8);
 
     if(type_1 == 15 && a3==2/* && (int16)a4==-1 && item_id_1==1215 && (int16)item_id_2==-1 && item_id_3==5 && a8==0*/){
-        printf("break");
+        // printf("break");
     }
 
     // item_id_1 = first required quest->itemID, last required quest->itemID

@@ -293,6 +293,8 @@ NSString * const ActionDragType = @"com.deskfun.action";
     switch (instruction.opcode) {
         case Action::Instruction::Opcode::PlaceTile:
             f(@"placeTile(x:%d, y:%d, l:%d, 0x%04x)", arguments[0], arguments[1], arguments[2], arguments[3])
+        case Action::Instruction::Opcode::PlaceTileAgain:
+            f(@"placeTileAgain(x:%d, y:%d, l:%d, 0x%04x)", arguments[0], arguments[1], arguments[2], arguments[3])
         case Action::Instruction::Opcode::RemoveTile:
             f(@"removeTile(x:%d, y:%d, l:%d)", arguments[0], arguments[1], arguments[2])
         case Action::Instruction::Opcode::MoveTile:
@@ -331,6 +333,8 @@ NSString * const ActionDragType = @"com.deskfun.action";
             f(@"removeItem(%@ (0x%0x))", [self _nameOfTile:arguments[0]], arguments[0])
         case Action::Instruction::Opcode::PlaySound:
             f(@"playSound(%s)", _GameDataParser->_sounds[arguments[0]]->getFileName().c_str())
+        case Action::Instruction::Opcode::StopSound:
+            f(@"stopSounds()")
         case Action::Instruction::Opcode::SetCounter:
             f(@"setCounter(value: %d)", arguments[0]);
         case Action::Instruction::Opcode::ChangeZone:

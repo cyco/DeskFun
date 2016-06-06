@@ -34,11 +34,11 @@ public:
             Wait   = 0x08,
             Redraw = 0x09,
             PlaySound = 0x0a,           // DONE
-            // = 0x0b, // update inventory?
+            StopSound = 0x0b,           // DONE
             RollDice = 0x0c,            // DONE
             SetCounter = 0x0d,          // DONE
             // = 0x0e, // AddToCounter  // DONE
-            // = 0x0f, // PlaceTile     // DONE
+            PlaceTileAgain = 0x0f,      // DONE
             HideHero = 0x10,            // DONE
             ShowHero = 0x11,            // DONE
             SetHero  = 0x12,            // DONE
@@ -122,6 +122,7 @@ public:
                 case Wait: return "Wait";
                 case Redraw: return "Redraw";
                 case PlaySound: return "PlaySound";
+                case StopSound: return "StopSound";
                 case RollDice: return "RollDice";
                 case SetCounter: return "SetCounter";
                 case DisableAction: return "DisableAction";

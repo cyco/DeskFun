@@ -469,6 +469,9 @@ bool ZoneScene::executeInstruction(Action::Instruction instruction)
             _engine->mixer->play(sound, SoundMixer::SoundEffect);
             break;
         }
+        case I::StopSound:
+
+            break;
         case I::AddItem:
             _engine->world->hero.addItem(_engine->data->_tiles.at(instruction.arguments[0]));
             if(_engine->hostCallbacks.updateInventory)
